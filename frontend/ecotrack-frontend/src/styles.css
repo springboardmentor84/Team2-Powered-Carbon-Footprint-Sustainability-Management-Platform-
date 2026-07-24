@@ -1,1 +1,273 @@
 /* You can add global styles to this file, and also import other style files */
+/* =========================================
+   EcoTrack Global Theme
+========================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* ========= Variables ========= */
+
+:root{
+
+    --primary:#2E7D32;
+    --primary-dark:#1B5E20;
+    --secondary:#4CAF50;
+
+    --success:#4CAF50;
+    --danger:#E53935;
+    --warning:#FB8C00;
+    --info:#2196F3;
+
+    --background:#F5F7FA;
+    --surface:#FFFFFF;
+
+    --text:#1F2937;
+    --text-light:#6B7280;
+
+    --border:#E5E7EB;
+
+    --radius:12px;
+
+    --shadow:0 5px 18px rgba(0,0,0,.08);
+
+    --transition:.3s ease;
+
+}
+
+/* ========= Reset ========= */
+
+*{
+
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+
+}
+
+html{
+
+    scroll-behavior:smooth;
+
+}
+
+body{
+
+    font-family:'Inter',sans-serif;
+
+    background:var(--background);
+
+    color:var(--text);
+
+    min-height:100vh;
+
+}
+
+/* ========= Scrollbar ========= */
+
+::-webkit-scrollbar{
+
+    width:8px;
+
+}
+
+::-webkit-scrollbar-thumb{
+
+    background:#bdbdbd;
+    border-radius:20px;
+
+}
+
+/* ========= Links ========= */
+
+a{
+
+    text-decoration:none;
+
+    color:inherit;
+
+}
+
+/* ========= Images ========= */
+
+img{
+
+    max-width:100%;
+
+    display:block;
+
+}
+
+/* ========= Buttons ========= */
+
+.btn{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    padding:12px 24px;
+
+    border:none;
+
+    border-radius:var(--radius);
+
+    cursor:pointer;
+
+    background:var(--primary);
+
+    color:white;
+
+    transition:var(--transition);
+
+    font-weight:600;
+
+}
+
+.btn:hover{
+
+    background:var(--primary-dark);
+
+}
+
+/* ========= Inputs ========= */
+
+input,
+textarea,
+select{
+
+    width:100%;
+
+    padding:12px 15px;
+
+    border:1px solid var(--border);
+
+    border-radius:10px;
+
+    outline:none;
+
+    transition:.3s;
+
+    background:white;
+
+}
+
+input:focus,
+textarea:focus{
+
+    border-color:var(--primary);
+
+}
+
+/* ========= Card ========= */
+
+.card{
+
+    background:white;
+
+    border-radius:var(--radius);
+
+    box-shadow:var(--shadow);
+
+    padding:25px;
+
+}
+
+/* ========= Container ========= */
+
+.container{
+
+    width:90%;
+
+    max-width:1400px;
+
+    margin:auto;
+
+}
+
+/* ========= Utility ========= */
+
+.text-center{
+
+    text-align:center;
+
+}
+
+.mt-1{
+
+    margin-top:10px;
+
+}
+
+.mt-2{
+
+    margin-top:20px;
+
+}
+
+.mt-3{
+
+    margin-top:30px;
+
+}
+
+.mt-4{
+
+    margin-top:40px;
+
+}
+
+/* ========= Responsive ========= */
+
+@media(max-width:1200px){
+
+    .container{
+
+        width:94%;
+
+    }
+
+}
+
+@media(max-width:992px){
+
+    .container{
+
+        width:95%;
+
+    }
+
+}
+
+@media(max-width:768px){
+
+    body{
+
+        font-size:15px;
+
+    }
+
+    .container{
+
+        width:95%;
+
+    }
+
+}
+
+@media(max-width:576px){
+
+    body{
+
+        font-size:14px;
+
+    }
+
+    .btn{
+
+        width:100%;
+
+    }
+
+}
