@@ -1,0 +1,27 @@
+<mat-card class="card">
+
+    <h2>Goal Progress</h2>
+
+    <div class="value">
+
+        {{carbonSaved | number:'1.0-1'}} kg
+
+    </div>
+
+    <mat-progress-bar
+
+        mode="determinate"
+
+        [value]="progress">
+
+    </mat-progress-bar>
+
+    <div class="footer">
+
+        <span>{{progress | number:'1.0-0'}}%</span>
+
+        <span>{{remaining | number:'1.0-1'}} kg left</span>
+
+    </div>
+
+</mat-card>

@@ -1,0 +1,84 @@
+<h2 mat-dialog-title>
+
+Edit Activity
+
+</h2>
+
+<mat-dialog-content>
+
+<mat-form-field appearance="outline">
+
+<mat-label>Activity</mat-label>
+
+<input
+matInput
+[(ngModel)]="activity.title">
+
+</mat-form-field>
+
+<mat-form-field appearance="outline">
+
+<mat-label>Category</mat-label>
+
+<input
+matInput
+[(ngModel)]="activity.category">
+
+</mat-form-field>
+
+<mat-form-field appearance="outline">
+
+<mat-label>Carbon Saved</mat-label>
+
+<input
+type="number"
+matInput
+[(ngModel)]="activity.carbon">
+
+</mat-form-field>
+
+<mat-form-field appearance="outline">
+
+<mat-label>Date</mat-label>
+
+<input
+type="date"
+matInput
+[(ngModel)]="activity.date">
+
+</mat-form-field>
+
+<mat-form-field appearance="outline">
+
+<mat-label>Notes</mat-label>
+
+<textarea
+matInput
+rows="3"
+[(ngModel)]="activity.notes">
+</textarea>
+
+</mat-form-field>
+
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+
+<button
+mat-button
+(click)="cancel()">
+
+Cancel
+
+</button>
+
+<button
+mat-raised-button
+color="primary"
+(click)="save()">
+
+Save
+
+</button>
+
+</mat-dialog-actions>

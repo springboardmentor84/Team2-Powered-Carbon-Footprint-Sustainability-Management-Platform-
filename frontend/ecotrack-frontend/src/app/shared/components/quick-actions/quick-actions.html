@@ -1,0 +1,27 @@
+<mat-card>
+
+    <h2>
+
+        Quick Actions
+
+    </h2>
+
+    <div class="actions">
+
+        <button
+            mat-raised-button
+            *ngFor="let action of actions">
+
+            <mat-icon>
+
+                {{action.icon}}
+
+            </mat-icon>
+
+            {{action.title}}
+
+        </button>
+
+    </div>
+
+</mat-card>

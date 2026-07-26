@@ -1,273 +1,133 @@
-/* You can add global styles to this file, and also import other style files */
-/* =========================================
-   EcoTrack Global Theme
-========================================= */
+/* ---------------- Google Font ---------------- */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
-/* ========= Variables ========= */
+/* ---------------- Theme Variables ---------------- */
 
 :root{
 
-    --primary:#2E7D32;
-    --primary-dark:#1B5E20;
-    --secondary:#4CAF50;
+--primary:#2E7D32;
 
-    --success:#4CAF50;
-    --danger:#E53935;
-    --warning:#FB8C00;
-    --info:#2196F3;
+--primary-light:#43A047;
 
-    --background:#F5F7FA;
-    --surface:#FFFFFF;
+--secondary:#1976D2;
 
-    --text:#1F2937;
-    --text-light:#6B7280;
+--danger:#D32F2F;
 
-    --border:#E5E7EB;
+--warning:#F9A825;
 
-    --radius:12px;
+--success:#43A047;
 
-    --shadow:0 5px 18px rgba(0,0,0,.08);
+--background:#F5F7FA;
 
-    --transition:.3s ease;
+--surface:#FFFFFF;
+
+--text:#212121;
+
+--text-light:#757575;
+
+--border:#E5E7EB;
+
+--radius:14px;
+
+--shadow:0 8px 25px rgba(0,0,0,.08);
 
 }
 
-/* ========= Reset ========= */
+/* ---------------- Reset ---------------- */
 
 *{
 
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
+margin:0;
+
+padding:0;
+
+box-sizing:border-box;
 
 }
 
 html{
 
-    scroll-behavior:smooth;
+scroll-behavior:smooth;
 
 }
 
 body{
 
-    font-family:'Inter',sans-serif;
+font-family:'Inter',sans-serif;
 
-    background:var(--background);
+background:var(--background);
 
-    color:var(--text);
-
-    min-height:100vh;
+color:var(--text);
 
 }
 
-/* ========= Scrollbar ========= */
-
-::-webkit-scrollbar{
-
-    width:8px;
-
-}
-
-::-webkit-scrollbar-thumb{
-
-    background:#bdbdbd;
-    border-radius:20px;
-
-}
-
-/* ========= Links ========= */
-
-a{
-
-    text-decoration:none;
-
-    color:inherit;
-
-}
-
-/* ========= Images ========= */
-
-img{
-
-    max-width:100%;
-
-    display:block;
-
-}
-
-/* ========= Buttons ========= */
-
-.btn{
-
-    display:inline-flex;
-
-    align-items:center;
-
-    justify-content:center;
-
-    padding:12px 24px;
-
-    border:none;
-
-    border-radius:var(--radius);
-
-    cursor:pointer;
-
-    background:var(--primary);
-
-    color:white;
-
-    transition:var(--transition);
-
-    font-weight:600;
-
-}
-
-.btn:hover{
-
-    background:var(--primary-dark);
-
-}
-
-/* ========= Inputs ========= */
-
-input,
-textarea,
-select{
-
-    width:100%;
-
-    padding:12px 15px;
-
-    border:1px solid var(--border);
-
-    border-radius:10px;
-
-    outline:none;
-
-    transition:.3s;
-
-    background:white;
-
-}
-
-input:focus,
-textarea:focus{
-
-    border-color:var(--primary);
-
-}
-
-/* ========= Card ========= */
-
-.card{
-
-    background:white;
-
-    border-radius:var(--radius);
-
-    box-shadow:var(--shadow);
-
-    padding:25px;
-
-}
-
-/* ========= Container ========= */
+/* ---------------- Containers ---------------- */
 
 .container{
 
-    width:90%;
+width:min(1300px,95%);
 
-    max-width:1400px;
-
-    margin:auto;
+margin:auto;
 
 }
 
-/* ========= Utility ========= */
+/* ---------------- Cards ---------------- */
 
-.text-center{
+.card{
 
-    text-align:center;
+background:var(--surface);
 
-}
+border-radius:var(--radius);
 
-.mt-1{
+box-shadow:var(--shadow);
 
-    margin-top:10px;
-
-}
-
-.mt-2{
-
-    margin-top:20px;
+padding:24px;
 
 }
 
-.mt-3{
+/* ---------------- Buttons ---------------- */
 
-    margin-top:30px;
+.primary-btn{
 
-}
+background:var(--primary);
 
-.mt-4{
+color:white;
 
-    margin-top:40px;
+border:none;
 
-}
+padding:12px 24px;
 
-/* ========= Responsive ========= */
+border-radius:10px;
 
-@media(max-width:1200px){
+cursor:pointer;
 
-    .container{
-
-        width:94%;
-
-    }
+transition:.3s;
 
 }
 
-@media(max-width:992px){
+.primary-btn:hover{
 
-    .container{
+background:var(--primary-light);
 
-        width:95%;
+}
 
-    }
+/* ---------------- Responsive ---------------- */
+
+img{
+
+max-width:100%;
+
+display:block;
 
 }
 
 @media(max-width:768px){
 
-    body{
+.container{
 
-        font-size:15px;
-
-    }
-
-    .container{
-
-        width:95%;
-
-    }
+width:95%;
 
 }
-
-@media(max-width:576px){
-
-    body{
-
-        font-size:14px;
-
-    }
-
-    .btn{
-
-        width:100%;
-
-    }
 
 }

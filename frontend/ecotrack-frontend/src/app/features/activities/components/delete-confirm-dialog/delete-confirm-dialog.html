@@ -1,0 +1,38 @@
+<h2 mat-dialog-title>
+
+Delete Activity
+
+</h2>
+
+<mat-dialog-content>
+
+<p>
+
+Are you sure you want to delete
+
+<strong>{{title}}</strong> ?
+
+</p>
+
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+
+<button
+mat-button
+(click)="cancel()">
+
+Cancel
+
+</button>
+
+<button
+mat-raised-button
+color="warn"
+(click)="delete()">
+
+Delete
+
+</button>
+
+</mat-dialog-actions>

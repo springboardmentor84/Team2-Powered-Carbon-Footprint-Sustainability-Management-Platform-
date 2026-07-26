@@ -1,27 +1,38 @@
 <div class="sidebar">
 
-    <h2>EcoTrack</h2>
+    <div class="logo">
 
-    <a routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
+        <mat-icon>eco</mat-icon>
 
-    <a routerLink="/activities" routerLinkActive="active">Activities</a>
+        <span>EcoTrack</span>
 
-    <a routerLink="/carbon-tracker" routerLinkActive="active">Carbon Tracker</a>
+    </div>
 
-    <a routerLink="/goals" routerLinkActive="active">Goals</a>
+    <mat-nav-list>
 
-    <a routerLink="/reports" routerLinkActive="active">Reports</a>
+        @for(item of menu; track item.route){
 
-    <a routerLink="/analytics" routerLinkActive="active">Analytics</a>
+            <a
+                mat-list-item
+                [routerLink]="item.route"
+                routerLinkActive="active">
 
-    <a routerLink="/leaderboard" routerLinkActive="active">Leaderboard</a>
+                <mat-icon matListItemIcon>
 
-    <a routerLink="/notifications" routerLinkActive="active">Notifications</a>
+                    {{item.icon}}
 
-    <a routerLink="/profile" routerLinkActive="active">Profile</a>
+                </mat-icon>
 
-    <a routerLink="/settings" routerLinkActive="active">Settings</a>
+                <span>
 
-    <a routerLink="/ai-assistant" routerLinkActive="active">AI Assistant</a>
+                    {{item.title}}
+
+                </span>
+
+            </a>
+
+        }
+
+    </mat-nav-list>
 
 </div>

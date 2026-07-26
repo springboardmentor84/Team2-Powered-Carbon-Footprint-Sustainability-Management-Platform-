@@ -1,9 +1,43 @@
-.dashboard-container{
-    display:flex;
-    min-height:100vh;
+.layout-container{
+
+    height:100vh;
+
+}
+
+.sidebar{
+
+    width:260px;
+
+    border-right:none;
+
 }
 
 .content{
-    flex:1;
-    padding:20px;
+
+    padding:25px;
+
+    min-height:calc(100vh - 130px);
+
+    background:#F5F7FA;
+
+}
+
+@media(max-width:992px){
+
+    .sidebar{
+
+        width:220px;
+
+    }
+
+}
+
+@media(max-width:768px){
+
+    .content{
+
+        padding:15px;
+
+    }
+
 }

@@ -1,0 +1,94 @@
+<h2 mat-dialog-title>Add New Activity</h2>
+
+<mat-dialog-content>
+
+  <mat-form-field appearance="outline" class="full-width">
+
+    <mat-label>Activity Name</mat-label>
+
+    <input
+      matInput
+      [(ngModel)]="activity.title"
+      placeholder="Walking, Cycling, Tree Plantation">
+
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full-width">
+
+    <mat-label>Category</mat-label>
+
+    <mat-select [(ngModel)]="activity.category">
+
+      <mat-option value="Walking">Walking</mat-option>
+
+      <mat-option value="Cycling">Cycling</mat-option>
+
+      <mat-option value="Public Transport">Public Transport</mat-option>
+
+      <mat-option value="Tree Plantation">Tree Plantation</mat-option>
+
+      <mat-option value="Recycling">Recycling</mat-option>
+
+      <mat-option value="Renewable Energy">Renewable Energy</mat-option>
+
+    </mat-select>
+
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full-width">
+
+    <mat-label>Carbon Saved (kg)</mat-label>
+
+    <input
+      matInput
+      type="number"
+      [(ngModel)]="activity.carbon">
+
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full-width">
+
+    <mat-label>Date</mat-label>
+
+    <input
+      matInput
+      type="date"
+      [(ngModel)]="activity.date">
+
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full-width">
+
+    <mat-label>Notes</mat-label>
+
+    <textarea
+      matInput
+      rows="4"
+      [(ngModel)]="activity.notes">
+
+    </textarea>
+
+  </mat-form-field>
+
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+
+  <button
+    mat-button
+    (click)="cancel()">
+
+    Cancel
+
+  </button>
+
+  <button
+    mat-raised-button
+    color="primary"
+    (click)="save()">
+
+    Save Activity
+
+  </button>
+
+</mat-dialog-actions>

@@ -1,0 +1,31 @@
+mat-card{
+
+    padding:24px;
+
+    height:100%;
+
+}
+
+.item{
+
+    display:flex;
+
+    gap:15px;
+
+    align-items:flex-start;
+
+    margin:18px 0;
+
+}
+
+mat-icon{
+
+    color:#FB8C00;
+
+}
+
+span{
+
+    color:#555;
+
+}

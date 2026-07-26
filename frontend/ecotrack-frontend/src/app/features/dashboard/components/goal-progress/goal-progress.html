@@ -1,0 +1,35 @@
+<mat-card>
+
+    <h2>
+
+        Goal Progress
+
+    </h2>
+
+    <div class="percentage">
+
+        {{percentage | number:'1.0-0'}}%
+
+    </div>
+
+    <mat-progress-bar
+
+        mode="determinate"
+
+        [value]="percentage">
+
+    </mat-progress-bar>
+
+    <p>
+
+        {{completedGoals}} of {{totalGoals}} goals completed
+
+    </p>
+
+    <button mat-raised-button color="primary">
+
+        + New Goal
+
+    </button>
+
+</mat-card>
