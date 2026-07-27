@@ -1,50 +1,46 @@
 <div class="dashboard">
 
+  <!-- Welcome -->
   <div class="welcome-card">
 
     <div>
-
       <h1>Welcome Back 👋</h1>
-
       <p>
-
         Monitor your sustainability journey and reduce your carbon footprint.
-
       </p>
-
     </div>
 
     <button
       class="primary-btn"
       (click)="openDialog()">
-
       + Add Activity
-
     </button>
 
   </div>
 
+  <!-- Stats -->
   <section class="stats">
 
     <mat-card
       class="stat-card"
-      *ngFor="let item of stats">
+      *ngFor="let item of stats; let i = index"
+      [style.animation-delay]="(i * 0.15) + 's'">
 
       <div
         class="icon"
         [style.background]="item.color">
 
-        <mat-icon>{{item.icon}}</mat-icon>
+        <mat-icon>{{ item.icon }}</mat-icon>
 
       </div>
 
       <div>
 
-        <h2>{{item.value}}</h2>
+        <h2>{{ item.value }}</h2>
 
-        <p>{{item.title}}</p>
+        <p>{{ item.title }}</p>
 
-        <small>{{item.subtitle}}</small>
+        <small>{{ item.subtitle }}</small>
 
       </div>
 
@@ -52,38 +48,44 @@
 
   </section>
 
- <section class="dashboard-grid">
+  <!-- Dashboard Grid -->
+  <section class="dashboard-grid">
 
-  <!-- Weekly Chart -->
-  <mat-card class="large-card">
+    <!-- Weekly Chart -->
+    <mat-card class="large-card">
 
-    <h2>Weekly Carbon Savings</h2>
+      <h2>Weekly Carbon Savings</h2>
 
-    <div class="chart-container">
-      <canvas #carbonChart></canvas>
-    </div>
+      <div class="chart-container">
+        <canvas #carbonChart></canvas>
+      </div>
 
-  </mat-card>
+    </mat-card>
 
-  <!-- Monthly Chart -->
-  <app-monthly-chart></app-monthly-chart>
+    <app-monthly-chart></app-monthly-chart>
 
-  <!-- Sustainability Score -->
-  <app-sustainability-score></app-sustainability-score>
+    <app-sustainability-score></app-sustainability-score>
 
-  <!-- Goal Progress -->
-  <app-goal-progress></app-goal-progress>
+    <app-goal-progress></app-goal-progress>
 
-  <!-- Temporary placeholders -->
-  <app-recent-activities></app-recent-activities>
+    <app-recent-activities></app-recent-activities>
 
-  <app-calendar-card></app-calendar-card>
+    <app-calendar-card></app-calendar-card>
 
-  <app-notification-card></app-notification-card>
+    <app-notification-card></app-notification-card>
 
-  <app-ai-recommendation></app-ai-recommendation>
+    <app-ai-recommendation></app-ai-recommendation>
 
-  <app-quick-actions></app-quick-actions>
+    <app-quick-actions></app-quick-actions>
 
-</section>
+    <app-profile-widget></app-profile-widget>
+
+    <app-achievement-card></app-achievement-card>
+
+    <app-streak-card></app-streak-card>
+
+    <app-weather-card></app-weather-card>
+
+  </section>
+
 </div>

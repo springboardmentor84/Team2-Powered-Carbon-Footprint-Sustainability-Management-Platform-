@@ -1,33 +1,73 @@
 <mat-card class="card">
 
-<h2>
+    <h2>
 
-Quick Actions
+        Quick Actions
 
-</h2>
+    </h2>
 
-<button (click)="addActivity()">
+    <div class="grid">
 
-➕ Add Activity
+        <button
+            class="green"
+            (click)="addActivity()">
 
-</button>
+            <span>➕</span>
 
-<button (click)="openActivities()">
+            Add Activity
 
-📋 View Activities
+        </button>
 
-</button>
+        <button
+            class="blue"
+            (click)="openActivities()">
 
-<button (click)="openDashboard()">
+            <span>📋</span>
 
-🏠 Dashboard
+            Activities
 
-</button>
+        </button>
 
-<button (click)="reports()">
+        <button
+            class="purple"
+            (click)="exportCSV()">
 
-📊 Reports
+            <span>⬇️</span>
 
-</button>
+            Export CSV
+
+        </button>
+
+        <button
+            class="orange"
+            (click)="reports()">
+
+            <span>📊</span>
+
+            Reports
+
+        </button>
+
+        <button
+            class="cyan"
+            (click)="syncData()">
+
+            <span>☁️</span>
+
+            Sync
+
+        </button>
+
+        <button
+            class="red"
+            (click)="clearActivities()">
+
+            <span>🗑️</span>
+
+            Clear Data
+
+        </button>
+
+    </div>
 
 </mat-card>

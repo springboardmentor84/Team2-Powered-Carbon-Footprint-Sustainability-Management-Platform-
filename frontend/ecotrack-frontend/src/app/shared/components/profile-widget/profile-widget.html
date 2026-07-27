@@ -1,0 +1,105 @@
+<mat-card class="card">
+
+<div class="top">
+
+<img
+[src]="user.avatar"
+alt="avatar">
+
+<div>
+
+<h2>
+
+{{user.name}}
+
+</h2>
+
+<p>
+
+{{user.email}}
+
+</p>
+
+<span class="level">
+
+{{ecoLevel}}
+
+</span>
+
+</div>
+
+</div>
+
+<div class="stats">
+
+<div>
+
+<h3>
+
+{{carbon}} kg
+
+</h3>
+
+<span>
+
+Carbon Saved
+
+</span>
+
+</div>
+
+<div>
+
+<h3>
+
+{{score}}
+
+</h3>
+
+<span>
+
+Eco Score
+
+</span>
+
+</div>
+
+<div>
+
+<h3>
+
+{{activities}}
+
+</h3>
+
+<span>
+
+Activities
+
+</span>
+
+</div>
+
+</div>
+
+<div class="member">
+
+Member Since
+
+<strong>
+
+{{user.memberSince}}
+
+</strong>
+
+</div>
+
+<button
+
+(click)="editProfile()">
+
+Edit Profile
+
+</button>
+
+</mat-card>

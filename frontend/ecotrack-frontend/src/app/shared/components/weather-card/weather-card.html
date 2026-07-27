@@ -1,0 +1,79 @@
+<mat-card class="card">
+
+<div class="header">
+
+<h2>
+
+Weather
+
+</h2>
+
+<button (click)="refresh()">
+
+↻
+
+</button>
+
+</div>
+
+<div class="weather">
+
+<div class="icon">
+
+{{weather.icon}}
+
+</div>
+
+<div>
+
+<h1>
+
+{{weather.temperature}}°C
+
+</h1>
+
+<h3>
+
+{{weather.condition}}
+
+</h3>
+
+<p>
+
+📍 {{weather.city}}
+
+</p>
+
+</div>
+
+</div>
+
+<div class="details">
+
+<div>
+
+💧
+
+{{weather.humidity}}%
+
+</div>
+
+<div>
+
+💨
+
+{{weather.wind}} km/h
+
+</div>
+
+</div>
+
+<div class="tip">
+
+🌱
+
+{{ecoSuggestion}}
+
+</div>
+
+</mat-card>

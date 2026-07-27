@@ -28,7 +28,10 @@ import { NotificationCard } from '../../../../shared/components/notification-car
 import { CalendarCard } from '../../../../shared/components/calendar-card/calendar-card';
 import { AiRecommendation } from '../../../../shared/components/ai-recommendation/ai-recommendation';
 import { QuickActions } from '../../../../shared/components/quick-actions/quick-actions';
-
+import { ProfileWidget } from '../../../../shared/components/profile-widget/profile-widget';
+import { AchievementCard } from '../../../../shared/components/achievement-card/achievement-card';
+import { StreakCard } from '../../../../shared/components/streak-card/streak-card';
+import { WeatherCard } from '../../../../shared/components/weather-card/weather-card';
 @Component({
   selector: 'app-dashboard-home',
   standalone: true,
@@ -46,7 +49,11 @@ import { QuickActions } from '../../../../shared/components/quick-actions/quick-
     NotificationCard,
     CalendarCard,
     AiRecommendation,
-    QuickActions
+    QuickActions,
+    AchievementCard,
+    StreakCard,
+    WeatherCard,
+    ProfileWidget
   ],
 
   templateUrl: './dashboard-home.html',
@@ -142,6 +149,8 @@ export class DashboardHome implements OnInit, AfterViewInit, OnDestroy {
   this.stats[2].value = score.toString();
 
   this.stats[3].value = goal + '%';
+  
+  this.stats=[...this.stats];
 
   if (this.chart) {
 

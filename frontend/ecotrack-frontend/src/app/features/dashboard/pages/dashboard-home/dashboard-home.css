@@ -2,13 +2,35 @@
 
 padding:30px;
 
-background:#f4f7fb;
+display:flex;
 
-min-height:100vh;
+flex-direction:column;
+
+gap:28px;
+
+animation:fadePage .8s ease;
 
 }
 
-/* ---------------- Welcome ---------------- */
+@keyframes fadePage{
+
+from{
+
+opacity:0;
+
+transform:translateY(18px);
+
+}
+
+to{
+
+opacity:1;
+
+transform:translateY(0);
+
+}
+
+}
 
 .welcome-card{
 
@@ -18,41 +40,43 @@ justify-content:space-between;
 
 align-items:center;
 
-padding:30px;
+padding:28px;
 
-border-radius:20px;
+border-radius:22px;
 
 background:linear-gradient(135deg,#2E7D32,#43A047);
 
 color:white;
 
-margin-bottom:30px;
+box-shadow:0 12px 28px rgba(0,0,0,.12);
 
-box-shadow:0 10px 25px rgba(0,0,0,.12);
-
-}
-
-.welcome-card h1{
-
-margin:0;
-
-font-size:32px;
-
-font-weight:700;
+animation:slideTop .8s ease;
 
 }
 
-.welcome-card p{
+@keyframes slideTop{
 
-margin-top:8px;
+from{
 
-opacity:.9;
+opacity:0;
+
+transform:translateY(-30px);
+
+}
+
+to{
+
+opacity:1;
+
+transform:translateY(0);
+
+}
 
 }
 
 .primary-btn{
 
-padding:14px 26px;
+padding:14px 24px;
 
 border:none;
 
@@ -66,29 +90,25 @@ font-weight:700;
 
 cursor:pointer;
 
-transition:.25s;
+transition:.3s;
 
 }
 
 .primary-btn:hover{
 
-transform:translateY(-3px);
+transform:translateY(-4px);
 
 box-shadow:0 8px 20px rgba(0,0,0,.18);
 
 }
 
-/* ---------------- KPI ---------------- */
-
 .stats{
 
 display:grid;
 
-grid-template-columns:repeat(4,1fr);
+grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
 
-gap:20px;
-
-margin-bottom:30px;
+gap:22px;
 
 }
 
@@ -98,85 +118,79 @@ display:flex;
 
 align-items:center;
 
+gap:18px;
+
 padding:22px;
 
 border-radius:18px;
 
-box-shadow:0 6px 18px rgba(0,0,0,.08);
+transition:.3s;
 
-transition:.25s;
+animation:fadeCard .7s ease;
+
+}
+
+@keyframes fadeCard{
+
+from{
+
+opacity:0;
+
+transform:translateY(20px);
+
+}
+
+to{
+
+opacity:1;
+
+transform:translateY(0);
+
+}
 
 }
 
 .stat-card:hover{
 
-transform:translateY(-5px);
+transform:translateY(-8px);
 
-box-shadow:0 12px 28px rgba(0,0,0,.15);
+box-shadow:0 16px 35px rgba(0,0,0,.15);
 
 }
 
 .icon{
 
-width:60px;
+width:70px;
 
-height:60px;
-
-display:flex;
-
-align-items:center;
-
-justify-content:center;
+height:70px;
 
 border-radius:50%;
 
-color:white;
+display:flex;
 
-margin-right:18px;
+justify-content:center;
+
+align-items:center;
+
+color:white;
 
 }
 
 .icon mat-icon{
 
-font-size:30px;
+font-size:34px;
 
-width:30px;
+width:34px;
 
-height:30px;
-
-}
-
-.stat-card h2{
-
-margin:0;
-
-font-size:28px;
-
-font-weight:700;
+height:34px;
 
 }
-
-.stat-card p{
-
-margin:4px 0;
-
-font-weight:600;
-
-}
-
-.stat-card small{
-
-color:#777;
-
-}
-
-/* ---------------- Dashboard Grid ---------------- */
 
 .dashboard-grid{
 
 display:grid;
 
-grid-template-columns:2fr 1fr;
+grid-template-columns:repeat(auto-fit,minmax(350px,1fr));
 
 gap:24px;
 
@@ -184,97 +198,29 @@ align-items:start;
 
 }
 
-.dashboard-grid > *{
-
-width:100%;
-
-min-width:0;
-
-}
-
 .large-card{
 
-grid-column:1;
+grid-column:span 2;
 
-}
-
-app-monthly-chart{
-
-grid-column:2;
-
-}
-
-app-sustainability-score{
-
-grid-column:1;
-
-}
-
-app-goal-progress{
-
-grid-column:2;
-
-}
-
-app-recent-activities{
-
-grid-column:1;
-
-}
-
-app-calendar-card{
-
-grid-column:2;
-
-}
-
-app-notification-card{
-
-grid-column:1;
-
-}
-
-app-ai-recommendation{
-
-grid-column:2;
-
-}
-
-app-quick-actions{
-
-grid-column:1;
-
-}
-
-.large-card{
-
-padding:25px;
+padding:22px;
 
 border-radius:18px;
 
-box-shadow:0 6px 18px rgba(0,0,0,.08);
+animation:fadeCard .8s ease;
 
 }
 
 .chart-container{
 
-height:340px;
+height:320px;
 
 }
 
-/* ---------------- Responsive ---------------- */
+@media(max-width:1100px){
 
-@media(max-width:1200px){
+.large-card{
 
-.stats{
-
-grid-template-columns:repeat(2,1fr);
-
-}
-
-.dashboard-grid{
-
-grid-template-columns:1fr;
+grid-column:span 1;
 
 }
 
@@ -282,9 +228,9 @@ grid-template-columns:1fr;
 
 @media(max-width:768px){
 
-.stats{
+.dashboard{
 
-grid-template-columns:1fr;
+padding:18px;
 
 }
 
@@ -292,9 +238,21 @@ grid-template-columns:1fr;
 
 flex-direction:column;
 
+text-align:center;
+
 gap:20px;
 
-align-items:flex-start;
+}
+
+.stats{
+
+grid-template-columns:1fr;
+
+}
+
+.dashboard-grid{
+
+grid-template-columns:1fr;
 
 }
 

@@ -1,0 +1,81 @@
+.card{
+
+padding:24px;
+
+border-radius:20px;
+
+box-shadow:0 10px 25px rgba(0,0,0,.08);
+
+text-align:center;
+
+}
+
+h2{
+
+margin:0 0 18px;
+
+font-size:22px;
+
+font-weight:700;
+
+}
+
+.big{
+
+font-size:70px;
+
+font-weight:700;
+
+color:#FF6F00;
+
+line-height:1;
+
+}
+
+p{
+
+margin:10px 0 25px;
+
+color:#666;
+
+font-size:15px;
+
+}
+
+.stats{
+
+display:grid;
+
+grid-template-columns:1fr 1fr;
+
+gap:15px;
+
+}
+
+.stats div{
+
+padding:16px;
+
+border-radius:14px;
+
+background:#FFF3E0;
+
+}
+
+.stats h3{
+
+margin:0;
+
+font-size:28px;
+
+color:#FF6F00;
+
+}
+
+.stats span{
+
+font-size:13px;
+
+color:#666;
+
+}
