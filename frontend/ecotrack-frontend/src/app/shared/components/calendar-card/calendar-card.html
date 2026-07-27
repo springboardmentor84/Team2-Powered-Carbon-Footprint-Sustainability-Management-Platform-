@@ -2,19 +2,33 @@
 
     <div class="header">
 
-        <button (click)="previousMonth()">
+        <button
+            class="nav-btn"
+            (click)="previousMonth()">
 
             ◀
 
         </button>
 
-        <h2>
+        <div class="title">
 
-            {{month}} {{year}}
+            <h2>
 
-        </h2>
+                {{month}}
 
-        <button (click)="nextMonth()">
+            </h2>
+
+            <span>
+
+                {{year}}
+
+            </span>
+
+        </div>
+
+        <button
+            class="nav-btn"
+            (click)="nextMonth()">
 
             ▶
 
@@ -22,27 +36,72 @@
 
     </div>
 
-    <div class="week">
+    <div class="weekdays">
 
-        <span *ngFor="let day of weekDays">
+        <div
+            *ngFor="let day of weekDays">
 
             {{day}}
 
-        </span>
+        </div>
 
     </div>
 
-    <div class="days">
+    <div class="calendar-grid">
 
         <div
 
             *ngFor="let day of days"
 
-            [class.today]="isToday(day)">
+            class="day"
 
-            {{day}}
+            [class.today]="isToday(day)"
+
+            [class.activity-day]="hasActivity(day)"
+
+            [class.selected]="selectedDay===day"
+
+            (click)="selectDay(day)">
+
+            <span>
+
+                {{day}}
+
+            </span>
+
+            <small
+
+                *ngIf="hasActivity(day)"
+
+                class="dot">
+
+            </small>
 
         </div>
+
+    </div>
+
+    <div
+        class="activity-summary"
+        *ngIf="selectedDay">
+
+        <h4>
+
+            {{selectedDay}} {{month}}
+
+        </h4>
+
+        <p>
+
+            Activities :
+
+            <strong>
+
+                {{getActivityCount(selectedDay)}}
+
+            </strong>
+
+        </p>
 
     </div>
 

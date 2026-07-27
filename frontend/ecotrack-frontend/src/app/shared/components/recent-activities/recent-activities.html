@@ -1,57 +1,79 @@
 <mat-card class="card">
 
-    <h2>Recent Activities</h2>
+    <div class="header">
 
-    <table>
+        <h2>Recent Activities</h2>
 
-        <thead>
+        <span class="count">
 
-            <tr>
+            {{activities.length}} Activities
 
-                <th></th>
+        </span>
 
-                <th>Activity</th>
+    </div>
 
-                <th>Carbon Saved</th>
+    <div
+        class="empty"
+        *ngIf="activities.length==0">
 
-                <th>Date</th>
+        <h3>No Activities Yet</h3>
 
-            </tr>
+        <p>
 
-        </thead>
+            Start adding eco-friendly activities.
 
-        <tbody>
+        </p>
 
-            <tr *ngFor="let activity of activities">
+    </div>
 
-                <td class="icon">
+    <div
+        class="activity"
+        *ngFor="let activity of activities">
 
-                    {{getIcon(activity.category)}}
+        <div class="left">
 
-                </td>
+            <div class="emoji">
 
-                <td>
+                {{getIcon(activity.category)}}
+
+            </div>
+
+            <div>
+
+                <h4>
 
                     {{activity.title}}
 
-                </td>
+                </h4>
 
-                <td>
+                <small>
 
-                    {{activity.carbon}} kg
+                    {{activity.category}}
 
-                </td>
+                </small>
 
-                <td>
+            </div>
 
-                    {{activity.date}}
+        </div>
 
-                </td>
+        <div class="right">
 
-            </tr>
+            <span
+                class="badge"
+                [style.background]="getBadgeColor(activity.carbon)">
 
-        </tbody>
+                +{{activity.carbon}} kg
 
-    </table>
+            </span>
+
+            <small>
+
+                {{getRelativeDate(activity.date)}}
+
+            </small>
+
+        </div>
+
+    </div>
 
 </mat-card>

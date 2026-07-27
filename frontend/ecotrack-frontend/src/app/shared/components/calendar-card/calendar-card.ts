@@ -1,6 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
+
+import { ActivityService } from '../../../core/services/activity.service';
 
 @Component({
   selector: 'app-calendar-card',
@@ -14,84 +16,108 @@ import { MatCardModule } from '@angular/material/card';
 })
 export class CalendarCard {
 
+  private activityService = inject(ActivityService);
+
   currentDate = new Date();
 
+  selectedDay: number | null = null;
+
   monthNames = [
-    'January','February','March','April','May','June',
-    'July','August','September','October','November','December'
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December'
   ];
 
   weekDays = [
-    'S','M','T','W','T','F','S'
+    'Sun',
+    'Mon',
+    'Tue',
+    'Wed',
+    'Thu',
+    'Fri',
+    'Sat'
   ];
 
-  days:number[]=[];
+  days: number[] = [];
 
-  constructor(){
+  constructor() {
 
     this.generateCalendar();
 
   }
 
-  get month(){
+  get month(): string {
 
     return this.monthNames[this.currentDate.getMonth()];
 
   }
 
-  get year(){
+  get year(): number {
 
     return this.currentDate.getFullYear();
 
   }
 
-  previousMonth(){
+  previousMonth(): void {
 
     this.currentDate = new Date(
 
       this.currentDate.getFullYear(),
 
-      this.currentDate.getMonth()-1,
+      this.currentDate.getMonth() - 1,
 
       1
 
     );
 
+    this.selectedDay = null;
+
     this.generateCalendar();
 
   }
 
-  nextMonth(){
+  nextMonth(): void {
 
     this.currentDate = new Date(
 
       this.currentDate.getFullYear(),
 
-      this.currentDate.getMonth()+1,
+      this.currentDate.getMonth() + 1,
 
       1
 
     );
 
+    this.selectedDay = null;
+
     this.generateCalendar();
 
   }
 
-  generateCalendar(){
+  generateCalendar(): void {
 
-    this.days=[];
+    this.days = [];
 
     const totalDays = new Date(
 
       this.currentDate.getFullYear(),
 
-      this.currentDate.getMonth()+1,
+      this.currentDate.getMonth() + 1,
 
       0
 
     ).getDate();
 
-    for(let i=1;i<=totalDays;i++){
+    for (let i = 1; i <= totalDays; i++) {
 
       this.days.push(i);
 
@@ -99,20 +125,83 @@ export class CalendarCard {
 
   }
 
-  isToday(day:number){
+  isToday(day: number): boolean {
 
-    const today=new Date();
+    const today = new Date();
 
     return (
 
-      today.getDate()==day &&
+      today.getDate() === day &&
 
-      today.getMonth()==this.currentDate.getMonth() &&
+      today.getMonth() === this.currentDate.getMonth() &&
 
-      today.getFullYear()==this.currentDate.getFullYear()
+      today.getFullYear() === this.currentDate.getFullYear()
 
     );
 
   }
 
+  hasActivity(day: number): boolean {
+
+    const month = this.currentDate.getMonth();
+
+    const year = this.currentDate.getFullYear();
+
+    return this.activityService
+
+      .getActivities()
+
+      .some(activity => {
+
+        const d = new Date(activity.date);
+
+        return (
+
+          d.getDate() === day &&
+
+          d.getMonth() === month &&
+
+          d.getFullYear() === year
+
+        );
+
+      });
+
+  }
+
+  selectDay(day: number): void {
+
+    this.selectedDay = day;
+
+  }
+
+  getActivityCount(day: number): number {
+
+    const month = this.currentDate.getMonth();
+
+    const year = this.currentDate.getFullYear();
+
+    return this.activityService
+
+      .getActivities()
+
+      .filter(activity => {
+
+        const d = new Date(activity.date);
+
+        return (
+
+          d.getDate() === day &&
+
+          d.getMonth() === month &&
+
+          d.getFullYear() === year
+
+        );
+
+      }).length;
+
+  }
+
 }
+

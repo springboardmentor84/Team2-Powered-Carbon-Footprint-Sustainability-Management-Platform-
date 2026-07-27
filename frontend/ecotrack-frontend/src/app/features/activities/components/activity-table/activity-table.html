@@ -1,178 +1,244 @@
 <mat-card>
 
-<h2>Activity History</h2>
+  <h2>Activity History</h2>
 
-<div class="toolbar">
+  <div class="toolbar">
 
+    <mat-form-field appearance="outline">
+
+      <mat-label>Search</mat-label>
+
+      <input
+        matInput
+        [(ngModel)]="search"
+        (ngModelChange)="loadData()">
+
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+
+      <mat-label>Category</mat-label>
+
+      <mat-select
+        [(ngModel)]="selectedCategory"
+        (selectionChange)="loadData()">
+
+        <mat-option
+          *ngFor="let c of categories"
+          [value]="c">
+
+          {{ c }}
+
+        </mat-option>
+
+      </mat-select>
+
+    </mat-form-field>
 <mat-form-field appearance="outline">
 
-<mat-label>Search</mat-label>
+  <mat-label>Date</mat-label>
 
-<input
-matInput
-[(ngModel)]="search"
-(ngModelChange)="loadData()">
+  <input
+    matInput
+    type="date"
+    [(ngModel)]="selectedDate"
+    (ngModelChange)="loadData()">
 
 </mat-form-field>
-
 <mat-form-field appearance="outline">
 
-<mat-label>Category</mat-label>
+  <mat-label>Minimum Carbon</mat-label>
 
-<mat-select
-[(ngModel)]="selectedCategory"
-(selectionChange)="loadData()">
-
-<mat-option
-*ngFor="let c of categories"
-[value]="c">
-
-{{c}}
-
-</mat-option>
-
-</mat-select>
+  <input
+    matInput
+    type="number"
+    [(ngModel)]="minCarbon"
+    (ngModelChange)="loadData()">
 
 </mat-form-field>
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="exportCSV()">
 
-</div>
+      Export CSV
 
-<table
-mat-table
-[dataSource]="dataSource"
-matSort>
+    </button>
 
-<!-- Activity -->
+  </div>
 
-<ng-container matColumnDef="activity">
+  <table
+    mat-table
+    [dataSource]="dataSource"
+    matSort>
 
-<th mat-header-cell *matHeaderCellDef mat-sort-header>
+    <!-- Activity -->
 
-Activity
+    <ng-container matColumnDef="activity">
 
-</th>
+      <th
+        mat-header-cell
+        *matHeaderCellDef
+        mat-sort-header>
 
-<td mat-cell *matCellDef="let row">
+        Activity
 
-{{row.title}}
+      </th>
 
-</td>
+      <td
+        mat-cell
+        *matCellDef="let row">
 
-</ng-container>
+        {{ row.title }}
 
-<!-- Category -->
+      </td>
 
-<ng-container matColumnDef="category">
+    </ng-container>
 
-<th mat-header-cell *matHeaderCellDef mat-sort-header>
+    <!-- Category -->
 
-Category
+    <ng-container matColumnDef="category">
 
-</th>
+      <th
+        mat-header-cell
+        *matHeaderCellDef
+        mat-sort-header>
 
-<td mat-cell *matCellDef="let row">
+        Category
 
-{{row.category}}
+      </th>
 
-</td>
+      <td
+        mat-cell
+        *matCellDef="let row">
 
-</ng-container>
+        {{ row.category }}
 
-<!-- Carbon -->
+      </td>
 
-<ng-container matColumnDef="carbonSaved">
+    </ng-container>
 
-<th mat-header-cell *matHeaderCellDef mat-sort-header>
+    <!-- Carbon -->
 
-Carbon
+    <ng-container matColumnDef="carbonSaved">
 
-</th>
+      <th
+        mat-header-cell
+        *matHeaderCellDef
+        mat-sort-header>
 
-<td mat-cell *matCellDef="let row">
+        Carbon Saved
 
-{{row.carbon}} kg
+      </th>
 
-</td>
+      <td
+        mat-cell
+        *matCellDef="let row">
 
-</ng-container>
+        {{ row.carbon }} kg
 
-<!-- Date -->
+      </td>
 
-<ng-container matColumnDef="date">
+    </ng-container>
 
-<th mat-header-cell *matHeaderCellDef mat-sort-header>
+    <!-- Date -->
 
-Date
+    <ng-container matColumnDef="date">
 
-</th>
+      <th
+        mat-header-cell
+        *matHeaderCellDef
+        mat-sort-header>
 
-<td mat-cell *matCellDef="let row">
+        Date
 
-{{row.date}}
+      </th>
 
-</td>
+      <td
+        mat-cell
+        *matCellDef="let row">
 
-</ng-container>
+        {{ row.date }}
 
-<!-- Notes -->
+      </td>
 
-<ng-container matColumnDef="status">
+    </ng-container>
 
-<th mat-header-cell *matHeaderCellDef>
+    <!-- Notes -->
 
-Notes
+    <ng-container matColumnDef="status">
 
-</th>
+      <th
+        mat-header-cell
+        *matHeaderCellDef>
 
-<td mat-cell *matCellDef="let row">
+        Notes
 
-{{row.notes}}
+      </th>
 
-</td>
+      <td
+        mat-cell
+        *matCellDef="let row">
 
-</ng-container>
+        {{ row.notes }}
 
-<!-- Action -->
+      </td>
 
-<ng-container matColumnDef="action">
+    </ng-container>
 
-<th mat-header-cell *matHeaderCellDef>
+    <!-- Actions -->
 
-Action
+    <ng-container matColumnDef="action">
 
-</th>
+      <th
+        mat-header-cell
+        *matHeaderCellDef>
 
-<td mat-cell *matCellDef="let row">
+        Action
 
-<button
-mat-icon-button
-color="primary"
-(click)="edit(row)">
+      </th>
 
-<mat-icon>edit</mat-icon>
+      <td
+        mat-cell
+        *matCellDef="let row">
 
-</button>
+        <button
+          mat-icon-button
+          color="primary"
+          (click)="edit(row)">
 
-<button
-mat-icon-button
-color="warn"
-(click)="delete(row)">
+          <mat-icon>edit</mat-icon>
 
-<mat-icon>delete</mat-icon>
+        </button>
 
-</button>
+        <button
+          mat-icon-button
+          color="warn"
+          (click)="delete(row)">
 
-</td>
+          <mat-icon>delete</mat-icon>
 
-</ng-container>
+        </button>
 
-<tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      </td>
 
-<tr mat-row *matRowDef="let row;columns:displayedColumns"></tr>
+    </ng-container>
 
-</table>
+    <tr
+      mat-header-row
+      *matHeaderRowDef="displayedColumns">
 
-<mat-paginator
+    </tr>
+
+    <tr
+      mat-row
+      *matRowDef="let row; columns: displayedColumns">
+
+    </tr>
+
+  </table>
+
+ <mat-paginator
 
 [pageSize]="5"
 
@@ -181,5 +247,19 @@ color="warn"
 showFirstLastButtons>
 
 </mat-paginator>
+
+<div
+class="empty-state"
+*ngIf="dataSource.data.length==0">
+
+<h3>No Activities Found</h3>
+
+<p>
+
+Try changing the filters or add a new activity.
+
+</p>
+
+</div>
 
 </mat-card>

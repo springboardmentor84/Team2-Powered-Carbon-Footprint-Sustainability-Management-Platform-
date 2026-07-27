@@ -1,10 +1,18 @@
 <mat-card class="card">
 
-    <h2>
+    <div class="header">
 
-        AI Recommendation
+        <h2>AI Recommendation</h2>
 
-    </h2>
+        <button
+            class="refresh"
+            (click)="refreshRecommendation()">
+
+            ↻
+
+        </button>
+
+    </div>
 
     <div class="content">
 
@@ -14,7 +22,7 @@
 
         </div>
 
-        <div>
+        <div class="details">
 
             <h3>
 
@@ -31,6 +39,26 @@
             <div class="saving">
 
                 {{recommendation.saving}}
+
+            </div>
+
+            <div class="meta">
+
+                <span class="priority">
+
+                    {{recommendation.priority}}
+
+                    Priority
+
+                </span>
+
+                <span class="confidence">
+
+                    AI Confidence
+
+                    {{recommendation.confidence}}%
+
+                </span>
 
             </div>
 

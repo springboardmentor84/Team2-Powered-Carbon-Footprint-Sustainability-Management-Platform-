@@ -13,6 +13,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 import {
   Activity,
@@ -29,7 +30,8 @@ import {
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
-    MatSelectModule
+    MatSelectModule,
+    MatSnackBarModule
   ],
   templateUrl: './edit-activity-dialog.html',
   styleUrl: './edit-activity-dialog.css'
@@ -39,22 +41,33 @@ export class EditActivityDialog {
   constructor(
     private dialogRef: MatDialogRef<EditActivityDialog>,
     private activityService: ActivityService,
+    private snackBar: MatSnackBar,
 
     @Inject(MAT_DIALOG_DATA)
     public activity: Activity
   ) {}
 
-  save() {
+  save(): void {
 
     this.activityService.updateActivity(this.activity);
 
-    this.dialogRef.close();
+    this.snackBar.open(
+      'Activity Updated Successfully',
+      'Close',
+      {
+        duration: 3000,
+        horizontalPosition: 'right',
+        verticalPosition: 'top'
+      }
+    );
+
+    this.dialogRef.close(true);
 
   }
 
-  cancel() {
+  cancel(): void {
 
-    this.dialogRef.close();
+    this.dialogRef.close(false);
 
   }
 

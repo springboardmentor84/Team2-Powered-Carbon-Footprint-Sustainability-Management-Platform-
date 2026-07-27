@@ -124,7 +124,6 @@ export class ActivityService {
       newActivity,
       ...this.activitiesSubject.value
     ]);
-
     this.persist();
 
   }

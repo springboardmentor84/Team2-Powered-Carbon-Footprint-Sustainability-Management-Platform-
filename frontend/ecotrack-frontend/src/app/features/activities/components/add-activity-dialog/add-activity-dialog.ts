@@ -10,7 +10,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
 
 import { ActivityService } from '../../../../core/services/activity.service';
-
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 @Component({
   selector: 'app-add-activity-dialog',
   standalone: true,
@@ -21,6 +21,7 @@ import { ActivityService } from '../../../../core/services/activity.service';
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
+    MatSnackBarModule,
     MatSelectModule
   ],
   templateUrl: './add-activity-dialog.html',
@@ -28,10 +29,11 @@ import { ActivityService } from '../../../../core/services/activity.service';
 })
 export class AddActivityDialog {
 
-  constructor(
-    private dialogRef: MatDialogRef<AddActivityDialog>,
-    private activityService: ActivityService
-  ) {}
+constructor(
+private dialogRef: MatDialogRef<AddActivityDialog>,
+private activityService: ActivityService,
+private snackBar: MatSnackBar
+){}
 
   categories = [
     'Walking',
@@ -75,9 +77,19 @@ export class AddActivityDialog {
       updatedAt: new Date().toISOString()
     });
 
+    this.snackBar.open(
+      'Activity Added Successfully',
+      'Close',
+      {
+        duration: 3000,
+        horizontalPosition: 'right',
+        verticalPosition: 'top'
+      }
+    );
+
     this.dialogRef.close(true);
 
-  }
+}
 
   cancel(): void {
 

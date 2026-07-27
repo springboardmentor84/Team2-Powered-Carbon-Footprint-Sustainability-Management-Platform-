@@ -16,151 +16,204 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSelectModule } from '@angular/material/select';
-
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 import {
-Activity,
-ActivityService
+  Activity,
+  ActivityService
 } from '../../../../core/services/activity.service';
 
 import { EditActivityDialog } from '../edit-activity-dialog/edit-activity-dialog';
 import { DeleteConfirmDialog } from '../delete-confirm-dialog/delete-confirm-dialog';
 
 @Component({
-selector:'app-activity-table',
-standalone:true,
-
-imports:[
-CommonModule,
-FormsModule,
-MatCardModule,
-MatTableModule,
-MatIconModule,
-MatButtonModule,
-MatInputModule,
-MatFormFieldModule,
-MatDialogModule,
-MatSelectModule,
-MatPaginatorModule,
-MatSortModule
-],
-
-templateUrl:'./activity-table.html',
-styleUrl:'./activity-table.css'
+  selector: 'app-activity-table',
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    MatCardModule,
+    MatTableModule,
+    MatIconModule,
+    MatButtonModule,
+    MatInputModule,
+    MatFormFieldModule,
+    MatDialogModule,
+    MatSelectModule,
+    MatPaginatorModule,
+    MatSortModule,
+    MatSnackBarModule
+  ],
+  templateUrl: './activity-table.html',
+  styleUrl: './activity-table.css'
 })
+export class ActivityTable implements AfterViewInit {
 
-export class ActivityTable implements AfterViewInit{
+  private dialog = inject(MatDialog);
+  private activityService = inject(ActivityService);
+  private snackBar = inject(MatSnackBar);
 
-private dialog=inject(MatDialog);
+  search = '';
+  selectedCategory = 'All';
+  selectedDate = '';
+  minCarbon = 0;
 
-private activityService=inject(ActivityService);
+  categories = [
+    'All',
+    'Walking',
+    'Recycling',
+    'Transport',
+    'Food',
+    'Waste',
+    'Water',
+    'Electricity'
+  ];
 
-search='';
+  displayedColumns = [
+    'activity',
+    'category',
+    'carbonSaved',
+    'date',
+    'status',
+    'action'
+  ];
 
-selectedCategory='All';
+  dataSource = new MatTableDataSource<Activity>();
 
-categories=[
-'All',
-'Walking',
-'Recycling',
-'Transport',
-'Food',
-'Waste',
-'Water',
-'Electricity'
-];
+  @ViewChild(MatPaginator)
+  paginator!: MatPaginator;
 
-displayedColumns=[
-'activity',
-'category',
-'carbonSaved',
-'date',
-'status',
-'action'
-];
+  @ViewChild(MatSort)
+  sort!: MatSort;
 
-dataSource=new MatTableDataSource<Activity>();
+  constructor() {
 
-@ViewChild(MatPaginator)
-paginator!:MatPaginator;
+    this.activityService.activities$
+      .subscribe(() => this.loadData());
 
-@ViewChild(MatSort)
-sort!:MatSort;
+  }
 
-constructor(){
+  ngAfterViewInit(): void {
 
-this.loadData();
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
 
-}
+  }
 
-ngAfterViewInit(){
+  loadData(): void {
 
-this.dataSource.paginator=this.paginator;
+    let list = this.activityService.getActivities();
 
-this.dataSource.sort=this.sort;
+    if (this.selectedCategory !== 'All') {
+      list = list.filter(x => x.category === this.selectedCategory);
+    }
 
-}
+    if (this.selectedDate) {
+      list = list.filter(x => x.date === this.selectedDate);
+    }
 
-loadData(){
+    if (this.minCarbon > 0) {
+      list = list.filter(x => x.carbon >= this.minCarbon);
+    }
 
-let list=this.activityService.getActivities();
+    if (this.search.trim()) {
 
-if(this.selectedCategory!='All'){
+      list = list.filter(item =>
 
-list=list.filter(x=>x.category==this.selectedCategory);
+        item.title.toLowerCase().includes(this.search.toLowerCase()) ||
 
-}
+        item.category.toLowerCase().includes(this.search.toLowerCase()) ||
 
-if(this.search.trim()){
+        item.notes.toLowerCase().includes(this.search.toLowerCase())
 
-list=list.filter(item=>
+      );
 
-item.title.toLowerCase().includes(this.search.toLowerCase())||
+    }
 
-item.category.toLowerCase().includes(this.search.toLowerCase())||
+    this.dataSource.data = list;
 
-item.notes.toLowerCase().includes(this.search.toLowerCase())
+  }
 
-);
+  edit(activity: Activity): void {
 
-}
+    this.dialog.open(EditActivityDialog, {
+      width: '550px',
+      data: { ...activity }
+    }).afterClosed().subscribe(() => {
 
-this.dataSource.data=list;
+      this.loadData();
 
-}
+    });
 
-edit(activity:Activity){
+  }
 
-this.dialog.open(EditActivityDialog,{
-width:'550px',
-data:{...activity}
-}).afterClosed().subscribe(()=>{
+  delete(activity: Activity): void {
 
-this.loadData();
+    this.dialog.open(DeleteConfirmDialog, {
+      width: '420px',
+      data: activity.title
+    }).afterClosed().subscribe(result => {
 
-});
+      if (result) {
 
-}
+        this.activityService.deleteActivity(activity.id);
 
-delete(activity:Activity){
+        this.loadData();
 
-this.dialog.open(DeleteConfirmDialog,{
-width:'420px',
-data:activity.title
-}).afterClosed().subscribe(result=>{
+        this.snackBar.open(
+          'Activity Deleted Successfully',
+          'Close',
+          {
+            duration: 3000,
+            horizontalPosition: 'right',
+            verticalPosition: 'top'
+          }
+        );
 
-if(result){
+      }
 
-this.activityService.deleteActivity(activity.id);
+    });
 
-this.loadData();
+  }
 
-}
+  exportCSV(): void {
 
-});
+    const rows = this.dataSource.data;
 
-}
+    let csv = 'Activity,Category,Carbon Saved,Date,Notes\n';
+
+    rows.forEach(r => {
+
+      csv += `${r.title},${r.category},${r.carbon},${r.date},${r.notes}\n`;
+
+    });
+
+    const blob = new Blob([csv], { type: 'text/csv' });
+
+    const url = window.URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+
+    a.href = url;
+
+    a.download = 'activities.csv';
+
+    a.click();
+
+    window.URL.revokeObjectURL(url);
+
+    this.snackBar.open(
+      'CSV Exported Successfully',
+      'Close',
+      {
+        duration: 3000,
+        horizontalPosition: 'right',
+        verticalPosition: 'top'
+      }
+    );
+
+  }
 
 }

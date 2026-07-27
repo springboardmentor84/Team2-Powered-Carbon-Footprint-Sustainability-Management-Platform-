@@ -18,54 +18,134 @@ export class AiRecommendation {
 
   private activityService = inject(ActivityService);
 
-  get recommendation() {
+  refreshRecommendation(){
 
-    const carbon = this.activityService.getCarbonSaved();
+    // Backend Ready
+    // Later:
+    // recommendationService.getRecommendation().subscribe(...)
+  }
 
-    const score = this.activityService.getSustainabilityScore();
+  get recommendation(){
 
-    if(score < 30){
+    const carbon=this.activityService.getCarbonSaved();
 
-      return {
+    const score=this.activityService.getSustainabilityScore();
+
+    const activities=this.activityService.getActivities().length;
+
+    if(activities==0){
+
+      return{
+
+        icon:'🌱',
+
+        title:'Start Your Journey',
+
+        text:'Log your first eco activity to unlock personalized AI insights.',
+
+        saving:'Potential Saving : 3 kg CO₂/day',
+
+        priority:'High',
+
+        confidence:98
+
+      };
+
+    }
+
+    if(score<30){
+
+      return{
+
         icon:'🚶',
+
         title:'Walk More',
-        text:'Walking instead of driving can improve your sustainability score quickly.',
-        saving:'≈ 2 kg CO₂/day'
+
+        text:'Replace short vehicle trips with walking. This has the biggest impact on your sustainability score.',
+
+        saving:'Estimated Saving : 2 kg CO₂/day',
+
+        priority:'High',
+
+        confidence:96
+
       };
 
     }
 
-    if(score < 60){
+    if(score<50){
 
-      return {
+      return{
+
         icon:'🚴',
-        title:'Try Cycling',
-        text:'Replace short trips with cycling to reduce emissions.',
-        saving:'≈ 3 kg CO₂/day'
+
+        title:'Use Bicycle',
+
+        text:'Cycling twice a week can significantly reduce your carbon footprint.',
+
+        saving:'Estimated Saving : 3 kg CO₂/day',
+
+        priority:'High',
+
+        confidence:94
+
       };
 
     }
 
-    if(score < 80){
+    if(score<70){
 
-      return {
+      return{
+
         icon:'♻',
-        title:'Increase Recycling',
-        text:'Recycling more household waste can further improve your score.',
-        saving:'≈ 1.5 kg CO₂/day'
+
+        title:'Recycle More',
+
+        text:'Increase plastic, paper and metal recycling to improve your sustainability score.',
+
+        saving:'Estimated Saving : 1.5 kg CO₂/day',
+
+        priority:'Medium',
+
+        confidence:91
+
       };
 
     }
 
-    return {
+    if(score<90){
 
-      icon:'🌱',
+      return{
 
-      title:'Excellent Work',
+        icon:'⚡',
 
-      text:'Maintain your eco-friendly lifestyle and inspire others.',
+        title:'Reduce Electricity Usage',
 
-      saving:`${carbon.toFixed(1)} kg CO₂ saved`
+        text:'Switch off unused appliances and use LED lighting whenever possible.',
+
+        saving:'Estimated Saving : 2.3 kg CO₂/day',
+
+        priority:'Medium',
+
+        confidence:89
+
+      };
+
+    }
+
+    return{
+
+      icon:'🏆',
+
+      title:'Excellent Sustainability',
+
+      text:'Your eco habits are excellent. Keep inspiring others and maintain your current lifestyle.',
+
+      saving:`Total Saved : ${carbon.toFixed(1)} kg CO₂`,
+
+      priority:'Low',
+
+      confidence:99
 
     };
 

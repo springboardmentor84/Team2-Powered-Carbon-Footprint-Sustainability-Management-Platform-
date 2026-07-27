@@ -1,39 +1,35 @@
 <mat-card class="card">
 
-<h2>
+    <div class="header">
 
-Notifications
+        <h2>Notifications</h2>
 
-</h2>
+        <span>{{notifications.length}}</span>
 
-<div
+    </div>
 
-class="item"
+    <div
+        class="notification"
+        *ngFor="let n of notifications">
 
-*ngFor="let n of notifications">
+        <div
+            class="icon"
+            [style.background]="n.color">
 
-<div class="icon">
+            {{n.icon}}
 
-{{n.icon}}
+        </div>
 
-</div>
+        <div class="content">
 
-<div>
+            <h4>{{n.title}}</h4>
 
-<h4>
+            <p>{{n.desc}}</p>
 
-{{n.title}}
+            <small>{{n.time}}</small>
 
-</h4>
+        </div>
 
-<p>
-
-{{n.desc}}
-
-</p>
-
-</div>
-
-</div>
+    </div>
 
 </mat-card>
