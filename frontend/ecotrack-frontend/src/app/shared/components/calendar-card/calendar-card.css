@@ -1,13 +1,111 @@
-mat-card{
+.card{
 
-    padding:24px;
+padding:20px;
 
-    height:100%;
+border-radius:18px;
+
+box-shadow:0 8px 20px rgba(0,0,0,.08);
 
 }
 
-mat-calendar{
+.header{
 
-    width:100%;
+display:flex;
+
+justify-content:space-between;
+
+align-items:center;
+
+margin-bottom:20px;
+
+}
+
+.header h2{
+
+font-size:20px;
+
+margin:0;
+
+font-weight:700;
+
+}
+
+.header button{
+
+border:none;
+
+background:#2E7D32;
+
+color:white;
+
+width:34px;
+
+height:34px;
+
+border-radius:50%;
+
+cursor:pointer;
+
+font-size:16px;
+
+}
+
+.week{
+
+display:grid;
+
+grid-template-columns:repeat(7,1fr);
+
+font-weight:700;
+
+text-align:center;
+
+margin-bottom:12px;
+
+color:#777;
+
+}
+
+.days{
+
+display:grid;
+
+grid-template-columns:repeat(7,1fr);
+
+gap:8px;
+
+}
+
+.days div{
+
+height:42px;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+border-radius:10px;
+
+cursor:pointer;
+
+transition:.25s;
+
+}
+
+.days div:hover{
+
+background:#E8F5E9;
+
+}
+
+.today{
+
+background:#2E7D32;
+
+color:white;
+
+font-weight:700;
 
 }

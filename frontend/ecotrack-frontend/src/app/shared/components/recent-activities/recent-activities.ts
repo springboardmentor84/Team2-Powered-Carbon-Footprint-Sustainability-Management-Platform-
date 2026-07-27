@@ -1,64 +1,60 @@
-import { Component } from '@angular/core';
-
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
 import { MatCardModule } from '@angular/material/card';
-
-import { MatTableModule } from '@angular/material/table';
-
-import { MatIconModule } from '@angular/material/icon';
+import { ActivityService } from '../../../core/services/activity.service';
 
 @Component({
   selector: 'app-recent-activities',
   standalone: true,
   imports: [
     CommonModule,
-    MatCardModule,
-    MatTableModule,
-    MatIconModule
+    MatCardModule
   ],
   templateUrl: './recent-activities.html',
   styleUrl: './recent-activities.css'
 })
 export class RecentActivities {
 
-  displayedColumns = [
-    'icon',
-    'activity',
-    'carbon',
-    'date'
-  ];
+  private activityService = inject(ActivityService);
 
-  activities = [
+  get activities() {
 
-    {
-      icon:'directions_walk',
-      activity:'Walked 4 km',
-      carbon:'1.8 kg',
-      date:'Today'
-    },
+    return this.activityService
+      .getActivities()
+      .slice(0,5);
 
-    {
-      icon:'pedal_bike',
-      activity:'Cycling',
-      carbon:'2.5 kg',
-      date:'Yesterday'
-    },
+  }
 
-    {
-      icon:'park',
-      activity:'Tree Plantation',
-      carbon:'5.0 kg',
-      date:'2 Days Ago'
-    },
+  getIcon(category:string){
 
-    {
-      icon:'recycling',
-      activity:'Plastic Recycled',
-      carbon:'0.8 kg',
-      date:'3 Days Ago'
+    switch(category.toLowerCase()){
+
+      case 'walking':
+        return '🚶';
+
+      case 'cycling':
+        return '🚴';
+
+      case 'recycling':
+        return '♻';
+
+      case 'transport':
+        return '🚌';
+
+      case 'food':
+        return '🥗';
+
+      case 'water':
+        return '💧';
+
+      case 'electricity':
+        return '⚡';
+
+      default:
+        return '🌱';
+
     }
 
-  ];
+  }
 
 }

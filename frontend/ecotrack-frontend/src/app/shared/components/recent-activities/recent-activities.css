@@ -1,35 +1,65 @@
-mat-card{
+.card{
 
-    padding:24px;
+padding:20px;
 
-    height:100%;
+border-radius:18px;
 
-}
-
-.activity-table{
-
-    width:100%;
+box-shadow:0 8px 20px rgba(0,0,0,.08);
 
 }
 
-mat-icon{
+h2{
 
-    color:#2E7D32;
+margin-bottom:18px;
+
+font-size:22px;
+
+font-weight:700;
 
 }
 
 table{
 
-    margin-top:20px;
+width:100%;
+
+border-collapse:collapse;
 
 }
 
-@media(max-width:768px){
+th{
 
-    table{
+padding:12px;
 
-        font-size:13px;
+font-size:14px;
 
-    }
+font-weight:700;
+
+border-bottom:2px solid #ddd;
+
+text-align:left;
+
+}
+
+td{
+
+padding:12px;
+
+border-bottom:1px solid #eee;
+
+font-size:14px;
+
+}
+
+.icon{
+
+font-size:22px;
+
+width:45px;
+
+}
+
+tbody tr:hover{
+
+background:#f5fff6;
 
 }

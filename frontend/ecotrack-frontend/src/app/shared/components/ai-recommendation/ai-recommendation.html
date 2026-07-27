@@ -1,39 +1,41 @@
-<mat-card class="ai-card">
+<mat-card class="card">
 
-    <div class="header">
+    <h2>
 
-        <mat-icon>
+        AI Recommendation
 
-            psychology
+    </h2>
 
-        </mat-icon>
+    <div class="content">
 
-        <h2>
+        <div class="emoji">
 
-            {{recommendation.title}}
+            {{recommendation.icon}}
 
-        </h2>
+        </div>
+
+        <div>
+
+            <h3>
+
+                {{recommendation.title}}
+
+            </h3>
+
+            <p>
+
+                {{recommendation.text}}
+
+            </p>
+
+            <div class="saving">
+
+                {{recommendation.saving}}
+
+            </div>
+
+        </div>
 
     </div>
-
-    <p>
-
-        {{recommendation.description}}
-
-    </p>
-
-    <div class="impact">
-
-        {{recommendation.impact}}
-
-    </div>
-
-    <button
-        mat-raised-button
-        color="primary">
-
-        View More Tips
-
-    </button>
 
 </mat-card>

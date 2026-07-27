@@ -1,27 +1,33 @@
-<mat-card>
+<mat-card class="card">
 
-    <h2>
+<h2>
 
-        Quick Actions
+Quick Actions
 
-    </h2>
+</h2>
 
-    <div class="actions">
+<button (click)="addActivity()">
 
-        <button
-            mat-raised-button
-            *ngFor="let action of actions">
+➕ Add Activity
 
-            <mat-icon>
+</button>
 
-                {{action.icon}}
+<button (click)="openActivities()">
 
-            </mat-icon>
+📋 View Activities
 
-            {{action.title}}
+</button>
 
-        </button>
+<button (click)="openDashboard()">
 
-    </div>
+🏠 Dashboard
+
+</button>
+
+<button (click)="reports()">
+
+📊 Reports
+
+</button>
 
 </mat-card>

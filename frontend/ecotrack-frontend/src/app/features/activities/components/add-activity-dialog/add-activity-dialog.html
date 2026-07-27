@@ -2,16 +2,24 @@
 
 <mat-dialog-content>
 
-  <mat-form-field appearance="outline" class="full-width">
+  <!-- Activity Title -->
 
-    <mat-label>Activity Name</mat-label>
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Activity Title</mat-label>
 
     <input
       matInput
+      maxlength="60"
       [(ngModel)]="activity.title"
-      placeholder="Walking, Cycling, Tree Plantation">
+      placeholder="e.g. Walked 5 km">
+
+    <mat-hint align="end">
+      {{activity.title.length}} / 60
+    </mat-hint>
 
   </mat-form-field>
+
+  <!-- Category -->
 
   <mat-form-field appearance="outline" class="full-width">
 
@@ -19,21 +27,19 @@
 
     <mat-select [(ngModel)]="activity.category">
 
-      <mat-option value="Walking">Walking</mat-option>
+      <mat-option
+        *ngFor="let item of categories"
+        [value]="item">
 
-      <mat-option value="Cycling">Cycling</mat-option>
+        {{item}}
 
-      <mat-option value="Public Transport">Public Transport</mat-option>
-
-      <mat-option value="Tree Plantation">Tree Plantation</mat-option>
-
-      <mat-option value="Recycling">Recycling</mat-option>
-
-      <mat-option value="Renewable Energy">Renewable Energy</mat-option>
+      </mat-option>
 
     </mat-select>
 
   </mat-form-field>
+
+  <!-- Carbon -->
 
   <mat-form-field appearance="outline" class="full-width">
 
@@ -42,9 +48,13 @@
     <input
       matInput
       type="number"
+      min="0"
+      step="0.1"
       [(ngModel)]="activity.carbon">
 
   </mat-form-field>
+
+  <!-- Date -->
 
   <mat-form-field appearance="outline" class="full-width">
 
@@ -57,6 +67,8 @@
 
   </mat-form-field>
 
+  <!-- Notes -->
+
   <mat-form-field appearance="outline" class="full-width">
 
     <mat-label>Notes</mat-label>
@@ -64,15 +76,29 @@
     <textarea
       matInput
       rows="4"
+      maxlength="250"
       [(ngModel)]="activity.notes">
 
     </textarea>
+
+    <mat-hint align="end">
+      {{activity.notes.length}} / 250
+    </mat-hint>
 
   </mat-form-field>
 
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
+
+  <button
+    mat-stroked-button
+    color="warn"
+    (click)="resetForm()">
+
+    Reset
+
+  </button>
 
   <button
     mat-button
@@ -85,6 +111,12 @@
   <button
     mat-raised-button
     color="primary"
+    [disabled]="
+      !activity.title ||
+      !activity.category ||
+      activity.carbon <= 0 ||
+      !activity.date
+    "
     (click)="save()">
 
     Save Activity

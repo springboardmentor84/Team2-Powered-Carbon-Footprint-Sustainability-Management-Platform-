@@ -1,71 +1,75 @@
-.ai-card{
+.card{
 
-    padding:24px;
+padding:22px;
 
-    height:100%;
+border-radius:18px;
 
-    display:flex;
-
-    flex-direction:column;
-
-    gap:20px;
+box-shadow:0 8px 20px rgba(0,0,0,.08);
 
 }
 
-.header{
+h2{
 
-    display:flex;
+margin-bottom:20px;
 
-    align-items:center;
+font-size:22px;
 
-    gap:12px;
-
-}
-
-.header mat-icon{
-
-    font-size:34px;
-
-    width:34px;
-
-    height:34px;
-
-    color:#2E7D32;
+font-weight:700;
 
 }
 
-.header h2{
+.content{
 
-    margin:0;
+display:flex;
 
-    font-size:22px;
+gap:18px;
+
+align-items:center;
+
+}
+
+.emoji{
+
+font-size:54px;
+
+}
+
+h3{
+
+margin:0;
+
+font-size:20px;
+
+font-weight:700;
+
+color:#2E7D32;
 
 }
 
 p{
 
-    line-height:1.7;
+margin:8px 0;
 
-    color:#666;
+color:#666;
 
-}
-
-.impact{
-
-    background:#E8F5E9;
-
-    color:#2E7D32;
-
-    padding:12px;
-
-    border-radius:10px;
-
-    font-weight:600;
+line-height:1.5;
 
 }
 
-button{
+.saving{
 
-    margin-top:auto;
+margin-top:12px;
+
+display:inline-block;
+
+padding:8px 14px;
+
+background:#E8F5E9;
+
+border-radius:25px;
+
+font-weight:700;
+
+color:#2E7D32;
 
 }

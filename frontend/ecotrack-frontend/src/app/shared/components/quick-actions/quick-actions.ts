@@ -1,46 +1,50 @@
-import { Component } from '@angular/core';
-
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
+import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
+
+import { AddActivityDialog } from '../../../features/activities/components/add-activity-dialog/add-activity-dialog';
 
 @Component({
   selector: 'app-quick-actions',
   standalone: true,
   imports: [
     CommonModule,
-    MatCardModule,
-    MatButtonModule,
-    MatIconModule
+    MatCardModule
   ],
   templateUrl: './quick-actions.html',
   styleUrl: './quick-actions.css'
 })
 export class QuickActions {
 
-  actions = [
+  private dialog = inject(MatDialog);
+  private router = inject(Router);
 
-    {
-      icon:'add_circle',
-      title:'Add Activity'
-    },
+  addActivity(){
 
-    {
-      icon:'flag',
-      title:'Create Goal'
-    },
+    this.dialog.open(AddActivityDialog,{
+      width:'500px'
+    });
 
-    {
-      icon:'download',
-      title:'Download Report'
-    },
+  }
 
-    {
-      icon:'smart_toy',
-      title:'Ask AI'
-    }
+  openActivities(){
 
-  ];
+    this.router.navigate(['/activities']);
+
+  }
+
+  openDashboard(){
+
+    this.router.navigate(['/dashboard']);
+
+  }
+
+  reports(){
+
+    alert('Reports Module Coming Soon');
+
+  }
 
 }

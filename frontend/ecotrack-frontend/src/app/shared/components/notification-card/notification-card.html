@@ -1,27 +1,39 @@
-<mat-card>
+<mat-card class="card">
 
-    <h2>
+<h2>
 
-        Notifications
+Notifications
 
-    </h2>
+</h2>
 
-    <div
-        class="item"
-        *ngFor="let notification of notifications">
+<div
 
-        <mat-icon>
+class="item"
 
-            notifications
+*ngFor="let n of notifications">
 
-        </mat-icon>
+<div class="icon">
 
-        <span>
+{{n.icon}}
 
-            {{notification}}
+</div>
 
-        </span>
+<div>
 
-    </div>
+<h4>
+
+{{n.title}}
+
+</h4>
+
+<p>
+
+{{n.desc}}
+
+</p>
+
+</div>
+
+</div>
 
 </mat-card>

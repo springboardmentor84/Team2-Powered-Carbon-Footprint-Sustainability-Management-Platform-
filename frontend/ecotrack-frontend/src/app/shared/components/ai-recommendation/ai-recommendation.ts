@@ -1,35 +1,74 @@
-import { Component } from '@angular/core';
-
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
 import { MatCardModule } from '@angular/material/card';
 
-import { MatButtonModule } from '@angular/material/button';
-
-import { MatIconModule } from '@angular/material/icon';
+import { ActivityService } from '../../../core/services/activity.service';
 
 @Component({
   selector: 'app-ai-recommendation',
   standalone: true,
   imports: [
     CommonModule,
-    MatCardModule,
-    MatButtonModule,
-    MatIconModule
+    MatCardModule
   ],
   templateUrl: './ai-recommendation.html',
-  styleUrls: ['./ai-recommendation.css']
+  styleUrl: './ai-recommendation.css'
 })
 export class AiRecommendation {
 
-  recommendation = {
+  private activityService = inject(ActivityService);
 
-    title: "Today's Recommendation",
+  get recommendation() {
 
-    description:'Use public transport or bicycle today. You can reduce approximately 2.8 kg CO₂ emission.',
+    const carbon = this.activityService.getCarbonSaved();
 
-    impact:'+12 Sustainability Points'
+    const score = this.activityService.getSustainabilityScore();
 
-  };
+    if(score < 30){
+
+      return {
+        icon:'🚶',
+        title:'Walk More',
+        text:'Walking instead of driving can improve your sustainability score quickly.',
+        saving:'≈ 2 kg CO₂/day'
+      };
+
+    }
+
+    if(score < 60){
+
+      return {
+        icon:'🚴',
+        title:'Try Cycling',
+        text:'Replace short trips with cycling to reduce emissions.',
+        saving:'≈ 3 kg CO₂/day'
+      };
+
+    }
+
+    if(score < 80){
+
+      return {
+        icon:'♻',
+        title:'Increase Recycling',
+        text:'Recycling more household waste can further improve your score.',
+        saving:'≈ 1.5 kg CO₂/day'
+      };
+
+    }
+
+    return {
+
+      icon:'🌱',
+
+      title:'Excellent Work',
+
+      text:'Maintain your eco-friendly lifestyle and inspire others.',
+
+      saving:`${carbon.toFixed(1)} kg CO₂ saved`
+
+    };
+
+  }
 
 }

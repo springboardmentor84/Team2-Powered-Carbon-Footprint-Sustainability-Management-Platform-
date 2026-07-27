@@ -33,25 +33,68 @@ export class AddActivityDialog {
     private activityService: ActivityService
   ) {}
 
+  categories = [
+    'Walking',
+    'Cycling',
+    'Recycling',
+    'Transport',
+    'Food',
+    'Electricity',
+    'Water',
+    'Waste'
+  ];
+
   activity = {
+    userId: 1,
     title: '',
     category: '',
     carbon: 0,
-    date: '',
+    date: new Date().toISOString().substring(0, 10),
     notes: ''
   };
 
-  save() {
+  save(): void {
 
-    this.activityService.addActivity(this.activity);
+    if (
+      !this.activity.title.trim() ||
+      !this.activity.category ||
+      this.activity.carbon <= 0 ||
+      !this.activity.date
+    ) {
+      return;
+    }
 
-    this.dialogRef.close();
+    this.activityService.addActivity({
+      userId: this.activity.userId,
+      title: this.activity.title.trim(),
+      category: this.activity.category,
+      carbon: Number(this.activity.carbon),
+      date: this.activity.date,
+      notes: this.activity.notes.trim(),
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    });
+
+    this.dialogRef.close(true);
 
   }
 
-  cancel() {
+  cancel(): void {
 
-    this.dialogRef.close();
+    this.dialogRef.close(false);
+
+  }
+
+  resetForm(): void {
+
+    this.activity = {
+      userId: 1,
+      title: '',
+      category: '',
+      carbon: 0,
+      date: new Date().toISOString().substring(0, 10),
+      notes: ''
+    };
 
   }
 
