@@ -1,22 +1,20 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
-import { MatIconModule } from '@angular/material/icon';
 
 import { ActivityService } from '../../../../core/services/activity.service';
 
 @Component({
-  selector: 'app-activity-summary',
+  selector: 'app-reports-summary',
   standalone: true,
   imports: [
     CommonModule,
-    MatCardModule,
-    MatIconModule
+    MatCardModule
   ],
-  templateUrl: './activity-summary.html',
-  styleUrl: './activity-summary.css'
+  templateUrl: './reports-summary.html',
+  styleUrl: './reports-summary.css'
 })
-export class ActivitySummary {
+export class ReportsSummary {
 
   private activityService = inject(ActivityService);
 
@@ -28,59 +26,38 @@ export class ActivitySummary {
 
     const score = this.activityService.getSustainabilityScore();
 
-    const streak = this.calculateStreak();
+    const average =
+      activities.length > 0
+        ? (carbon / activities.length).toFixed(1)
+        : '0';
 
     return [
 
       {
         title: 'Activities',
         value: activities.length,
-        icon: 'task_alt',
         color: '#2E7D32'
       },
 
       {
         title: 'Carbon Saved',
         value: carbon.toFixed(1) + ' kg',
-        icon: 'eco',
         color: '#43A047'
       },
 
       {
-        title: 'Current Streak',
-        value: streak + ' Days',
-        icon: 'local_fire_department',
+        title: 'Average',
+        value: average + ' kg',
         color: '#FB8C00'
       },
 
       {
-        title: 'Weekly Score',
+        title: 'Score',
         value: score + '%',
-        icon: 'leaderboard',
         color: '#1565C0'
       }
 
     ];
-
-  }
-
-  calculateStreak(): number {
-
-    const activities = this.activityService.getActivities();
-
-    if (activities.length === 0) {
-
-      return 0;
-
-    }
-
-    const uniqueDates = [
-      ...new Set(
-        activities.map(a => a.date)
-      )
-    ];
-
-    return uniqueDates.length;
 
   }
 

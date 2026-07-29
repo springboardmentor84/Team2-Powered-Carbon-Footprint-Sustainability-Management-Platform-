@@ -1,0 +1,27 @@
+<div class="summary-grid">
+
+    <mat-card
+        class="card"
+        *ngFor="let card of cards">
+
+        <div
+            class="top-bar"
+            [style.background]="card.color">
+
+        </div>
+
+        <h2>
+
+            {{card.value}}
+
+        </h2>
+
+        <p>
+
+            {{card.title}}
+
+        </p>
+
+    </mat-card>
+
+</div>

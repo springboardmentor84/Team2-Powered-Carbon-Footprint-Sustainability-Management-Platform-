@@ -18,13 +18,27 @@ gap:18px;
 
 padding:25px;
 
+border-radius:18px;
+
+box-shadow:0 10px 25px rgba(0,0,0,.08);
+
+transition:.3s;
+
+}
+
+.summary-card:hover{
+
+transform:translateY(-6px);
+
+box-shadow:0 15px 30px rgba(0,0,0,.15);
+
 }
 
 .icon{
 
-width:60px;
+width:65px;
 
-height:60px;
+height:65px;
 
 border-radius:50%;
 
@@ -38,18 +52,32 @@ color:white;
 
 }
 
+.icon mat-icon{
+
+font-size:32px;
+
+width:32px;
+
+height:32px;
+
+}
+
 h2{
 
 margin:0;
 
-font-size:26px;
+font-size:28px;
+
+font-weight:700;
 
 }
 
 p{
 
-margin-top:5px;
+margin-top:6px;
 
 color:#666;
+
+font-size:14px;
 
 }

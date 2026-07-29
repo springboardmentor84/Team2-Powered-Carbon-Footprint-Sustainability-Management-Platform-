@@ -1,0 +1,53 @@
+<mat-card class="card">
+
+    <h2>
+
+        Report History
+
+    </h2>
+
+    <table>
+
+        <thead>
+
+            <tr>
+
+                <th>Month</th>
+
+                <th>Carbon Saved</th>
+
+                <th>Score</th>
+
+                <th>Status</th>
+
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+            <tr *ngFor="let report of reports">
+
+                <td>{{report.month}}</td>
+
+                <td>{{report.carbon}}</td>
+
+                <td>{{report.score}}</td>
+
+                <td>
+
+                    <span class="badge">
+
+                        {{report.status}}
+
+                    </span>
+
+                </td>
+
+            </tr>
+
+        </tbody>
+
+    </table>
+
+</mat-card>

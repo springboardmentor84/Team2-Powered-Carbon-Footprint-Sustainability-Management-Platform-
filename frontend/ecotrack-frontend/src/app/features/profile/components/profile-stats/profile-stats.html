@@ -1,0 +1,27 @@
+<div class="grid">
+
+    <mat-card
+        class="card"
+        *ngFor="let item of stats">
+
+        <div
+            class="bar"
+            [style.background]="item.color">
+
+        </div>
+
+        <h2>
+
+            {{item.value}}
+
+        </h2>
+
+        <p>
+
+            {{item.title}}
+
+        </p>
+
+    </mat-card>
+
+</div>

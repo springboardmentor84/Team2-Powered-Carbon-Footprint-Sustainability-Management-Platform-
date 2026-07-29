@@ -1,35 +1,35 @@
 <div class="page">
 
-<div class="page-header">
+    <section class="hero">
 
-<div>
+        <div>
 
-<h1>
+            <h1>Activities</h1>
 
-Activities
+            <p>
 
-</h1>
+                Track, analyse and improve your sustainable lifestyle.
 
-<p>
+            </p>
 
-Track your daily eco-friendly activities.
+        </div>
 
-</p>
+        <button
+            class="primary-btn"
+            (click)="openDialog()">
 
-</div>
+            + Add Activity
 
-<button>
+        </button>
 
-+ Add Activity
+    </section>
 
-</button>
+    <app-activity-summary></app-activity-summary>
 
-</div>
+    <app-activity-analytics></app-activity-analytics>
 
-<app-activity-summary></app-activity-summary>
+    <app-activity-filter></app-activity-filter>
 
-<app-activity-filter></app-activity-filter>
-
-<app-activity-table></app-activity-table>
+    <app-activity-table></app-activity-table>
 
 </div>

@@ -1,0 +1,43 @@
+<section class="stats-grid">
+
+    <mat-card class="card green">
+
+        <h3>Total Activities</h3>
+
+        <h1>{{totalActivities}}</h1>
+
+        <p>Activities Logged</p>
+
+    </mat-card>
+
+    <mat-card class="card blue">
+
+        <h3>Carbon Saved</h3>
+
+        <h1>{{totalCarbon | number:'1.1-1'}} kg</h1>
+
+        <p>Total CO₂ Reduction</p>
+
+    </mat-card>
+
+    <mat-card class="card orange">
+
+        <h3>Categories</h3>
+
+        <h1>{{totalCategories}}</h1>
+
+        <p>Activity Types</p>
+
+    </mat-card>
+
+    <mat-card class="card purple">
+
+        <h3>Today</h3>
+
+        <h1>{{todayActivities}}</h1>
+
+        <p>Activities Today</p>
+
+    </mat-card>
+
+</section>

@@ -1,34 +1,85 @@
 <div class="filter-card">
 
-<mat-form-field appearance="outline">
+    <mat-form-field appearance="outline">
 
-<mat-label>
+        <mat-label>Search Activity</mat-label>
 
-Search Activity
+        <input
+            matInput
+            [(ngModel)]="search"
+            (keyup)="applyFilters()">
 
-</mat-label>
+    </mat-form-field>
 
-<input
-matInput
-[(ngModel)]="search">
+    <mat-form-field appearance="outline">
 
-<mat-icon matSuffix>
+        <mat-label>Category</mat-label>
 
-search
+        <mat-select
+            [(ngModel)]="category"
+            (selectionChange)="applyFilters()">
 
-</mat-icon>
+            <mat-option value="">
 
-</mat-form-field>
+                All
 
-<mat-chip-set>
+            </mat-option>
 
-<mat-chip
-*ngFor="let category of categories">
+            <mat-option
+                *ngFor="let item of categories"
+                [value]="item">
 
-{{category}}
+                {{item}}
 
-</mat-chip>
+            </mat-option>
 
-</mat-chip-set>
+        </mat-select>
+
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+
+        <mat-label>Sort</mat-label>
+
+        <mat-select
+            [(ngModel)]="sort"
+            (selectionChange)="applyFilters()">
+
+            <mat-option value="latest">
+
+                Latest
+
+            </mat-option>
+
+            <mat-option value="oldest">
+
+                Oldest
+
+            </mat-option>
+
+            <mat-option value="carbon-high">
+
+                Carbon High
+
+            </mat-option>
+
+            <mat-option value="carbon-low">
+
+                Carbon Low
+
+            </mat-option>
+
+        </mat-select>
+
+    </mat-form-field>
+
+    <button
+        mat-raised-button
+        color="primary"
+        (click)="reset()">
+
+        Reset
+
+    </button>
 
 </div>

@@ -1,0 +1,25 @@
+.card{
+
+padding:24px;
+
+border-radius:20px;
+
+box-shadow:0 10px 25px rgba(0,0,0,.08);
+
+}
+
+h2{
+
+margin-bottom:20px;
+
+font-size:22px;
+
+font-weight:700;
+
+}
+
+.chart{
+
+height:350px;
+
+}

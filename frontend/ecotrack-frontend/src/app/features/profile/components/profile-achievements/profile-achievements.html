@@ -1,0 +1,50 @@
+<mat-card class="card">
+
+    <h2>
+
+        Achievements
+
+    </h2>
+
+    <p class="count">
+
+        {{achievements.filter(a=>a.unlocked).length}} of {{achievements.length}} unlocked
+
+    </p>
+
+    <div class="grid">
+
+        <div
+            class="badge"
+            *ngFor="let item of achievements"
+            [class.locked]="!item.unlocked">
+
+            <div class="icon">
+
+                {{item.icon}}
+
+            </div>
+
+            <h3>
+
+                {{item.title}}
+
+            </h3>
+
+            <p>
+
+                {{item.description}}
+
+            </p>
+
+            <span>
+
+                {{item.unlocked ? 'Unlocked' : 'Locked'}}
+
+            </span>
+
+        </div>
+
+    </div>
+
+</mat-card>

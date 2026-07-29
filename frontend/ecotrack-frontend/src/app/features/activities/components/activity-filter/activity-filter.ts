@@ -1,39 +1,66 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 
 import { CommonModule } from '@angular/common';
-
 import { FormsModule } from '@angular/forms';
 
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatChipsModule } from '@angular/material/chips';
-import { MatIconModule } from '@angular/material/icon';
+import { MatSelectModule } from '@angular/material/select';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
-  selector:'app-activity-filter',
-  standalone:true,
-  imports:[
+  selector: 'app-activity-filter',
+  standalone: true,
+  imports: [
     CommonModule,
     FormsModule,
     MatFormFieldModule,
     MatInputModule,
-    MatChipsModule,
-    MatIconModule
+    MatSelectModule,
+    MatButtonModule
   ],
-  templateUrl:'./activity-filter.html',
-  styleUrl:'./activity-filter.css'
+  templateUrl: './activity-filter.html',
+  styleUrl: './activity-filter.css'
 })
-export class ActivityFilter{
+export class ActivityFilter {
 
-  search='';
+  @Output() filterChanged = new EventEmitter<any>();
 
-  categories=[
-    'All',
+  search = '';
+
+  category = '';
+
+  sort = 'latest';
+
+  categories = [
     'Walking',
     'Cycling',
-    'Transport',
     'Recycling',
-    'Electricity'
+    'Transport',
+    'Food',
+    'Electricity',
+    'Water',
+    'Waste'
   ];
+
+  applyFilters() {
+
+    this.filterChanged.emit({
+      search: this.search,
+      category: this.category,
+      sort: this.sort
+    });
+
+  }
+
+  reset() {
+
+    this.search = '';
+    this.category = '';
+    this.sort = 'latest';
+
+    this.applyFilters();
+
+  }
 
 }

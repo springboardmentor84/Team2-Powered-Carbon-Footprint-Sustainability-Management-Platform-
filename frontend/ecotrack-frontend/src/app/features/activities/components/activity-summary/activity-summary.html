@@ -1,29 +1,37 @@
 <div class="summary-grid">
 
-<mat-card
-class="summary-card"
-*ngFor="let card of cards">
+    <mat-card
+        class="summary-card"
+        *ngFor="let card of cards">
 
-<div
-class="icon"
-[style.background]="card.color">
+        <div
+            class="icon"
+            [style.background]="card.color">
 
-<mat-icon>
+            <mat-icon>
 
-{{card.icon}}
+                {{card.icon}}
 
-</mat-icon>
+            </mat-icon>
 
-</div>
+        </div>
 
-<div>
+        <div>
 
-<h2>{{card.value}}</h2>
+            <h2>
 
-<p>{{card.title}}</p>
+                {{card.value}}
 
-</div>
+            </h2>
 
-</mat-card>
+            <p>
+
+                {{card.title}}
+
+            </p>
+
+        </div>
+
+    </mat-card>
 
 </div>
