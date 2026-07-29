@@ -1,19 +1,196 @@
+<!-- ================= NAVBAR ================= -->
+
+<header class="navbar">
+
+  <div class="logo">
+    🌿 <span>EcoTrack</span>
+  </div>
+
+  <nav class="nav-links">
+    <a href="#">Home</a>
+    <a href="#">About</a>
+    <a href="#">Features</a>
+    <a href="#">Pricing</a>
+    <a href="#">Contact</a>
+  </nav>
+
+  <div class="nav-buttons">
+    <button class="login-btn" (click)="goToLogin()">Login</button>
+    <button class="signup-btn" (click)="goToSignup()">Get Started</button>
+  </div>
+
+</header>
+
+<!-- ================= HERO SECTION ================= -->
+
 <section class="hero">
 
-    <div class="hero-content">
+  <!-- Left Side -->
 
-        <h1>EcoTrack</h1>
+  <div class="hero-content">
+
+    <span class="badge">
+      🌱 AI Powered Sustainability Platform
+    </span>
+
+    <h1>
+      Track Today,<br>
+      <span>Save Tomorrow.</span>
+    </h1>
+
+    <p>
+      Monitor your daily carbon footprint, receive AI-powered
+      recommendations, achieve sustainability goals and make
+      the world greener.
+    </p>
+
+    <div class="hero-buttons">
+
+      <button class="primary-btn">
+        Get Started →
+      </button>
+
+      <button class="secondary-btn">
+        Learn More
+      </button>
+
+    </div>
+
+    <div class="users">
+
+      <img src="https://i.pravatar.cc/40?img=12">
+
+      <img src="https://i.pravatar.cc/40?img=13">
+
+      <img src="https://i.pravatar.cc/40?img=14">
+
+      <img src="https://i.pravatar.cc/40?img=15">
+
+      <span>15,000+ Active Users</span>
+
+    </div>
+
+  </div>
+
+  <!-- Right Side -->
+
+  <div class="hero-image">
+
+    <div class="dashboard-card">
+
+      <div class="card">
+
+        <h4>Total Carbon</h4>
+
+        <h2>2.8 kg</h2>
+
+        <small>↓ 15% this week</small>
+
+      </div>
+
+      <div class="card">
+
+        <h4>Eco Score</h4>
+
+        <h2>82</h2>
+
+        <small>Excellent</small>
+
+      </div>
+
+      <div class="card">
+
+        <h4>Goals</h4>
+
+        <h2>74%</h2>
+
+        <small>Completed</small>
+
+      </div>
+
+      <div class="card">
+
+        <h4>Trees Saved</h4>
+
+        <h2>18</h2>
+
+        <small>This Month</small>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+<!-- ================= FEATURES SECTION ================= -->
+
+<section class="features">
+
+    <div class="section-title">
+
+        <span>OUR FEATURES</span>
+
+        <h2>Everything You Need for a Sustainable Future</h2>
 
         <p>
-            Smart Carbon Footprint &
-            Sustainability Management Platform
+            EcoTrack provides powerful tools to monitor your carbon footprint,
+            achieve sustainability goals, and make a positive environmental impact.
         </p>
 
-        <div class="buttons">
+    </div>
 
-            <a routerLink="/login" class="btn">Login</a>
+    <div class="feature-grid">
 
-            <a routerLink="/signup" class="btn secondary">Sign Up</a>
+        <div class="feature-card">
+
+            <div class="icon">🌍</div>
+
+            <h3>Carbon Tracking</h3>
+
+            <p>
+                Track emissions from transportation,
+                electricity, food, waste and more.
+            </p>
+
+        </div>
+
+        <div class="feature-card">
+
+            <div class="icon">🎯</div>
+
+            <h3>Eco Goals</h3>
+
+            <p>
+                Create sustainability goals and
+                monitor your progress with smart insights.
+            </p>
+
+        </div>
+
+        <div class="feature-card">
+
+            <div class="icon">🤖</div>
+
+            <h3>AI Recommendations</h3>
+
+            <p>
+                Receive personalized AI suggestions
+                to reduce your environmental impact.
+            </p>
+
+        </div>
+
+        <div class="feature-card">
+
+            <div class="icon">📊</div>
+
+            <h3>Analytics & Reports</h3>
+
+            <p>
+                Visual dashboards with weekly,
+                monthly and yearly sustainability reports.
+            </p>
 
         </div>
 
@@ -21,21 +198,251 @@
 
 </section>
 
-<section class="features">
+<!-- ================= STATISTICS ================= -->
 
-    <div class="feature-card">
-        <h2>Carbon Tracking</h2>
-        <p>Track your daily carbon emissions.</p>
+<section class="statistics">
+
+    <div class="stat-box">
+
+        <h2>15K+</h2>
+
+        <p>Active Users</p>
+
     </div>
 
-    <div class="feature-card">
-        <h2>Analytics</h2>
-        <p>Visualize sustainability reports.</p>
+    <div class="stat-box">
+
+        <h2>220T</h2>
+
+        <p>CO₂ Saved</p>
+
     </div>
 
-    <div class="feature-card">
-        <h2>AI Assistant</h2>
-        <p>Get AI-powered sustainability tips.</p>
+    <div class="stat-box">
+
+        <h2>48K</h2>
+
+        <p>Trees Planted</p>
+
+    </div>
+
+    <div class="stat-box">
+
+        <h2>98%</h2>
+
+        <p>Goal Success</p>
+
     </div>
 
 </section>
+<!-- ================= WHY CHOOSE US ================= -->
+
+<section class="why-section">
+
+    <div class="why-left">
+
+        <span class="section-tag">WHY ECOTRACK?</span>
+
+        <h2>
+            Build Better Habits for a
+            <span>Greener Planet</span>
+        </h2>
+
+        <p>
+            EcoTrack combines Artificial Intelligence,
+            sustainability analytics and personalized
+            recommendations to help every individual
+            reduce their carbon footprint effortlessly.
+        </p>
+
+        <div class="why-list">
+
+            <div class="why-item">
+                ✅ AI Powered Suggestions
+            </div>
+
+            <div class="why-item">
+                ✅ Smart Carbon Calculator
+            </div>
+
+            <div class="why-item">
+                ✅ Sustainability Reports
+            </div>
+
+            <div class="why-item">
+                ✅ Daily Eco Challenges
+            </div>
+
+            <div class="why-item">
+                ✅ Goal Tracking
+            </div>
+
+            <div class="why-item">
+                ✅ Community Leaderboard
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="why-right">
+
+        <div class="phone">
+
+            <div class="phone-header">
+                EcoTrack AI
+            </div>
+
+            <div class="chat user">
+                How can I reduce my carbon footprint?
+            </div>
+
+            <div class="chat ai">
+                Try public transport twice a week, reduce
+                electricity consumption and carry reusable
+                bags while shopping.
+            </div>
+
+            <button class="chat-btn">
+                Ask AI Assistant
+            </button>
+
+        </div>
+
+    </div>
+
+</section>
+<!-- ================= TESTIMONIALS ================= -->
+
+<section class="testimonials">
+
+    <div class="section-title">
+
+        <span>TESTIMONIALS</span>
+
+        <h2>What Our Users Say</h2>
+
+        <p>
+            Thousands of users are already making a positive environmental impact with EcoTrack.
+        </p>
+
+    </div>
+
+    <div class="testimonial-grid">
+
+        <div class="testimonial-card">
+
+            <p>
+                "EcoTrack helped me reduce my electricity consumption by 25% within three months."
+            </p>
+
+            <h4>⭐⭐⭐⭐⭐</h4>
+
+            <strong>Rahul Kumar</strong>
+
+        </div>
+
+        <div class="testimonial-card">
+
+            <p>
+                "The AI suggestions are simple to follow and really helped me build sustainable habits."
+            </p>
+
+            <h4>⭐⭐⭐⭐⭐</h4>
+
+            <strong>Priya Sharma</strong>
+
+        </div>
+
+        <div class="testimonial-card">
+
+            <p>
+                "I enjoy the weekly challenges and leaderboard. It keeps me motivated every day."
+            </p>
+
+            <h4>⭐⭐⭐⭐⭐</h4>
+
+            <strong>Arjun Reddy</strong>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- ================= CTA ================= -->
+
+<section class="cta">
+
+    <h2>Start Your Sustainability Journey Today</h2>
+
+    <p>
+        Join thousands of users working together to build a greener future.
+    </p>
+
+    <button>
+        Get Started
+    </button>
+
+</section>
+
+<!-- ================= FOOTER ================= -->
+
+<footer class="footer">
+
+    <div class="footer-container">
+
+        <div class="footer-about">
+
+            <h2>🌿 EcoTrack</h2>
+
+            <p>
+                AI Powered Carbon Footprint &
+                Sustainability Management Platform.
+            </p>
+
+        </div>
+
+        <div class="footer-links">
+
+            <h3>Quick Links</h3>
+
+            <a href="#">Home</a>
+            <a href="#">Features</a>
+            <a href="#">Analytics</a>
+            <a href="#">Reports</a>
+
+        </div>
+
+        <div class="footer-links">
+
+            <h3>Resources</h3>
+
+            <a href="#">Privacy Policy</a>
+            <a href="#">Terms</a>
+            <a href="#">Help</a>
+            <a href="#">Support</a>
+
+        </div>
+
+        <div class="footer-links">
+
+            <h3>Contact</h3>
+
+            <p>Email : support@ecotrack.com</p>
+
+            <p>Phone : +91 9876543210</p>
+
+            <p>Hyderabad, India</p>
+
+        </div>
+
+    </div>
+
+    <hr>
+
+    <p class="copyright">
+        © 2026 EcoTrack. All Rights Reserved.
+    </p>
+
+</footer>
