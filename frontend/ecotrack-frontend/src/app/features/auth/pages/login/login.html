@@ -1,1 +1,136 @@
-<p>login works!</p>
+<div class="login-wrapper">
+
+  <!-- Left Panel -->
+  <div class="login-left">
+
+    <div class="brand">
+      <span class="brand-icon">🌱</span>
+      <span class="brand-name">EcoTrack</span>
+    </div>
+
+    <h1 class="left-title">Track Your Carbon.<br>Change the World.</h1>
+
+    <p class="left-subtitle">
+      Join thousands of eco-conscious users reducing their carbon footprint every day.
+    </p>
+
+    <div class="stats-row">
+      <div class="stat">
+        <span class="stat-value">12K+</span>
+        <span class="stat-label">Users</span>
+      </div>
+      <div class="stat">
+        <span class="stat-value">480T</span>
+        <span class="stat-label">CO₂ Saved</span>
+      </div>
+      <div class="stat">
+        <span class="stat-value">98%</span>
+        <span class="stat-label">Satisfaction</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Right Panel — Login Card -->
+  <div class="login-right">
+
+    <mat-card class="login-card">
+
+      <div class="card-header">
+        <h2>Welcome Back</h2>
+        <p>Sign in to your EcoTrack account</p>
+      </div>
+
+      <form (ngSubmit)="onSubmit()" #loginForm="ngForm" novalidate>
+
+        <!-- Email -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Email Address</mat-label>
+          <mat-icon matPrefix>email</mat-icon>
+          <input
+            matInput
+            type="email"
+            name="email"
+            [(ngModel)]="email"
+            placeholder="you@example.com"
+            required
+            email
+            #emailRef="ngModel"
+          />
+          @if (emailRef.invalid && emailRef.touched) {
+            <mat-error>Enter a valid email address.</mat-error>
+          }
+        </mat-form-field>
+
+        <!-- Password -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Password</mat-label>
+          <mat-icon matPrefix>lock</mat-icon>
+          <input
+            matInput
+            [type]="showPassword ? 'text' : 'password'"
+            name="password"
+            [(ngModel)]="password"
+            placeholder="Your password"
+            required
+            minlength="6"
+            #passwordRef="ngModel"
+          />
+          <button
+            mat-icon-button
+            matSuffix
+            type="button"
+            (click)="togglePassword()"
+            [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'">
+            <mat-icon>{{ showPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+          @if (passwordRef.invalid && passwordRef.touched) {
+            <mat-error>Password must be at least 6 characters.</mat-error>
+          }
+        </mat-form-field>
+
+        <!-- Remember Me & Forgot Password -->
+        <div class="form-options">
+          <mat-checkbox [(ngModel)]="rememberMe" name="rememberMe" color="primary">
+            Remember me
+          </mat-checkbox>
+          <a routerLink="/forgot-password" class="forgot-link">Forgot password?</a>
+        </div>
+
+        <!-- Submit -->
+        <button
+          mat-raised-button
+          color="primary"
+          type="submit"
+          class="submit-btn"
+          [disabled]="isLoading || !canSubmit">
+          @if (isLoading) {
+            <span>Signing in...</span>
+          } @else {
+            <mat-icon>login</mat-icon>
+            <span>Sign In</span>
+          }
+        </button>
+
+      </form>
+
+      <div class="divider">
+        <span>OR</span>
+      </div>
+
+      <!-- Google Sign In (UI only — backend ready) -->
+      <button mat-stroked-button class="google-btn" type="button" disabled>
+        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" width="18" />
+        Continue with Google
+      </button>
+
+      <p class="signup-link">
+        Don't have an account?
+        <a routerLink="/signup">Create one</a>
+      </p>
+
+    </mat-card>
+
+  </div>
+
+</div>

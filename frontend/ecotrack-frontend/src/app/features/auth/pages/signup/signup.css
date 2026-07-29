@@ -1,0 +1,253 @@
+/* ===========================
+   Signup Page Layout
+=========================== */
+.signup-wrapper {
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+}
+
+/* ===========================
+   Left Panel
+=========================== */
+.signup-left {
+  flex: 1;
+  background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 50%, #43a047 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 60px 56px;
+  color: #ffffff;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 48px;
+}
+
+.brand-icon {
+  font-size: 2rem;
+}
+
+.brand-name {
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.left-title {
+  font-size: 2.4rem;
+  font-weight: 800;
+  line-height: 1.25;
+  margin: 0 0 20px;
+}
+
+.left-subtitle {
+  font-size: 1rem;
+  opacity: 0.88;
+  line-height: 1.65;
+  max-width: 380px;
+  margin: 0 0 40px;
+}
+
+.features {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.feature-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 0.95rem;
+  opacity: 0.92;
+}
+
+.feature-icon {
+  font-size: 1.3rem;
+  flex-shrink: 0;
+}
+
+/* ===========================
+   Right Panel
+=========================== */
+.signup-right {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f5f5f5;
+  padding: 40px 24px;
+}
+
+/* ===========================
+   Signup Card
+=========================== */
+.signup-card {
+  width: 100%;
+  max-width: 460px;
+  padding: 40px 36px;
+  border-radius: 16px;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.card-header h2 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #1b5e20;
+  margin: 0 0 6px;
+}
+
+.card-header p {
+  font-size: 0.9rem;
+  color: #757575;
+  margin: 0;
+}
+
+/* ===========================
+   Form Fields
+=========================== */
+.full-width {
+  width: 100%;
+  margin-bottom: 2px;
+}
+
+/* ===========================
+   Terms Row
+=========================== */
+.terms-row {
+  margin: 4px 0 20px;
+  font-size: 0.875rem;
+  color: #424242;
+}
+
+.terms-link {
+  color: #2e7d32;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.terms-link:hover {
+  text-decoration: underline;
+}
+
+/* ===========================
+   Submit Button
+=========================== */
+.submit-btn {
+  width: 100%;
+  height: 48px;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background-color: #2e7d32;
+  color: #ffffff;
+  margin-bottom: 20px;
+}
+
+.submit-btn:disabled {
+  opacity: 0.6;
+}
+
+/* ===========================
+   Divider
+=========================== */
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 4px 0 16px;
+  color: #9e9e9e;
+  font-size: 0.8rem;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #e0e0e0;
+}
+
+/* ===========================
+   Google Button
+=========================== */
+.google-btn {
+  width: 100%;
+  height: 44px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #424242;
+  border-color: #e0e0e0;
+  margin-bottom: 20px;
+}
+
+/* ===========================
+   Login Link
+=========================== */
+.login-link {
+  text-align: center;
+  font-size: 0.875rem;
+  color: #757575;
+  margin: 0;
+}
+
+.login-link a {
+  color: #2e7d32;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.login-link a:hover {
+  text-decoration: underline;
+}
+
+/* ===========================
+   Responsive
+=========================== */
+@media (max-width: 768px) {
+  .signup-wrapper {
+    flex-direction: column;
+  }
+
+  .signup-left {
+    padding: 36px 28px;
+    align-items: center;
+    text-align: center;
+  }
+
+  .left-title {
+    font-size: 1.75rem;
+  }
+
+  .features {
+    align-items: flex-start;
+    width: 100%;
+  }
+
+  .signup-right {
+    padding: 24px 16px;
+  }
+
+  .signup-card {
+    padding: 28px 20px;
+  }
+}

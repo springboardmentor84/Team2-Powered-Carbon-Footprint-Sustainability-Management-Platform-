@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-landing',
@@ -8,12 +9,14 @@ import { Component } from '@angular/core';
 })
 export class Landing {
 
+  constructor(private router: Router) {}
+
   goToLogin() {
-    console.log("Login Clicked");
+    this.router.navigate(['/login']);
   }
 
   goToSignup() {
-    console.log("Signup Clicked");
+    this.router.navigate(['/signup']);
   }
 
 }

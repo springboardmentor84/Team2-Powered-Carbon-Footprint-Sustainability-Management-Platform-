@@ -1,1 +1,190 @@
-<p>signup works!</p>
+<div class="signup-wrapper">
+
+  <!-- Left Panel -->
+  <div class="signup-left">
+
+    <div class="brand">
+      <span class="brand-icon">🌱</span>
+      <span class="brand-name">EcoTrack</span>
+    </div>
+
+    <h1 class="left-title">Start Your Eco<br>Journey Today.</h1>
+
+    <p class="left-subtitle">
+      Create your free account and begin tracking, reducing, and celebrating your sustainable lifestyle.
+    </p>
+
+    <div class="features">
+      <div class="feature-item">
+        <span class="feature-icon">📊</span>
+        <span>Track your carbon footprint in real time</span>
+      </div>
+      <div class="feature-item">
+        <span class="feature-icon">🎯</span>
+        <span>Set and achieve sustainability goals</span>
+      </div>
+      <div class="feature-item">
+        <span class="feature-icon">🏆</span>
+        <span>Earn badges and climb the leaderboard</span>
+      </div>
+      <div class="feature-item">
+        <span class="feature-icon">🤖</span>
+        <span>Get AI-powered eco recommendations</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Right Panel — Signup Card -->
+  <div class="signup-right">
+
+    <mat-card class="signup-card">
+
+      <div class="card-header">
+        <h2>Create Account</h2>
+        <p>Join EcoTrack and make a difference</p>
+      </div>
+
+      <form (ngSubmit)="onSubmit()" #signupForm="ngForm" novalidate>
+
+        <!-- Full Name -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Full Name</mat-label>
+          <mat-icon matPrefix>person</mat-icon>
+          <input
+            matInput
+            type="text"
+            name="name"
+            [(ngModel)]="name"
+            placeholder="John Doe"
+            required
+            minlength="2"
+            #nameRef="ngModel"
+          />
+          @if (nameRef.invalid && nameRef.touched) {
+            <mat-error>Name must be at least 2 characters.</mat-error>
+          }
+        </mat-form-field>
+
+        <!-- Email -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Email Address</mat-label>
+          <mat-icon matPrefix>email</mat-icon>
+          <input
+            matInput
+            type="email"
+            name="email"
+            [(ngModel)]="email"
+            placeholder="you@example.com"
+            required
+            email
+            #emailRef="ngModel"
+          />
+          @if (emailRef.invalid && emailRef.touched) {
+            <mat-error>Enter a valid email address.</mat-error>
+          }
+        </mat-form-field>
+
+        <!-- Password -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Password</mat-label>
+          <mat-icon matPrefix>lock</mat-icon>
+          <input
+            matInput
+            [type]="showPassword ? 'text' : 'password'"
+            name="password"
+            [(ngModel)]="password"
+            placeholder="Min. 6 characters"
+            required
+            minlength="6"
+            #passwordRef="ngModel"
+          />
+          <button
+            mat-icon-button
+            matSuffix
+            type="button"
+            (click)="togglePassword()"
+            [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'">
+            <mat-icon>{{ showPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+          @if (passwordRef.invalid && passwordRef.touched) {
+            <mat-error>Password must be at least 6 characters.</mat-error>
+          }
+        </mat-form-field>
+
+        <!-- Confirm Password -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Confirm Password</mat-label>
+          <mat-icon matPrefix>lock_outline</mat-icon>
+          <input
+            matInput
+            [type]="showConfirmPassword ? 'text' : 'password'"
+            name="confirmPassword"
+            [(ngModel)]="confirmPassword"
+            placeholder="Repeat your password"
+            required
+            #confirmRef="ngModel"
+          />
+          <button
+            mat-icon-button
+            matSuffix
+            type="button"
+            (click)="toggleConfirmPassword()"
+            [attr.aria-label]="showConfirmPassword ? 'Hide password' : 'Show password'">
+            <mat-icon>{{ showConfirmPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+          @if (passwordMismatch) {
+            <mat-error>Passwords do not match.</mat-error>
+          }
+        </mat-form-field>
+
+        <!-- Terms & Conditions -->
+        <div class="terms-row">
+          <mat-checkbox
+            [(ngModel)]="agreeTerms"
+            name="agreeTerms"
+            color="primary">
+            I agree to the
+            <a href="#" class="terms-link">Terms of Service</a>
+            and
+            <a href="#" class="terms-link">Privacy Policy</a>
+          </mat-checkbox>
+        </div>
+
+        <!-- Submit -->
+        <button
+          mat-raised-button
+          color="primary"
+          type="submit"
+          class="submit-btn"
+          [disabled]="isLoading || !canSubmit">
+          @if (isLoading) {
+            <span>Creating account...</span>
+          } @else {
+            <mat-icon>person_add</mat-icon>
+            <span>Create Account</span>
+          }
+        </button>
+
+      </form>
+
+      <div class="divider">
+        <span>OR</span>
+      </div>
+
+      <!-- Google Sign Up (UI only — backend ready) -->
+      <button mat-stroked-button class="google-btn" type="button" disabled>
+        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" width="18" />
+        Sign up with Google
+      </button>
+
+      <p class="login-link">
+        Already have an account?
+        <a routerLink="/login">Sign in</a>
+      </p>
+
+    </mat-card>
+
+  </div>
+
+</div>
