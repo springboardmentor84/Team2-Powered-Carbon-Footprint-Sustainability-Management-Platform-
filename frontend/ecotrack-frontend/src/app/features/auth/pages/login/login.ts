@@ -46,6 +46,11 @@ export class Login {
     this.showPassword = !this.showPassword;
   }
 
+  openGoogleAuth(): void {
+    // Backend ready — replace with proper OAuth flow using AuthService
+    window.open('https://accounts.google.com/signin/v2/identifier', '_blank');
+  }
+
   get canSubmit(): boolean {
     return this.email.trim().length > 0 && this.password.trim().length > 0;
   }

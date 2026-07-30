@@ -54,12 +54,7 @@
             [(ngModel)]="email"
             placeholder="you@example.com"
             required
-            email
-            #emailRef="ngModel"
           />
-          @if (emailRef.invalid && emailRef.touched) {
-            <mat-error>Enter a valid email address.</mat-error>
-          }
         </mat-form-field>
 
         <!-- Password -->
@@ -73,8 +68,6 @@
             [(ngModel)]="password"
             placeholder="Your password"
             required
-            minlength="6"
-            #passwordRef="ngModel"
           />
           <button
             mat-icon-button
@@ -84,9 +77,6 @@
             [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'">
             <mat-icon>{{ showPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
           </button>
-          @if (passwordRef.invalid && passwordRef.touched) {
-            <mat-error>Password must be at least 6 characters.</mat-error>
-          }
         </mat-form-field>
 
         <!-- Remember Me & Forgot Password -->
@@ -97,31 +87,28 @@
           <a routerLink="/forgot-password" class="forgot-link">Forgot password?</a>
         </div>
 
-        <!-- Submit -->
+        <!-- Submit — plain button for perfect alignment -->
         <button
-          mat-raised-button
-          color="primary"
           type="submit"
           class="submit-btn"
+          [class.disabled]="isLoading || !canSubmit"
           [disabled]="isLoading || !canSubmit">
-          @if (isLoading) {
-            <span>Signing in...</span>
-          } @else {
-            <mat-icon>login</mat-icon>
-            <span>Sign In</span>
-          }
+          <span class="btn-inner">
+            <span class="material-icons btn-icon">login</span>
+            <span>{{ isLoading ? 'Signing in...' : 'Sign In' }}</span>
+          </span>
         </button>
 
       </form>
 
-      <div class="divider">
-        <span>OR</span>
-      </div>
+      <div class="divider"><span>OR</span></div>
 
-      <!-- Google Sign In (UI only — backend ready) -->
-      <button mat-stroked-button class="google-btn" type="button" disabled>
-        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" width="18" />
-        Continue with Google
+      <!-- Google Sign In -->
+      <button type="button" class="google-btn" (click)="openGoogleAuth()">
+        <span class="btn-inner">
+          <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" width="18" height="18" />
+          <span>Continue with Google</span>
+        </span>
       </button>
 
       <p class="signup-link">

@@ -1,10 +1,12 @@
 /* ===========================
-   Signup Page Layout
+   Layout
 =========================== */
 .signup-wrapper {
   display: flex;
-  min-height: 100vh;
+  height: 80vh;
+  min-height: 560px;
   width: 100%;
+  overflow: hidden;
 }
 
 /* ===========================
@@ -17,58 +19,56 @@
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
-  padding: 60px 56px;
+  padding: 28px 36px;
   color: #ffffff;
+  overflow: hidden;
 }
 
 .brand {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 48px;
+  gap: 8px;
+  margin-bottom: 14px;
 }
 
-.brand-icon {
-  font-size: 2rem;
-}
+.brand-icon { font-size: 1.6rem; }
 
 .brand-name {
-  font-size: 1.6rem;
+  font-size: 1.3rem;
   font-weight: 700;
-  letter-spacing: 0.5px;
 }
 
 .left-title {
-  font-size: 2.4rem;
+  font-size: 1.5rem;
   font-weight: 800;
-  line-height: 1.25;
-  margin: 0 0 20px;
+  line-height: 1.3;
+  margin: 0 0 10px;
 }
 
 .left-subtitle {
-  font-size: 1rem;
+  font-size: 0.82rem;
   opacity: 0.88;
-  line-height: 1.65;
-  max-width: 380px;
-  margin: 0 0 40px;
+  line-height: 1.5;
+  max-width: 340px;
+  margin: 0 0 16px;
 }
 
 .features {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 9px;
 }
 
 .feature-item {
   display: flex;
   align-items: center;
-  gap: 14px;
-  font-size: 0.95rem;
+  gap: 10px;
+  font-size: 0.83rem;
   opacity: 0.92;
 }
 
 .feature-icon {
-  font-size: 1.3rem;
+  font-size: 1rem;
   flex-shrink: 0;
 }
 
@@ -81,52 +81,50 @@
   align-items: center;
   justify-content: center;
   background: #f5f5f5;
-  padding: 40px 24px;
+  padding: 14px 24px;
+  overflow-y: auto;
 }
 
 /* ===========================
-   Signup Card
+   Card
 =========================== */
 .signup-card {
   width: 100%;
-  max-width: 460px;
-  padding: 40px 36px;
+  max-width: 420px;
+  padding: 18px 24px;
   border-radius: 16px;
-  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.10);
 }
 
 .card-header {
   text-align: center;
-  margin-bottom: 24px;
+  margin-bottom: 10px;
 }
 
 .card-header h2 {
-  font-size: 1.75rem;
+  font-size: 1.35rem;
   font-weight: 700;
   color: #1b5e20;
-  margin: 0 0 6px;
+  margin: 0 0 3px;
 }
 
 .card-header p {
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   color: #757575;
   margin: 0;
 }
 
 /* ===========================
-   Form Fields
+   Form
 =========================== */
 .full-width {
   width: 100%;
-  margin-bottom: 2px;
+  margin-bottom: 0;
 }
 
-/* ===========================
-   Terms Row
-=========================== */
 .terms-row {
-  margin: 4px 0 20px;
-  font-size: 0.875rem;
+  margin: 2px 0 10px;
+  font-size: 0.8rem;
   color: #424242;
 }
 
@@ -136,30 +134,52 @@
   font-weight: 500;
 }
 
-.terms-link:hover {
-  text-decoration: underline;
-}
+.terms-link:hover { text-decoration: underline; }
 
 /* ===========================
-   Submit Button
+   Submit Button — plain, full control
 =========================== */
 .submit-btn {
   width: 100%;
-  height: 48px;
-  font-size: 1rem;
-  font-weight: 600;
+  height: 44px;
+  background-color: #2e7d32;
+  color: #ffffff;
+  border: none;
   border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-bottom: 10px;
+  transition: background 0.2s;
+}
+
+.submit-btn:hover:not(:disabled) {
+  background-color: #1b5e20;
+}
+
+.submit-btn:disabled,
+.submit-btn.disabled {
+  background-color: #bdbdbd;
+  color: #757575;
+  cursor: not-allowed;
+}
+
+/* Inner wrapper — guarantees icon + text are always side by side, centered */
+.btn-inner {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  background-color: #2e7d32;
-  color: #ffffff;
-  margin-bottom: 20px;
+  gap: 6px;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
 }
 
-.submit-btn:disabled {
-  opacity: 0.6;
+.btn-icon {
+  font-size: 18px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
 }
 
 /* ===========================
@@ -168,10 +188,10 @@
 .divider {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin: 4px 0 16px;
+  gap: 10px;
+  margin: 2px 0 10px;
   color: #9e9e9e;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
 }
 
 .divider::before,
@@ -183,29 +203,33 @@
 }
 
 /* ===========================
-   Google Button
+   Google Button — plain, full control
 =========================== */
 .google-btn {
   width: 100%;
-  height: 44px;
+  height: 40px;
+  background: #ffffff;
+  border: 1px solid #e0e0e0;
   border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  font-size: 0.9rem;
+  cursor: pointer;
+  font-size: 0.88rem;
   font-weight: 500;
   color: #424242;
-  border-color: #e0e0e0;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.google-btn:hover {
+  border-color: #bdbdbd;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.12);
 }
 
 /* ===========================
-   Login Link
+   Bottom Link
 =========================== */
 .login-link {
   text-align: center;
-  font-size: 0.875rem;
+  font-size: 0.8rem;
   color: #757575;
   margin: 0;
 }
@@ -216,9 +240,7 @@
   text-decoration: none;
 }
 
-.login-link a:hover {
-  text-decoration: underline;
-}
+.login-link a:hover { text-decoration: underline; }
 
 /* ===========================
    Responsive
@@ -226,28 +248,18 @@
 @media (max-width: 768px) {
   .signup-wrapper {
     flex-direction: column;
+    height: auto;
   }
 
   .signup-left {
-    padding: 36px 28px;
+    padding: 24px 20px;
     align-items: center;
     text-align: center;
   }
 
-  .left-title {
-    font-size: 1.75rem;
-  }
+  .features { align-items: flex-start; width: 100%; }
 
-  .features {
-    align-items: flex-start;
-    width: 100%;
-  }
+  .signup-right { padding: 14px; }
 
-  .signup-right {
-    padding: 24px 16px;
-  }
-
-  .signup-card {
-    padding: 28px 20px;
-  }
+  .signup-card { padding: 18px 14px; }
 }
