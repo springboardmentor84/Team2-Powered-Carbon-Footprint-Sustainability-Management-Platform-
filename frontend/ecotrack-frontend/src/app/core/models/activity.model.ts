@@ -2,11 +2,11 @@ export interface Activity {
 
   id: number;
 
-  activity: string;
+  title: string;
 
   category: string;
 
-  carbonSaved: number;
+  carbon: number;
 
   date: string;
 

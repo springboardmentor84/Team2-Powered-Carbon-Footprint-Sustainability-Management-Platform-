@@ -1,92 +1,65 @@
 import {
   Component,
-  AfterViewInit,
+  ElementRef,
   ViewChild,
-  ElementRef
+  AfterViewInit
 } from '@angular/core';
 
 import { CommonModule } from '@angular/common';
-import { MatCardModule } from '@angular/material/card';
-
-import Chart from 'chart.js/auto';
+import { Chart } from 'chart.js/auto';
 
 @Component({
   selector: 'app-reports-charts',
   standalone: true,
-  imports: [
-    CommonModule,
-    MatCardModule
-  ],
+  imports: [CommonModule],
   templateUrl: './reports-charts.html',
   styleUrl: './reports-charts.css'
 })
 export class ReportsCharts implements AfterViewInit {
 
-  @ViewChild('reportChart')
-  chartCanvas!: ElementRef<HTMLCanvasElement>;
+  @ViewChild('barChart')
+  barChart!: ElementRef<HTMLCanvasElement>;
 
-  chart!: Chart;
+  @ViewChild('lineChart')
+  lineChart!: ElementRef<HTMLCanvasElement>;
 
   ngAfterViewInit(): void {
 
-    this.chart = new Chart(
-      this.chartCanvas.nativeElement,
-      {
-        type: 'line',
-
-        data: {
-
-          labels: [
-            'Mon',
-            'Tue',
-            'Wed',
-            'Thu',
-            'Fri',
-            'Sat',
-            'Sun'
-          ],
-
-          datasets: [
-
-            {
-
-              label: 'Carbon Saved (kg)',
-
-              data: [
-                5,
-                7,
-                6,
-                9,
-                10,
-                8,
-                12
-              ],
-
-              borderColor: '#2E7D32',
-
-              backgroundColor: 'rgba(46,125,50,.15)',
-
-              fill: true,
-
-              tension: .35
-
-            }
-
-          ]
-
-        },
-
-        options: {
-
-          responsive: true,
-
-          maintainAspectRatio: false
-
-        }
-
+    new Chart(this.barChart.nativeElement, {
+      type: 'bar',
+      data: {
+        labels: ['Jan','Feb','Mar','Apr','May','Jun'],
+        datasets: [
+          {
+            label: 'Carbon Saved (kg)',
+            data: [18,25,31,28,42,55]
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false
       }
+    });
 
-    );
+    new Chart(this.lineChart.nativeElement, {
+      type: 'line',
+      data: {
+        labels: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
+        datasets: [
+          {
+            label: 'Daily Carbon',
+            data: [2,5,3,6,4,8,7],
+            fill: true,
+            tension: 0.4
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false
+      }
+    });
 
   }
 

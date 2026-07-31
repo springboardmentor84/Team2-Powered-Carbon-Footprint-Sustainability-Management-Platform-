@@ -18,135 +18,81 @@ export class AiRecommendation {
 
   private activityService = inject(ActivityService);
 
-  refreshRecommendation(){
+  refreshRecommendation(): void {
 
     // Backend Ready
-    // Later:
-    // recommendationService.getRecommendation().subscribe(...)
+    // recommendationService.getRecommendation()
+
   }
 
-  get recommendation(){
+  get recommendation() {
 
-    const carbon=this.activityService.getCarbonSaved();
+    const carbon = this.activityService.getCarbonSaved();
+    const score = this.activityService.getSustainabilityScore();
+    const activities = this.activityService.getActivities().length;
 
-    const score=this.activityService.getSustainabilityScore();
-
-    const activities=this.activityService.getActivities().length;
-
-    if(activities==0){
-
-      return{
-
-        icon:'🌱',
-
-        title:'Start Your Journey',
-
-        text:'Log your first eco activity to unlock personalized AI insights.',
-
-        saving:'Potential Saving : 3 kg CO₂/day',
-
-        priority:'High',
-
-        confidence:98
-
+    if (activities === 0) {
+      return {
+        icon: '🌱',
+        title: 'Start Your Journey',
+        text: 'Log your first eco activity to unlock personalized AI insights.',
+        saving: 'Potential Saving : 3 kg CO₂/day',
+        priority: 'High',
+        confidence: 98
       };
-
     }
 
-    if(score<30){
-
-      return{
-
-        icon:'🚶',
-
-        title:'Walk More',
-
-        text:'Replace short vehicle trips with walking. This has the biggest impact on your sustainability score.',
-
-        saving:'Estimated Saving : 2 kg CO₂/day',
-
-        priority:'High',
-
-        confidence:96
-
+    if (score < 30) {
+      return {
+        icon: '🚶',
+        title: 'Walk More',
+        text: 'Replace short vehicle trips with walking.',
+        saving: 'Estimated Saving : 2 kg CO₂/day',
+        priority: 'High',
+        confidence: 96
       };
-
     }
 
-    if(score<50){
-
-      return{
-
-        icon:'🚴',
-
-        title:'Use Bicycle',
-
-        text:'Cycling twice a week can significantly reduce your carbon footprint.',
-
-        saving:'Estimated Saving : 3 kg CO₂/day',
-
-        priority:'High',
-
-        confidence:94
-
+    if (score < 50) {
+      return {
+        icon: '🚴',
+        title: 'Use Bicycle',
+        text: 'Cycling twice a week can significantly reduce your carbon footprint.',
+        saving: 'Estimated Saving : 3 kg CO₂/day',
+        priority: 'High',
+        confidence: 94
       };
-
     }
 
-    if(score<70){
-
-      return{
-
-        icon:'♻',
-
-        title:'Recycle More',
-
-        text:'Increase plastic, paper and metal recycling to improve your sustainability score.',
-
-        saving:'Estimated Saving : 1.5 kg CO₂/day',
-
-        priority:'Medium',
-
-        confidence:91
-
+    if (score < 70) {
+      return {
+        icon: '♻️',
+        title: 'Recycle More',
+        text: 'Increase plastic, paper and metal recycling.',
+        saving: 'Estimated Saving : 1.5 kg CO₂/day',
+        priority: 'Medium',
+        confidence: 91
       };
-
     }
 
-    if(score<90){
-
-      return{
-
-        icon:'⚡',
-
-        title:'Reduce Electricity Usage',
-
-        text:'Switch off unused appliances and use LED lighting whenever possible.',
-
-        saving:'Estimated Saving : 2.3 kg CO₂/day',
-
-        priority:'Medium',
-
-        confidence:89
-
+    if (score < 90) {
+      return {
+        icon: '⚡',
+        title: 'Reduce Electricity Usage',
+        text: 'Switch off unused appliances and use LED lighting.',
+        saving: 'Estimated Saving : 2.3 kg CO₂/day',
+        priority: 'Medium',
+        confidence: 89
       };
-
     }
 
-    return{
-
-      icon:'🏆',
-
-      title:'Excellent Sustainability',
-
-      text:'Your eco habits are excellent. Keep inspiring others and maintain your current lifestyle.',
-
-      saving:`Total Saved : ${carbon.toFixed(1)} kg CO₂`,
-
-      priority:'Low',
-
-      confidence:99
-
+    return {
+      icon: '🏆',
+      title: 'Excellent Sustainability',
+      text: 'Your eco habits are excellent. Keep inspiring others.',
+      saving: `Total Saved : ${carbon.toFixed(1)} kg CO₂`,
+      priority: 'Low',
+      confidence: 99
     };
 
   }

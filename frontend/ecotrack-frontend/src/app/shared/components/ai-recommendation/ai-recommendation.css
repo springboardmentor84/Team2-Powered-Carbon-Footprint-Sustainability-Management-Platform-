@@ -1,165 +1,111 @@
 .card{
-
-padding:24px;
-
-border-radius:20px;
-
-box-shadow:0 10px 25px rgba(0,0,0,.08);
-
-display:flex;
-
-flex-direction:column;
-
-gap:20px;
-
+  padding:24px;
+  border-radius:20px;
+  background:#ffffff;
+  box-shadow:0 10px 25px rgba(0,0,0,.08);
+  display:flex;
+  flex-direction:column;
+  gap:20px;
 }
 
 .header{
-
-display:flex;
-
-justify-content:space-between;
-
-align-items:center;
-
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
 }
 
 .header h2{
-
-margin:0;
-
-font-size:22px;
-
-font-weight:700;
-
+  margin:0;
+  font-size:22px;
+  font-weight:700;
 }
 
 .refresh{
-
-border:none;
-
-background:#2E7D32;
-
-color:white;
-
-width:38px;
-
-height:38px;
-
-border-radius:50%;
-
-cursor:pointer;
-
-font-size:18px;
-
-transition:.3s;
-
+  width:40px;
+  height:40px;
+  border:none;
+  border-radius:50%;
+  background:#2E7D32;
+  color:#fff;
+  cursor:pointer;
+  font-size:20px;
+  transition:.35s;
 }
 
 .refresh:hover{
-
-transform:rotate(180deg);
-
+  transform:rotate(180deg);
 }
 
 .content{
-
-display:flex;
-
-gap:20px;
-
-align-items:flex-start;
-
+  display:flex;
+  gap:20px;
+  align-items:flex-start;
 }
 
 .emoji{
-
-font-size:58px;
-
+  font-size:60px;
+  line-height:1;
 }
 
 .details{
-
-flex:1;
-
+  flex:1;
 }
 
 .details h3{
-
-margin:0;
-
-font-size:20px;
-
-font-weight:700;
-
-color:#2E7D32;
-
+  margin:0;
+  font-size:20px;
+  color:#2E7D32;
+  font-weight:700;
 }
 
 .details p{
-
-margin:10px 0;
-
-line-height:1.6;
-
-color:#666;
-
+  margin:10px 0 16px;
+  color:#666;
+  line-height:1.6;
 }
 
 .saving{
-
-display:inline-block;
-
-margin-top:8px;
-
-padding:10px 16px;
-
-background:#E8F5E9;
-
-border-radius:20px;
-
-font-weight:700;
-
-color:#2E7D32;
-
+  display:inline-block;
+  padding:10px 16px;
+  background:#E8F5E9;
+  border-radius:18px;
+  color:#2E7D32;
+  font-weight:700;
 }
 
 .meta{
-
-display:flex;
-
-gap:12px;
-
-margin-top:18px;
-
-flex-wrap:wrap;
-
+  margin-top:18px;
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
 }
 
 .priority{
-
-background:#FFF3E0;
-
-padding:8px 14px;
-
-border-radius:18px;
-
-font-weight:600;
-
-color:#EF6C00;
-
+  background:#FFF3E0;
+  color:#EF6C00;
+  padding:8px 14px;
+  border-radius:20px;
+  font-weight:600;
 }
 
 .confidence{
+  background:#E3F2FD;
+  color:#1565C0;
+  padding:8px 14px;
+  border-radius:20px;
+  font-weight:600;
+}
 
-background:#E3F2FD;
+@media(max-width:768px){
 
-padding:8px 14px;
+  .content{
+    flex-direction:column;
+    align-items:center;
+    text-align:center;
+  }
 
-border-radius:18px;
-
-font-weight:600;
-
-color:#1565C0;
+  .meta{
+    justify-content:center;
+  }
 
 }

@@ -1,7 +1,8 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
-import { ActivityService } from '../../../core/services/activity.service';
+
+import { ActivityService, Activity } from '../../../core/services/activity.service';
 
 @Component({
   selector: 'app-recent-activities',
@@ -17,45 +18,39 @@ export class RecentActivities {
 
   private activityService = inject(ActivityService);
 
-  get activities() {
-    return this.activityService
+  activities: Activity[] = [];
+
+  constructor() {
+
+    this.loadActivities();
+
+  }
+
+  private loadActivities(): void {
+
+    this.activities = this.activityService
       .getActivities()
       .sort((a, b) => b.id - a.id)
       .slice(0, 5);
+
   }
 
   getIcon(category: string): string {
 
-    switch (category.toLowerCase()) {
+    const icons: Record<string, string> = {
 
-      case 'walking':
-        return '🚶';
+      walking: '🚶',
+      cycling: '🚴',
+      recycling: '♻️',
+      transport: '🚌',
+      food: '🥗',
+      water: '💧',
+      electricity: '⚡',
+      waste: '🗑️'
 
-      case 'cycling':
-        return '🚴';
+    };
 
-      case 'recycling':
-        return '♻️';
-
-      case 'transport':
-        return '🚌';
-
-      case 'food':
-        return '🥗';
-
-      case 'water':
-        return '💧';
-
-      case 'electricity':
-        return '⚡';
-
-      case 'waste':
-        return '🗑️';
-
-      default:
-        return '🌱';
-
-    }
+    return icons[category.toLowerCase()] || '🌱';
 
   }
 

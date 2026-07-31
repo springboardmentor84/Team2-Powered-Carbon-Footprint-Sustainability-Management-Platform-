@@ -1,17 +1,35 @@
-<mat-card class="card">
+<div class="chart-grid">
 
-    <h2>
+    <div class="chart-card">
 
-        Weekly Carbon Report
+        <h3>
 
-    </h2>
+            Monthly Carbon Saved
 
-    <div class="chart">
+        </h3>
 
-        <canvas #reportChart>
+        <div class="chart">
 
-        </canvas>
+            <canvas #barChart></canvas>
+
+        </div>
 
     </div>
 
-</mat-card>
+    <div class="chart-card">
+
+        <h3>
+
+            Weekly Activities
+
+        </h3>
+
+        <div class="chart">
+
+            <canvas #lineChart></canvas>
+
+        </div>
+
+    </div>
+
+</div>

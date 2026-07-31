@@ -18,74 +18,29 @@ import { MatIconModule } from '@angular/material/icon';
 })
 export class Sidebar {
 
-  menu = [
+ menu = [
 
-    {
-      title:'Dashboard',
-      icon:'dashboard',
-      route:'/dashboard'
-    },
+  { title:'Dashboard', icon:'dashboard', route:'/dashboard' },
 
-    {
-      title:'Activities',
-      icon:'task',
-      route:'/activities'
-    },
+  { title:'Activities', icon:'task', route:'/dashboard/activities' },
 
-    {
-      title:'Carbon Tracker',
-      icon:'eco',
-      route:'/carbon-tracker'
-    },
+  { title:'Carbon Tracker', icon:'eco', route:'/dashboard/carbon-tracker' },
 
-    {
-      title:'Goals',
-      icon:'flag',
-      route:'/goals'
-    },
+  { title:'Goals', icon:'flag', route:'/dashboard/goals' },
 
-    {
-      title:'Reports',
-      icon:'description',
-      route:'/reports'
-    },
+  { title:'Reports', icon:'description', route:'/dashboard/reports' },
 
-    {
-      title:'Analytics',
-      icon:'analytics',
-      route:'/analytics'
-    },
+  { title:'Analytics', icon:'analytics', route:'/dashboard/analytics' },
 
-    {
-      title:'Leaderboard',
-      icon:'leaderboard',
-      route:'/leaderboard'
-    },
+  { title:'Leaderboard', icon:'leaderboard', route:'/dashboard/leaderboard' },
 
-    {
-      title:'Notifications',
-      icon:'notifications',
-      route:'/notifications'
-    },
+  { title:'Notifications', icon:'notifications', route:'/dashboard/notifications' },
 
-    {
-      title:'Profile',
-      icon:'person',
-      route:'/profile'
-    },
+  { title:'Profile', icon:'person', route:'/dashboard/profile' },
 
-    {
-      title:'Settings',
-      icon:'settings',
-      route:'/settings'
-    },
+  { title:'Settings', icon:'settings', route:'/dashboard/settings' },
 
-    {
-      title:'AI Assistant',
-      icon:'smart_toy',
-      route:'/ai-assistant'
-    }
+  { title:'AI Assistant', icon:'smart_toy', route:'/dashboard/ai-assistant' }
 
-  ];
-
+];
 }

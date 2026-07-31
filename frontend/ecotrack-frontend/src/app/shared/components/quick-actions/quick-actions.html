@@ -1,72 +1,38 @@
 <mat-card class="card">
 
-    <h2>
-
-        Quick Actions
-
-    </h2>
+    <h2>Quick Actions</h2>
 
     <div class="grid">
 
-        <button
-            class="green"
-            (click)="addActivity()">
+        <div
 
-            <span>➕</span>
+            *ngFor="let action of actions"
 
-            Add Activity
+            class="action"
 
-        </button>
+            (click)="actionClick(action)">
 
-        <button
-            class="blue"
-            (click)="openActivities()">
+            <div
 
-            <span>📋</span>
+                class="icon"
 
-            Activities
+                [style.background]="action.color">
 
-        </button>
+                <mat-icon>
 
-        <button
-            class="purple"
-            (click)="exportCSV()">
+                    {{action.icon}}
 
-            <span>⬇️</span>
+                </mat-icon>
 
-            Export CSV
+            </div>
 
-        </button>
+            <span>
 
-        <button
-            class="orange"
-            (click)="reports()">
+                {{action.title}}
 
-            <span>📊</span>
+            </span>
 
-            Reports
-
-        </button>
-
-        <button
-            class="cyan"
-            (click)="syncData()">
-
-            <span>☁️</span>
-
-            Sync
-
-        </button>
-
-        <button
-            class="red"
-            (click)="clearActivities()">
-
-            <span>🗑️</span>
-
-            Clear Data
-
-        </button>
+        </div>
 
     </div>
 

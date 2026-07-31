@@ -1,1 +1,45 @@
-<p>goal-progress-card works!</p>
+<mat-card class="goal-card">
+
+    <h2>
+
+        Goal Progress
+
+    </h2>
+
+    <h3>
+
+        {{goal.title}}
+
+    </h3>
+
+    <p>
+
+        {{goal.currentValue}} / {{goal.targetValue}} {{goal.unit}}
+
+    </p>
+
+    <mat-progress-bar
+
+        mode="determinate"
+
+        [value]="goal.progressPercentage">
+
+    </mat-progress-bar>
+
+    <div class="footer">
+
+        <span>
+
+            {{goal.progressPercentage}}%
+
+        </span>
+
+        <span>
+
+            Target: {{goal.targetDate}}
+
+        </span>
+
+    </div>
+
+</mat-card>

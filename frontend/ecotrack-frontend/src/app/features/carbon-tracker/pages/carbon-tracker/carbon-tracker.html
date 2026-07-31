@@ -1,1 +1,71 @@
-<p>carbon-tracker works!</p>
+<div class="page">
+
+  <section class="hero">
+
+    <div>
+
+      <h1>Carbon Tracker</h1>
+
+      <p>
+
+        Monitor your carbon footprint and sustainability progress.
+
+      </p>
+
+    </div>
+
+  </section>
+
+  <div class="tracker-grid">
+
+    <mat-card class="tracker-card">
+
+      <h3>Total Carbon Saved</h3>
+
+      <div class="value">
+
+        {{totalCarbon}} kg
+
+      </div>
+
+    </mat-card>
+
+    <mat-card class="tracker-card">
+
+      <h3>Activities Logged</h3>
+
+      <div class="value">
+
+        {{totalActivities}}
+
+      </div>
+
+    </mat-card>
+
+    <mat-card class="tracker-card">
+
+      <h3>Eco Score</h3>
+
+      <div class="value">
+
+        {{ecoScore}} / 100
+
+      </div>
+
+    </mat-card>
+
+    <mat-card class="tracker-card">
+
+      <h3>Goal Progress</h3>
+
+      <div class="value">
+
+        {{goalProgress}}%
+
+      </div>
+
+    </mat-card>
+
+  </div>
+
+</div>

@@ -1,6 +1,10 @@
 <mat-card class="card">
 
-    <h2>Sustainability Score</h2>
+    <h2>
+
+        Sustainability Score
+
+    </h2>
 
     <div class="score-circle">
 
@@ -18,29 +22,40 @@
                 cx="70"
                 cy="70"
                 r="60"
-                [style.stroke-dashoffset]="377-(377*score/100)">
+                [style.stroke-dashoffset]="377-(377*scoreData.progress/100)">
             </circle>
 
         </svg>
 
         <div class="center">
 
-            <h1>{{score}}</h1>
+            <h1>
 
-            <small>/100</small>
+                {{scoreData.score}}
+
+            </h1>
+
+            <small>
+
+                /100
+
+            </small>
 
         </div>
 
     </div>
 
     <mat-progress-bar
+
         mode="determinate"
-        [value]="score">
+
+        [value]="scoreData.progress">
+
     </mat-progress-bar>
 
     <p class="level">
 
-        {{level}}
+        {{scoreData.level}}
 
     </p>
 

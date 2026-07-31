@@ -1,9 +1,9 @@
-import { Component, inject } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 
-import { ActivityService } from '../../../core/services/activity.service';
+import { SustainabilityScore as SustainabilityScoreModel } from '../../../core/models/dashboard.model';
 
 @Component({
   selector: 'app-sustainability-score',
@@ -18,73 +18,14 @@ import { ActivityService } from '../../../core/services/activity.service';
 })
 export class SustainabilityScore {
 
-  private activityService = inject(ActivityService);
+  scoreData: SustainabilityScoreModel = {
 
-  get score(): number {
+    score: 86,
 
-    const list = this.activityService.getActivities();
+    level: 'Excellent',
 
-    let score = 0;
+    progress: 86
 
-    list.forEach(item => {
-
-      switch(item.category.toLowerCase()){
-
-        case 'walking':
-          score += 5;
-          break;
-
-        case 'cycling':
-          score += 8;
-          break;
-
-        case 'recycling':
-          score += 4;
-          break;
-
-        case 'transport':
-          score += 6;
-          break;
-
-        case 'food':
-          score += 3;
-          break;
-
-        case 'electricity':
-          score += 5;
-          break;
-
-        case 'water':
-          score += 4;
-          break;
-
-        default:
-          score += 2;
-
-      }
-
-    });
-
-    return Math.min(score,100);
-
-  }
-
-  get level(){
-
-    if(this.score>=80){
-      return 'Excellent';
-    }
-
-    if(this.score>=60){
-      return 'Good';
-    }
-
-    if(this.score>=40){
-      return 'Average';
-    }
-
-    return 'Needs Improvement';
-
-  }
+  };
 
 }

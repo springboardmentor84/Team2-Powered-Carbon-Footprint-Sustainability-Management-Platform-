@@ -4,6 +4,16 @@ import { MatCardModule } from '@angular/material/card';
 
 import { ActivityService } from '../../../core/services/activity.service';
 
+interface CalendarDay {
+
+  day: number;
+
+  hasActivity: boolean;
+
+  activityCount: number;
+
+}
+
 @Component({
   selector: 'app-calendar-card',
   standalone: true,
@@ -47,7 +57,7 @@ export class CalendarCard {
     'Sat'
   ];
 
-  days: number[] = [];
+  calendarDays: CalendarDay[] = [];
 
   constructor() {
 
@@ -105,7 +115,7 @@ export class CalendarCard {
 
   generateCalendar(): void {
 
-    this.days = [];
+    this.calendarDays = [];
 
     const totalDays = new Date(
 
@@ -119,7 +129,15 @@ export class CalendarCard {
 
     for (let i = 1; i <= totalDays; i++) {
 
-      this.days.push(i);
+      this.calendarDays.push({
+
+        day: i,
+
+        hasActivity: this.hasActivity(i),
+
+        activityCount: this.getActivityCount(i)
+
+      });
 
     }
 
@@ -148,9 +166,7 @@ export class CalendarCard {
     const year = this.currentDate.getFullYear();
 
     return this.activityService
-
       .getActivities()
-
       .some(activity => {
 
         const d = new Date(activity.date);
@@ -169,12 +185,6 @@ export class CalendarCard {
 
   }
 
-  selectDay(day: number): void {
-
-    this.selectedDay = day;
-
-  }
-
   getActivityCount(day: number): number {
 
     const month = this.currentDate.getMonth();
@@ -182,9 +192,7 @@ export class CalendarCard {
     const year = this.currentDate.getFullYear();
 
     return this.activityService
-
       .getActivities()
-
       .filter(activity => {
 
         const d = new Date(activity.date);
@@ -203,5 +211,10 @@ export class CalendarCard {
 
   }
 
-}
+  selectDay(day: number): void {
 
+    this.selectedDay = day;
+
+  }
+
+}

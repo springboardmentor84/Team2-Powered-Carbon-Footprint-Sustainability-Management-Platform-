@@ -10,15 +10,15 @@ gap:22px;
 
 .card{
 
-padding:24px;
+position:relative;
+
+padding:26px;
 
 border-radius:18px;
 
-box-shadow:0 8px 20px rgba(0,0,0,.08);
-
-position:relative;
-
 overflow:hidden;
+
+box-shadow:0 8px 20px rgba(0,0,0,.08);
 
 transition:.3s;
 
@@ -26,7 +26,7 @@ transition:.3s;
 
 .card:hover{
 
-transform:translateY(-6px);
+transform:translateY(-5px);
 
 }
 
@@ -34,9 +34,9 @@ transform:translateY(-6px);
 
 position:absolute;
 
-left:0;
-
 top:0;
+
+left:0;
 
 width:100%;
 
@@ -44,9 +44,17 @@ height:6px;
 
 }
 
-h2{
+.icon{
 
-margin:20px 0 8px;
+font-size:34px;
+
+margin:16px 0 10px;
+
+}
+
+.card h2{
+
+margin:0;
 
 font-size:32px;
 
@@ -54,9 +62,9 @@ font-weight:700;
 
 }
 
-p{
+.card p{
 
-margin:0;
+margin-top:8px;
 
 font-size:14px;
 

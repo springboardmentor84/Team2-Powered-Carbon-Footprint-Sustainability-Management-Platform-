@@ -29,11 +29,15 @@ export class EditProfileDialog {
     @Inject(MAT_DIALOG_DATA) public user: any
   ) {}
 
-  save() {
+ save() {
 
-    this.dialogRef.close(this.user);
+    this.dialogRef.close({
 
-  }
+        ...this.user
+
+    });
+
+}
 
   cancel() {
 

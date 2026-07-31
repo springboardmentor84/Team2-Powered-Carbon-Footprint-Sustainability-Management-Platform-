@@ -2,46 +2,100 @@
 
 <mat-dialog-content>
 
+    <h3>Personal Information</h3>
+
     <mat-form-field appearance="outline" class="full-width">
-
-        <mat-label>Name</mat-label>
-
-        <input
-            matInput
-            [(ngModel)]="user.name">
-
+        <mat-label>Full Name</mat-label>
+        <input matInput [(ngModel)]="user.fullName">
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="full-width">
-
         <mat-label>Email</mat-label>
-
-        <input
-            matInput
-            [(ngModel)]="user.email">
-
+        <input matInput [(ngModel)]="user.email">
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Phone</mat-label>
+        <input matInput [(ngModel)]="user.phone">
+    </mat-form-field>
 
-        <mat-label>Level</mat-label>
+    <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Gender</mat-label>
+        <input matInput [(ngModel)]="user.gender">
+    </mat-form-field>
 
-        <input
-            matInput
-            [(ngModel)]="user.level">
+    <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Date of Birth</mat-label>
+        <input matInput [(ngModel)]="user.dob">
+    </mat-form-field>
 
+    <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Location</mat-label>
+        <input matInput [(ngModel)]="user.location">
+    </mat-form-field>
+
+    <h3>Academic Information</h3>
+
+    <mat-form-field appearance="outline" class="full-width">
+        <mat-label>University</mat-label>
+        <input matInput [(ngModel)]="user.university">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Department</mat-label>
+        <input matInput [(ngModel)]="user.department">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Roll Number</mat-label>
+        <input matInput [(ngModel)]="user.rollNumber">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Year</mat-label>
+        <input matInput [(ngModel)]="user.year">
+    </mat-form-field>
+
+    <h3>Sustainability</h3>
+
+    <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Eco Level</mat-label>
+        <input matInput [(ngModel)]="user.level">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Carbon Saved</mat-label>
+        <input matInput [(ngModel)]="user.carbon">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Current Streak</mat-label>
+        <input matInput [(ngModel)]="user.streak">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Green Score</mat-label>
+        <input matInput [(ngModel)]="user.score">
+    </mat-form-field>
+
+    <h3>Account Information</h3>
+
+    <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Username</mat-label>
+        <input matInput [(ngModel)]="user.username">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Account Status</mat-label>
+        <input matInput [(ngModel)]="user.accountStatus">
     </mat-form-field>
 
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
 
-    <button
-        mat-button
-        (click)="cancel()">
-
+    <button mat-button (click)="cancel()">
         Cancel
-
     </button>
 
     <button
@@ -49,7 +103,7 @@
         color="primary"
         (click)="save()">
 
-        Save
+        Save Profile
 
     </button>
 

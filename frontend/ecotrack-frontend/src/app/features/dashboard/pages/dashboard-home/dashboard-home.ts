@@ -9,6 +9,7 @@ import {
 } from '@angular/core';
 
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { Subscription } from 'rxjs';
 
 import { MatCardModule } from '@angular/material/card';
@@ -32,12 +33,13 @@ import { ProfileWidget } from '../../../../shared/components/profile-widget/prof
 import { AchievementCard } from '../../../../shared/components/achievement-card/achievement-card';
 import { StreakCard } from '../../../../shared/components/streak-card/streak-card';
 import { WeatherCard } from '../../../../shared/components/weather-card/weather-card';
+
 @Component({
   selector: 'app-dashboard-home',
   standalone: true,
-
   imports: [
     CommonModule,
+    RouterModule,
     MatCardModule,
     MatIconModule,
     MatDialogModule,
@@ -55,11 +57,9 @@ import { WeatherCard } from '../../../../shared/components/weather-card/weather-
     WeatherCard,
     ProfileWidget
   ],
-
   templateUrl: './dashboard-home.html',
   styleUrl: './dashboard-home.css'
 })
-
 export class DashboardHome implements OnInit, AfterViewInit, OnDestroy {
 
   private dialog = inject(MatDialog);
@@ -73,7 +73,6 @@ export class DashboardHome implements OnInit, AfterViewInit, OnDestroy {
   chart!: Chart;
 
   stats = [
-
     {
       icon: 'eco',
       title: 'Carbon Saved',
@@ -81,7 +80,6 @@ export class DashboardHome implements OnInit, AfterViewInit, OnDestroy {
       subtitle: 'CO₂ Reduced',
       color: '#2E7D32'
     },
-
     {
       icon: 'directions_walk',
       title: 'Activities',
@@ -89,7 +87,6 @@ export class DashboardHome implements OnInit, AfterViewInit, OnDestroy {
       subtitle: 'Activities Logged',
       color: '#1565C0'
     },
-
     {
       icon: 'emoji_events',
       title: 'Sustainability Score',
@@ -97,7 +94,6 @@ export class DashboardHome implements OnInit, AfterViewInit, OnDestroy {
       subtitle: 'Out of 100',
       color: '#FB8C00'
     },
-
     {
       icon: 'flag',
       title: 'Goals',
@@ -105,7 +101,6 @@ export class DashboardHome implements OnInit, AfterViewInit, OnDestroy {
       subtitle: 'Progress',
       color: '#8E24AA'
     }
-
   ];
 
   ngOnInit(): void {
@@ -115,6 +110,8 @@ export class DashboardHome implements OnInit, AfterViewInit, OnDestroy {
       this.refreshDashboard();
 
     });
+
+    this.refreshDashboard();
 
   }
 
@@ -126,39 +123,45 @@ export class DashboardHome implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnDestroy(): void {
 
-    this.subscription.unsubscribe();
+    if (this.subscription) {
+
+      this.subscription.unsubscribe();
+
+    }
+
+    if (this.chart) {
+
+      this.chart.destroy();
+
+    }
 
   }
 
+  refreshDashboard(): void {
 
- refreshDashboard() {
+    const carbon = this.activityService.getCarbonSaved();
 
-  const carbon = this.activityService.getCarbonSaved();
+    const activities = this.activityService.getActivities().length;
 
-  const activities = this.activityService.getActivities().length;
+    const score = this.activityService.getSustainabilityScore();
 
-  const score = this.activityService.getSustainabilityScore();
+    const goal = this.activityService.getGoalProgress();
 
-  const goal = this.activityService.getGoalProgress();
+    this.stats[0].value = `${carbon.toFixed(1)} kg`;
+    this.stats[1].value = activities.toString();
+    this.stats[2].value = score.toString();
+    this.stats[3].value = `${goal}%`;
 
-  // Show saved values immediately
-  this.stats[0].value = carbon.toFixed(1) + ' kg';
+    this.stats = [...this.stats];
 
-  this.stats[1].value = activities.toString();
+    if (this.chart) {
 
-  this.stats[2].value = score.toString();
+      this.updateChart();
 
-  this.stats[3].value = goal + '%';
-  
-  this.stats=[...this.stats];
-
-  if (this.chart) {
-
-    this.updateChart();
+    }
 
   }
 
-}
   createChart(): void {
 
     this.chart = new Chart(this.carbonChart.nativeElement, {
@@ -209,12 +212,6 @@ export class DashboardHome implements OnInit, AfterViewInit, OnDestroy {
 
         maintainAspectRatio: false,
 
-        animation: {
-
-          duration: 1200
-
-        },
-
         plugins: {
 
           legend: {
@@ -245,12 +242,6 @@ export class DashboardHome implements OnInit, AfterViewInit, OnDestroy {
 
               precision: 0
 
-            },
-
-            grid: {
-
-              color: '#eeeeee'
-
             }
 
           }
@@ -269,15 +260,13 @@ export class DashboardHome implements OnInit, AfterViewInit, OnDestroy {
 
     if (!this.chart) return;
 
-    const activities = this.activityService.getActivities();
-
     const totals = [0, 0, 0, 0, 0, 0, 0];
 
-    activities.forEach(activity => {
+    this.activityService.getActivities().forEach(activity => {
 
-      const d = new Date(activity.date);
+      const date = new Date(activity.date);
 
-      let day = d.getDay();
+      let day = date.getDay();
 
       day = day === 0 ? 6 : day - 1;
 

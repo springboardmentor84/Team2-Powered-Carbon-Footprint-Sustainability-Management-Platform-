@@ -1,73 +1,116 @@
 <mat-card class="card">
 
-    <div class="top">
+  <div class="profile-header">
+
+    <div class="profile-left">
+
+      <div class="profile-image">
 
         <img
-            src="https://ui-avatars.com/api/?name=Harshit+Rai&background=2E7D32&color=fff&size=256"
-            alt="Profile">
+          [src]="user.profileImage"
+          alt="Profile">
 
-        <div>
+        <label
+          class="camera-icon"
+          for="profileUpload">
 
-            <h2>
+          📷
 
-                {{user.name}}
+        </label>
 
-            </h2>
+        <input
+          id="profileUpload"
+          type="file"
+          accept="image/*"
+          hidden
+          (change)="onImageSelected($event)">
 
-            <p>
+      </div>
 
-                {{user.email}}
+      <div>
 
-            </p>
+        <h2>{{user.fullName}}</h2>
 
-            <span class="level">
+        <p>{{user.email}}</p>
 
-                {{user.level}}
+        <span class="level">
 
-            </span>
+          {{user.level}}
 
-        </div>
+        </span>
 
-    </div>
-
-    <div class="stats">
-
-        <div>
-
-            <h3>{{user.carbon}}</h3>
-
-            <span>Carbon Saved</span>
-
-        </div>
-
-        <div>
-
-            <h3>{{user.streak}}</h3>
-
-            <span>Current Streak</span>
-
-        </div>
-
-        <div>
-
-            <h3>{{user.score}}</h3>
-
-            <span>Sustainability</span>
-
-        </div>
+      </div>
 
     </div>
 
-    <p class="member">
+  </div>
 
-        Member since {{user.joined}}
+  <div class="info-grid">
 
-    </p>
+    <div class="info-card">
 
-   <button (click)="editProfile()">
+      <h3>Personal Information</h3>
+
+      <p><strong>Gender:</strong> {{user.gender}}</p>
+
+      <p><strong>Date of Birth:</strong> {{user.dob}}</p>
+
+      <p><strong>Phone:</strong> {{user.phone}}</p>
+
+      <p><strong>Location:</strong> {{user.location}}</p>
+
+    </div>
+
+    <div class="info-card">
+
+      <h3>Academic Information</h3>
+
+      <p><strong>University:</strong> {{user.university}}</p>
+
+      <p><strong>Department:</strong> {{user.department}}</p>
+
+      <p><strong>Roll Number:</strong> {{user.rollNumber}}</p>
+
+      <p><strong>Year:</strong> {{user.year}}</p>
+
+    </div>
+
+    <div class="info-card">
+
+      <h3>Sustainability</h3>
+
+      <p><strong>Carbon Saved:</strong> {{user.carbon}}</p>
+
+      <p><strong>Current Streak:</strong> {{user.streak}}</p>
+
+      <p><strong>Green Score:</strong> {{user.score}}</p>
+
+      <p><strong>Level:</strong> {{user.level}}</p>
+
+    </div>
+
+    <div class="info-card">
+
+      <h3>Account Information</h3>
+
+      <p><strong>Username:</strong> {{user.username}}</p>
+
+      <p><strong>Status:</strong> {{user.accountStatus}}</p>
+
+      <p><strong>Joined:</strong> {{user.joined}}</p>
+
+      <p><strong>Last Login:</strong> {{user.lastLogin}}</p>
+
+    </div>
+
+  </div>
+
+  <button
+    class="edit-btn"
+    (click)="editProfile()">
 
     Edit Profile
 
-</button>
+  </button>
 
 </mat-card>

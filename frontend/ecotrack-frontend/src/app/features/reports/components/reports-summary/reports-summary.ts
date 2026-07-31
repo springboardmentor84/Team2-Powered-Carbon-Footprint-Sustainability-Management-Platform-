@@ -24,37 +24,40 @@ export class ReportsSummary {
 
     const carbon = this.activityService.getCarbonSaved();
 
-    const score = this.activityService.getSustainabilityScore();
+    const totalReports = activities.length > 0 ? 4 : 0;
 
-    const average =
-      activities.length > 0
-        ? (carbon / activities.length).toFixed(1)
-        : '0';
+    const monthlyReports = activities.length > 0 ? 1 : 0;
+
+    const downloads = activities.length > 0 ? 2 : 0;
 
     return [
 
       {
-        title: 'Activities',
-        value: activities.length,
-        color: '#2E7D32'
+        title: 'Total Reports',
+        value: totalReports,
+        icon: '📄',
+        color: '#1565C0'
       },
 
       {
         title: 'Carbon Saved',
         value: carbon.toFixed(1) + ' kg',
-        color: '#43A047'
+        icon: '🌱',
+        color: '#2E7D32'
       },
 
       {
-        title: 'Average',
-        value: average + ' kg',
+        title: 'Monthly Reports',
+        value: monthlyReports,
+        icon: '📊',
         color: '#FB8C00'
       },
 
       {
-        title: 'Score',
-        value: score + '%',
-        color: '#1565C0'
+        title: 'Downloads',
+        value: downloads,
+        icon: '⬇️',
+        color: '#8E24AA'
       }
 
     ];

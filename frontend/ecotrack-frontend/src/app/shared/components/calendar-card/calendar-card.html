@@ -38,8 +38,7 @@
 
     <div class="weekdays">
 
-        <div
-            *ngFor="let day of weekDays">
+        <div *ngFor="let day of weekDays">
 
             {{day}}
 
@@ -51,27 +50,27 @@
 
         <div
 
-            *ngFor="let day of days"
+            *ngFor="let item of calendarDays"
 
             class="day"
 
-            [class.today]="isToday(day)"
+            [class.today]="isToday(item.day)"
 
-            [class.activity-day]="hasActivity(day)"
+            [class.activity-day]="item.hasActivity"
 
-            [class.selected]="selectedDay===day"
+            [class.selected]="selectedDay===item.day"
 
-            (click)="selectDay(day)">
+            (click)="selectDay(item.day)">
 
             <span>
 
-                {{day}}
+                {{item.day}}
 
             </span>
 
             <small
 
-                *ngIf="hasActivity(day)"
+                *ngIf="item.hasActivity"
 
                 class="dot">
 

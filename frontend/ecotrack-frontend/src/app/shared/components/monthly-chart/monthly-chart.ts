@@ -6,18 +6,20 @@ import {
   inject
 } from '@angular/core';
 
-import { Chart } from 'chart.js/auto';
 import { MatCardModule } from '@angular/material/card';
+
+import { Chart } from 'chart.js/auto';
+
 import { ActivityService } from '../../../core/services/activity.service';
+
+import { MonthlyCarbonSummary } from '../../../core/models/dashboard.model';
 
 @Component({
   selector: 'app-monthly-chart',
   standalone: true,
-
   imports: [
     MatCardModule
   ],
-
   templateUrl: './monthly-chart.html',
   styleUrl: './monthly-chart.css'
 })
@@ -36,7 +38,9 @@ export class MonthlyChart implements AfterViewInit {
 
   }
 
-  createChart() {
+  createChart(): void {
+
+    const monthlyData = this.getMonthlySummary();
 
     this.chart = new Chart(this.monthlyChart.nativeElement, {
 
@@ -44,20 +48,7 @@ export class MonthlyChart implements AfterViewInit {
 
       data: {
 
-        labels: [
-          'Jan',
-          'Feb',
-          'Mar',
-          'Apr',
-          'May',
-          'Jun',
-          'Jul',
-          'Aug',
-          'Sep',
-          'Oct',
-          'Nov',
-          'Dec'
-        ],
+        labels: monthlyData.map(item => item.month),
 
         datasets: [
 
@@ -65,7 +56,7 @@ export class MonthlyChart implements AfterViewInit {
 
             label: 'Carbon Saved (kg)',
 
-            data: this.getMonthlyData(),
+            data: monthlyData.map(item => item.carbonSaved),
 
             backgroundColor: '#43A047',
 
@@ -115,13 +106,39 @@ export class MonthlyChart implements AfterViewInit {
 
   }
 
-  getMonthlyData(): number[] {
+  private getMonthlySummary(): MonthlyCarbonSummary[] {
+
+    const months = [
+
+      'Jan',
+
+      'Feb',
+
+      'Mar',
+
+      'Apr',
+
+      'May',
+
+      'Jun',
+
+      'Jul',
+
+      'Aug',
+
+      'Sep',
+
+      'Oct',
+
+      'Nov',
+
+      'Dec'
+
+    ];
 
     const totals = new Array(12).fill(0);
 
-    const list = this.activityService.getActivities();
-
-    list.forEach(activity => {
+    this.activityService.getActivities().forEach(activity => {
 
       const month = new Date(activity.date).getMonth();
 
@@ -129,7 +146,13 @@ export class MonthlyChart implements AfterViewInit {
 
     });
 
-    return totals;
+    return months.map((month, index) => ({
+
+      month,
+
+      carbonSaved: totals[index]
+
+    }));
 
   }
 

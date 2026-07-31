@@ -25,23 +25,47 @@ export class ProfileCard {
 
   user = {
 
-    name: 'Harshit Rai',
+    profileImage: 'https://ui-avatars.com/api/?name=Harshit+Rai&background=2E7D32&color=fff&size=256',
+
+    fullName: 'Harshit Rai',
 
     email: 'harshit23btaml34@gmail.com',
 
-    level: 'Eco Champion',
+    phone: '+91 9876543210',
 
-    joined: 'July 2026',
+    gender: 'Male',
+
+    dob: '15 March 2004',
+
+    location: 'Odisha, India',
+
+    university: 'Sambalpur University Institute of Information Technology',
+
+    department: 'Computer Science & Engineering',
+
+    rollNumber: '23BTAML34',
+
+    year: '3rd Year',
+
+    level: 'Eco Champion',
 
     carbon: '128 kg',
 
     streak: '15 Days',
 
-    score: '86%'
+    score: '86%',
+
+    joined: 'July 2026',
+
+    username: 'harshitrai1602',
+
+    accountStatus: 'Active',
+
+    lastLogin: 'Today'
 
   };
 
-  editProfile() {
+  editProfile(): void {
 
     this.dialog.open(EditProfileDialog, {
 
@@ -51,9 +75,15 @@ export class ProfileCard {
 
     }).afterClosed().subscribe(result => {
 
-      if(result){
+      if (result) {
 
-        this.user = result;
+        this.user = {
+
+          ...this.user,
+
+          ...result
+
+        };
 
         this.snackBar.open(
 
@@ -63,11 +93,11 @@ export class ProfileCard {
 
           {
 
-            duration:3000,
+            duration: 3000,
 
-            horizontalPosition:'right',
+            horizontalPosition: 'right',
 
-            verticalPosition:'top'
+            verticalPosition: 'top'
 
           }
 
@@ -76,6 +106,30 @@ export class ProfileCard {
       }
 
     });
+
+  }
+
+  onImageSelected(event: Event): void {
+
+    const input = event.target as HTMLInputElement;
+
+    if (!input.files || input.files.length === 0) {
+
+      return;
+
+    }
+
+    const file = input.files[0];
+
+    const reader = new FileReader();
+
+    reader.onload = () => {
+
+      this.user.profileImage = reader.result as string;
+
+    };
+
+    reader.readAsDataURL(file);
 
   }
 

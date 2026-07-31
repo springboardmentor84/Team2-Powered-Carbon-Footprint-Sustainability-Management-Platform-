@@ -36,11 +36,11 @@ transform:translateY(0);
 
 display:flex;
 
-justify-content:space-between;
+justify-content:flex-start;
 
 align-items:center;
 
-padding:28px;
+padding:30px;
 
 border-radius:22px;
 
@@ -69,34 +69,6 @@ margin-top:10px;
 font-size:15px;
 
 opacity:.92;
-
-}
-
-.primary-btn{
-
-padding:14px 24px;
-
-border:none;
-
-border-radius:12px;
-
-background:white;
-
-color:#2E7D32;
-
-font-weight:700;
-
-cursor:pointer;
-
-transition:.3s;
-
-}
-
-.primary-btn:hover{
-
-transform:translateY(-4px);
-
-box-shadow:0 8px 20px rgba(0,0,0,.18);
 
 }
 
@@ -132,17 +104,11 @@ padding:18px;
 
 .hero{
 
-flex-direction:column;
-
-gap:20px;
+justify-content:center;
 
 text-align:center;
 
-}
-
-.primary-btn{
-
-width:100%;
+padding:24px;
 
 }
 

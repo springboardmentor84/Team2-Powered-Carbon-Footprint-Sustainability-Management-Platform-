@@ -1,69 +1,57 @@
 <mat-card class="card">
 
-    <div class="header">
+  <div class="header">
 
-        <h2>AI Recommendation</h2>
+    <h2>AI Recommendation</h2>
 
-        <button
-            class="refresh"
-            (click)="refreshRecommendation()">
+    <button
+      class="refresh"
+      (click)="refreshRecommendation()">
 
-            ↻
+      ↻
 
-        </button>
+    </button>
+
+  </div>
+
+  <div class="content">
+
+    <div class="emoji">
+
+      {{ recommendation.icon }}
+
+    </div>
+
+    <div class="details">
+
+      <h3>{{ recommendation.title }}</h3>
+
+      <p>{{ recommendation.text }}</p>
+
+      <div class="saving">
+
+        {{ recommendation.saving }}
+
+      </div>
+
+      <div class="meta">
+
+        <span class="priority">
+
+          {{ recommendation.priority }} Priority
+
+        </span>
+
+        <span class="confidence">
+
+          AI Confidence {{ recommendation.confidence }}%
+
+        </span>
+
+      </div>
 
     </div>
 
-    <div class="content">
-
-        <div class="emoji">
-
-            {{recommendation.icon}}
-
-        </div>
-
-        <div class="details">
-
-            <h3>
-
-                {{recommendation.title}}
-
-            </h3>
-
-            <p>
-
-                {{recommendation.text}}
-
-            </p>
-
-            <div class="saving">
-
-                {{recommendation.saving}}
-
-            </div>
-
-            <div class="meta">
-
-                <span class="priority">
-
-                    {{recommendation.priority}}
-
-                    Priority
-
-                </span>
-
-                <span class="confidence">
-
-                    AI Confidence
-
-                    {{recommendation.confidence}}%
-
-                </span>
-
-            </div>
-
-        </div>
-
-    </div>
+  </div>
 
 </mat-card>

@@ -1,10 +1,10 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatCardModule } from '@angular/material/card';
-import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 
-import { ActivityService } from '../../../core/services/activity.service';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
+import { MatDialog } from '@angular/material/dialog';
 
 import { AddActivityDialog } from '../../../features/activities/components/add-activity-dialog/add-activity-dialog';
 
@@ -13,88 +13,77 @@ import { AddActivityDialog } from '../../../features/activities/components/add-a
   standalone: true,
   imports: [
     CommonModule,
-    MatCardModule
+    MatCardModule,
+    MatIconModule,
+    RouterModule
   ],
   templateUrl: './quick-actions.html',
   styleUrl: './quick-actions.css'
 })
 export class QuickActions {
 
+  private router = inject(Router);
   private dialog = inject(MatDialog);
 
-  private router = inject(Router);
+  actions = [
 
-  private activityService = inject(ActivityService);
+    {
+      title: 'Add Activity',
+      icon: 'add_circle',
+      route: '/dashboard/activities',
+      color: '#2E7D32'
+    },
 
-  addActivity(){
+    {
+      title: 'Reports',
+      icon: 'bar_chart',
+      route: '/dashboard/reports',
+      color: '#1565C0'
+    },
 
-    this.dialog.open(AddActivityDialog,{
-      width:'520px'
-    });
+    {
+      title: 'Goals',
+      icon: 'flag',
+      route: '/dashboard/goals',
+      color: '#FB8C00'
+    },
 
-  }
+    {
+      title: 'Leaderboard',
+      icon: 'emoji_events',
+      route: '/dashboard/leaderboard',
+      color: '#8E24AA'
+    },
 
-  openActivities(){
+    {
+      title: 'Profile',
+      icon: 'person',
+      route: '/dashboard/profile',
+      color: '#00897B'
+    },
 
-    this.router.navigate(['/activities']);
+    {
+      title: 'Settings',
+      icon: 'settings',
+      route: '/dashboard/settings',
+      color: '#546E7A'
+    }
 
-  }
+  ];
 
-  openDashboard(){
+  actionClick(action: any): void {
 
-    this.router.navigate(['/dashboard']);
+    if (action.title === 'Add Activity') {
 
-  }
+      this.dialog.open(AddActivityDialog, {
+        width: '500px'
+      });
 
-  exportCSV(){
-
-    const rows=this.activityService.getActivities();
-
-    let csv='Activity,Category,Carbon Saved,Date,Notes\n';
-
-    rows.forEach(r=>{
-
-      csv+=`${r.title},${r.category},${r.carbon},${r.date},${r.notes}\n`;
-
-    });
-
-    const blob=new Blob([csv],{type:'text/csv'});
-
-    const url=window.URL.createObjectURL(blob);
-
-    const a=document.createElement('a');
-
-    a.href=url;
-
-    a.download='EcoTrack-Activities.csv';
-
-    a.click();
-
-    window.URL.revokeObjectURL(url);
-
-  }
-
-  clearActivities(){
-
-    const ok=confirm('Delete all activities?');
-
-    if(ok){
-
-      this.activityService.clearAllActivities();
+      return;
 
     }
 
-  }
-
-  syncData(){
-
-    alert('Backend API will sync data here.');
-
-  }
-
-  reports(){
-
-    alert('Reports module will be connected with backend.');
+    this.router.navigateByUrl(action.route);
 
   }
 

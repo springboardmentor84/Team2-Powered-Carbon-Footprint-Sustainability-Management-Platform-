@@ -1,1 +1,81 @@
-<p>goals works!</p>
+<div class="page">
+
+  <section class="hero">
+
+    <div>
+
+      <h1>Sustainability Goals</h1>
+
+      <p>
+
+        Track your progress toward your carbon reduction targets.
+
+      </p>
+
+    </div>
+
+  </section>
+
+  <div class="goal-grid">
+
+    <mat-card class="goal-card">
+
+      <h3>Goal Target</h3>
+
+      <div class="number">
+
+        {{target}} kg
+
+      </div>
+
+    </mat-card>
+
+    <mat-card class="goal-card">
+
+      <h3>Carbon Saved</h3>
+
+      <div class="number">
+
+        {{carbonSaved | number:'1.1-1'}} kg
+
+      </div>
+
+    </mat-card>
+
+    <mat-card class="goal-card">
+
+      <h3>Remaining</h3>
+
+      <div class="number">
+
+        {{remaining}} kg
+
+      </div>
+
+    </mat-card>
+
+  </div>
+
+  <mat-card class="progress-card">
+
+    <h2>Overall Goal Progress</h2>
+
+    <div class="progress">
+
+      <div
+        class="fill"
+        [style.width.%]="progress">
+
+      </div>
+
+    </div>
+
+    <p>
+
+      {{progress}}% Completed
+
+    </p>
+
+  </mat-card>
+
+</div>
