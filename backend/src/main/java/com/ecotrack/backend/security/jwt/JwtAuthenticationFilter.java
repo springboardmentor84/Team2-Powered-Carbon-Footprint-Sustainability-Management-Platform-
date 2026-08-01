@@ -39,24 +39,44 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
         
-        jwt = authHeader.substring(7);
-        userEmail = jwtService.extractUsername(jwt);
-        
-        if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
+        try {
+            jwt = authHeader.substring(7);
+            userEmail = jwtService.extractUsername(jwt);
             
-            if (jwtService.isTokenValid(jwt, userDetails)) {
-                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                        userDetails,
-                        null,
-                        userDetails.getAuthorities()
-                );
-                authToken.setDetails(
-                        new WebAuthenticationDetailsSource().buildDetails(request)
-                );
-                SecurityContextHolder.getContext().setAuthentication(authToken);
+            if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
+                
+                if (jwtService.isTokenValid(jwt, userDetails)) {
+                    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                            userDetails,
+                            null,
+                            userDetails.getAuthorities()
+                    );
+                    authToken.setDetails(
+                            new WebAuthenticationDetailsSource().buildDetails(request)
+                    );
+                    SecurityContextHolder.getContext().setAuthentication(authToken);
+                }
             }
+            filterChain.doFilter(request, response);
+        } catch (io.jsonwebtoken.ExpiredJwtException ex) {
+            sendErrorResponse(response, "Token has expired");
+        } catch (io.jsonwebtoken.MalformedJwtException ex) {
+            sendErrorResponse(response, "Invalid JWT token");
+        } catch (io.jsonwebtoken.UnsupportedJwtException ex) {
+            sendErrorResponse(response, "Unsupported JWT token");
+        } catch (io.jsonwebtoken.security.SignatureException ex) {
+            sendErrorResponse(response, "Invalid JWT signature");
+        } catch (IllegalArgumentException ex) {
+            sendErrorResponse(response, "JWT claims string is empty");
+        } catch (Exception ex) {
+            sendErrorResponse(response, "Unauthorized or invalid token");
         }
-        filterChain.doFilter(request, response);
+    }
+
+    private void sendErrorResponse(HttpServletResponse response, String message) throws IOException {
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.setContentType("application/json");
+        response.getWriter().write("{\"error\": \"Unauthorized\", \"message\": \"" + message + "\"}");
     }
 }
