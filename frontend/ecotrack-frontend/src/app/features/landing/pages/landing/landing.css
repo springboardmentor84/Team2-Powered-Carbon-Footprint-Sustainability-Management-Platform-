@@ -2,6 +2,10 @@
    GLOBAL
 ========================== */
 
+html {
+    scroll-behavior: smooth;
+}
+
 *{
     margin:0;
     padding:0;
@@ -30,10 +34,18 @@ body{
 
     box-shadow:0 2px 10px rgba(0,0,0,0.08);
 
-    position:sticky;
+    position:fixed;
     top:0;
+    left:0;
+    right:0;
     z-index:1000;
 
+    transition: box-shadow 0.3s ease;
+
+}
+
+.navbar.scrolled {
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
 }
 
 .logo{
@@ -64,12 +76,30 @@ body{
     color:#555;
     font-weight:500;
     transition:.3s;
+    padding: 6px 14px;
+    border-radius: 6px;
 
 }
 
 .nav-links a:hover{
 
     color:#2E7D32;
+    background-color: rgba(46, 125, 50, 0.1);
+
+}
+
+.nav-links a:active{
+
+    background-color: #2E7D32;
+    color: #fff;
+
+}
+
+.nav-links a.active{
+
+    background-color: #2E7D32;
+    color: #fff;
+    border-radius: 6px;
 
 }
 
@@ -143,6 +173,7 @@ body{
     align-items:center;
 
     padding:80px;
+    padding-top: 150px;
 
     gap:60px;
 

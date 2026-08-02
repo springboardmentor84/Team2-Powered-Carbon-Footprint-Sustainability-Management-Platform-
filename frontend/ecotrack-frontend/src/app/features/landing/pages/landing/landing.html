@@ -1,17 +1,17 @@
 <!-- ================= NAVBAR ================= -->
 
-<header class="navbar">
+<header class="navbar" [class.scrolled]="isScrolled">
 
   <div class="logo">
     🌿 <span>EcoTrack</span>
   </div>
 
   <nav class="nav-links">
-    <a href="#">Home</a>
-    <a href="#">About</a>
-    <a href="#">Features</a>
-    <a href="#">Pricing</a>
-    <a href="#">Contact</a>
+    <a href="#home"     [class.active]="activeLink === 'home'"     (click)="setActive('home')">Home</a>
+    <a href="#features" [class.active]="activeLink === 'features'" (click)="setActive('features')">Features</a>
+    <a href="#pricing"  [class.active]="activeLink === 'pricing'"  (click)="setActive('pricing')">Pricing</a>
+    <a href="#about"    [class.active]="activeLink === 'about'"    (click)="setActive('about')">About</a>
+    <a href="#contact"  [class.active]="activeLink === 'contact'"  (click)="setActive('contact')">Contact</a>
   </nav>
 
   <div class="nav-buttons">
@@ -23,7 +23,7 @@
 
 <!-- ================= HERO SECTION ================= -->
 
-<section class="hero">
+<section class="hero" id="home">
 
   <!-- Left Side -->
 
@@ -50,7 +50,7 @@
         Get Started →
       </button>
 
-      <button class="secondary-btn">
+      <button class="secondary-btn" (click)="scrollTo('features')">
         Learn More
       </button>
 
@@ -125,7 +125,7 @@
 </section>
 <!-- ================= FEATURES SECTION ================= -->
 
-<section class="features">
+<section class="features" id="features">
 
     <div class="section-title">
 
@@ -200,7 +200,7 @@
 
 <!-- ================= STATISTICS ================= -->
 
-<section class="statistics">
+<section class="statistics" id="pricing">
 
     <div class="stat-box">
 
@@ -237,7 +237,7 @@
 </section>
 <!-- ================= WHY CHOOSE US ================= -->
 
-<section class="why-section">
+<section class="why-section" id="about">
 
     <div class="why-left">
 
@@ -388,7 +388,7 @@
 
 <!-- ================= FOOTER ================= -->
 
-<footer class="footer">
+<footer class="footer" id="contact">
 
     <div class="footer-container">
 
@@ -427,13 +427,13 @@
 
         <div class="footer-links">
 
-            <h3>Contact</h3>
+            <h3>Contact EcoTrack</h3>
 
-            <p>Email : support@ecotrack.com</p>
+            <p>📧 support@ecotrack.com</p>
 
-            <p>Phone : +91 9876543210</p>
+            <p>📞 +91 9876543210</p>
 
-            <p>Hyderabad, India</p>
+            <p>📍 Hyderabad, India</p>
 
         </div>
 

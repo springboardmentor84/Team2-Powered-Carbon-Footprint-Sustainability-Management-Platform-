@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { TOKEN_KEY, USER_KEY } from '../constants/app.constants';
 
 export interface LoginRequest {
   email: string;
@@ -48,24 +49,24 @@ export class AuthService {
   }
 
   saveToken(token: string): void {
-    localStorage.setItem('token', token);
+    localStorage.setItem(TOKEN_KEY, token);
   }
 
   getToken(): string | null {
-    return localStorage.getItem('token');
+    return localStorage.getItem(TOKEN_KEY);
   }
 
   saveUser(user: LoginResponse): void {
-    localStorage.setItem('user', JSON.stringify(user));
+    localStorage.setItem(USER_KEY, JSON.stringify(user));
   }
 
   getUser(): LoginResponse | null {
-    const data = localStorage.getItem('user');
+    const data = localStorage.getItem(USER_KEY);
     return data ? JSON.parse(data) : null;
   }
 
   logout(): void {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+    localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem(USER_KEY);
   }
 }
