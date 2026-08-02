@@ -61,6 +61,12 @@ public class User implements UserDetails {
     @Column(length = 255)
     private String profileImage;
 
+    @Column(length = 255, name = "profile_image_public_id")
+    private String profileImagePublicId;
+
+    @Column(columnDefinition = "TEXT")
+    private String preferences;
+
     @Column(nullable = false)
     @Builder.Default
     private Boolean active = true;
@@ -72,6 +78,9 @@ public class User implements UserDetails {
     @UpdateTimestamp
     @Column(nullable = false)
     private LocalDateTime updatedAt;
+
+    @jakarta.persistence.OneToMany(mappedBy = "user", cascade = jakarta.persistence.CascadeType.ALL, fetch = jakarta.persistence.FetchType.LAZY)
+    private List<CarbonEntry> carbonEntries;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

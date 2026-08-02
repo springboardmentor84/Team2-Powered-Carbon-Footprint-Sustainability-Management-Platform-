@@ -1,0 +1,93 @@
+package com.ecotrack.backend.service.impl;
+
+import com.ecotrack.backend.dto.request.UpdatePreferencesRequest;
+import com.ecotrack.backend.dto.request.UpdateProfileRequest;
+import com.ecotrack.backend.dto.response.UserProfileResponse;
+import com.ecotrack.backend.entity.User;
+import com.ecotrack.backend.repository.UserRepository;
+import com.ecotrack.backend.service.interfaces.UserService;
+import com.ecotrack.backend.service.interfaces.CloudinaryService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import java.io.IOException;
+
+@Service
+@RequiredArgsConstructor
+public class UserServiceImpl implements UserService {
+
+    private final UserRepository userRepository;
+    private final CloudinaryService cloudinaryService;
+
+    @Override
+    public UserProfileResponse uploadProfileImage(String email, MultipartFile file) throws IOException {
+        User user = getUserByEmail(email);
+        
+        // Delete old image if it exists
+        if (user.getProfileImagePublicId() != null && !user.getProfileImagePublicId().isEmpty()) {
+            cloudinaryService.deleteImage(user.getProfileImagePublicId());
+        } else if (user.getProfileImage() != null && user.getProfileImage().contains("cloudinary.com")) {
+            // Fallback for old images without publicId stored in DB
+            String secureUrl = user.getProfileImage();
+            String[] urlParts = secureUrl.split("/");
+            String lastPart = urlParts[urlParts.length - 1];
+            String filename = lastPart.contains(".") ? lastPart.substring(0, lastPart.lastIndexOf('.')) : lastPart;
+            cloudinaryService.deleteImage("ecotrack/profiles/" + filename);
+        }
+        
+        // Upload new image
+        java.util.Map<String, String> uploadResult = cloudinaryService.uploadImage(file);
+        
+        user.setProfileImage(uploadResult.get("secure_url"));
+        user.setProfileImagePublicId(uploadResult.get("public_id"));
+        User updatedUser = userRepository.save(user);
+        
+        return mapToUserProfileResponse(updatedUser);
+    }
+
+    @Override
+    public UserProfileResponse getProfile(String email) {
+        User user = getUserByEmail(email);
+        return mapToUserProfileResponse(user);
+    }
+
+    @Override
+    public UserProfileResponse updateProfile(String email, UpdateProfileRequest request) {
+        User user = getUserByEmail(email);
+        
+        user.setFullName(request.getFullName());
+        if (request.getProfileImage() != null) {
+            user.setProfileImage(request.getProfileImage());
+        }
+        
+        User updatedUser = userRepository.save(user);
+        return mapToUserProfileResponse(updatedUser);
+    }
+
+    @Override
+    public UserProfileResponse updatePreferences(String email, UpdatePreferencesRequest request) {
+        User user = getUserByEmail(email);
+        
+        user.setPreferences(request.getPreferences());
+        
+        User updatedUser = userRepository.save(user);
+        return mapToUserProfileResponse(updatedUser);
+    }
+    
+    private User getUserByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
+    }
+    
+    private UserProfileResponse mapToUserProfileResponse(User user) {
+        return UserProfileResponse.builder()
+                .fullName(user.getFullName())
+                .email(user.getEmail())
+                .profileImage(user.getProfileImage())
+                .preferences(user.getPreferences())
+                .ecoPoints(user.getEcoPoints())
+                .role(user.getRole().name())
+                .build();
+    }
+}
