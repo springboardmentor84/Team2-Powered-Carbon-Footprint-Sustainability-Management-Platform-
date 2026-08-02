@@ -11,6 +11,11 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
+import {
+  AuthService,
+  LoginResponse
+} from '../../../../core/services/auth';
+
 @Component({
   selector: 'app-login',
   standalone: true,
@@ -39,7 +44,8 @@ export class Login {
 
   constructor(
     private router: Router,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private authService: AuthService
   ) {}
 
   togglePassword(): void {
@@ -47,38 +53,70 @@ export class Login {
   }
 
   openGoogleAuth(): void {
-    // Backend ready — replace with proper OAuth flow using AuthService
-    window.open('https://accounts.google.com/signin/v2/identifier', '_blank');
+    window.open(
+      'https://accounts.google.com/signin/v2/identifier',
+      '_blank'
+    );
   }
 
   get canSubmit(): boolean {
-    return this.email.trim().length > 0 && this.password.trim().length > 0;
+    return this.email.trim().length > 0 &&
+           this.password.trim().length > 0;
   }
 
   onSubmit(): void {
 
     if (!this.canSubmit) {
-      this.snackBar.open('Please fill in all fields.', 'Close', {
-        duration: 3000,
-        horizontalPosition: 'right',
-        verticalPosition: 'top'
-      });
+      this.snackBar.open(
+        'Please fill in all fields.',
+        'Close',
+        { duration: 3000 }
+      );
       return;
     }
 
     this.isLoading = true;
 
-    // Backend API ready — replace with AuthService.login() call
-    setTimeout(() => {
-      this.isLoading = false;
-      this.snackBar.open('Login Successful! Welcome back.', 'Close', {
-        duration: 3000,
-        horizontalPosition: 'right',
-        verticalPosition: 'top',
-        panelClass: ['snack-success']
-      });
-      this.router.navigate(['/dashboard']);
-    }, 1000);
+    this.authService.login({
+      email: this.email,
+      password: this.password
+    }).subscribe({
+
+      next: (response: LoginResponse) => {
+
+        this.isLoading = false;
+
+        this.authService.saveToken(response.token);
+        this.authService.saveUser(response);
+
+        this.snackBar.open(
+          'Login Successful!',
+          'Close',
+          {
+            duration: 3000,
+            panelClass: ['snack-success']
+          }
+        );
+
+        this.router.navigate(['/dashboard']);
+      },
+
+      error: (err: any) => {
+
+        this.isLoading = false;
+
+        this.snackBar.open(
+          err?.error?.message || 'Invalid email or password',
+          'Close',
+          {
+            duration: 3000,
+            panelClass: ['snack-error']
+          }
+        );
+
+      }
+
+    });
 
   }
 

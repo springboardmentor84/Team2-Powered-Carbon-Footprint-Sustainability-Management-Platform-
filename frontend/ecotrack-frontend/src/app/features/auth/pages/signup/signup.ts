@@ -10,7 +10,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-
+import { AuthService } from '../../../../core/services/auth';
 @Component({
   selector: 'app-signup',
   standalone: true,
@@ -42,7 +42,8 @@ export class Signup {
 
   constructor(
     private router: Router,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private auth: AuthService
   ) {}
 
   togglePassword(): void {
@@ -73,49 +74,81 @@ export class Signup {
     );
   }
 
-  onSubmit(): void {
+ onSubmit(): void {
 
-    if (!this.name.trim() || !this.email.trim() || !this.password || !this.confirmPassword) {
-      this.snackBar.open('Please fill in all fields.', 'Close', {
-        duration: 3000,
-        horizontalPosition: 'right',
-        verticalPosition: 'top'
-      });
-      return;
-    }
-
-    if (this.password !== this.confirmPassword) {
-      this.snackBar.open('Passwords do not match.', 'Close', {
-        duration: 3000,
-        horizontalPosition: 'right',
-        verticalPosition: 'top'
-      });
-      return;
-    }
-
-    if (!this.agreeTerms) {
-      this.snackBar.open('Please accept the terms and conditions.', 'Close', {
-        duration: 3000,
-        horizontalPosition: 'right',
-        verticalPosition: 'top'
-      });
-      return;
-    }
-
-    this.isLoading = true;
-
-    // Backend API ready — replace with AuthService.register() call
-    setTimeout(() => {
-      this.isLoading = false;
-      this.snackBar.open('Account created successfully! Please verify your email.', 'Close', {
-        duration: 4000,
-        horizontalPosition: 'right',
-        verticalPosition: 'top',
-        panelClass: ['snack-success']
-      });
-      this.router.navigate(['/otp']);
-    }, 1200);
-
+  if (!this.name.trim() || !this.email.trim() || !this.password || !this.confirmPassword) {
+    this.snackBar.open('Please fill in all fields.', 'Close', {
+      duration: 3000
+    });
+    return;
   }
+
+  if (this.password !== this.confirmPassword) {
+    this.snackBar.open('Passwords do not match.', 'Close', {
+      duration: 3000
+    });
+    return;
+  }
+
+  if (!this.agreeTerms) {
+    this.snackBar.open('Please accept the Terms.', 'Close', {
+      duration: 3000
+    });
+    return;
+  }
+
+  this.isLoading = true;
+
+  this.auth.register({
+    fullName: this.name,
+    email: this.email,
+    password: this.password
+  }).subscribe({
+
+    next: (response: any) => {
+
+      this.isLoading = false;
+
+      this.snackBar.open(
+        response.message || 'Registration Successful!',
+        'Close',
+        {
+          duration: 3000
+        }
+      );
+
+      this.router.navigate(['/login']);
+
+    },
+
+    error: (error: any) => {
+
+      this.isLoading = false;
+
+      console.error(error);
+
+      if (error.status === 409) {
+
+        this.snackBar.open(
+          'Email already exists.',
+          'Close',
+          { duration: 3000 }
+        );
+
+      } else {
+
+        this.snackBar.open(
+          error.error?.message || 'Registration Failed.',
+          'Close',
+          { duration: 3000 }
+        );
+
+      }
+
+    }
+
+  });
+
+}
 
 }

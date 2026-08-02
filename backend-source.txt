@@ -1,0 +1,1919 @@
+====================================================
+FILE: D:\EcoTrack\backend\.mvn\wrapper\maven-wrapper.properties
+====================================================
+wrapperVersion=3.3.4
+distributionType=only-script
+distributionUrl=https://repo.maven.apache.org/maven2/org/apache/maven/apache-maven/3.9.16/apache-maven-3.9.16-bin.zip
+
+
+====================================================
+FILE: D:\EcoTrack\backend\src\main\java\com\ecotrack\backend\controller\AdminController.java
+====================================================
+package com.ecotrack.backend.controller;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Map;
+
+@RestController
+@RequestMapping("/api/v1/admin")
+@PreAuthorize("hasRole('ADMIN')")
+public class AdminController {
+
+    @GetMapping("/dashboard")
+    public ResponseEntity<Map<String, String>> getAdminDashboard() {
+        return ResponseEntity.ok(Map.of("message", "Welcome to the Admin Dashboard"));
+    }
+
+    @GetMapping("/users")
+    public ResponseEntity<Map<String, String>> manageUsers() {
+        return ResponseEntity.ok(Map.of("message", "Admin endpoint to manage all users"));
+    }
+}
+
+
+====================================================
+FILE: D:\EcoTrack\backend\src\main\java\com\ecotrack\backend\controller\AuthController.java
+====================================================
+package com.ecotrack.backend.controller;
+
+import com.ecotrack.backend.dto.request.LoginRequest;
+import com.ecotrack.backend.dto.request.RegisterRequest;
+import com.ecotrack.backend.dto.response.LoginResponse;
+import com.ecotrack.backend.dto.response.RegisterResponse;
+import com.ecotrack.backend.service.interfaces.AuthService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/api/v1/auth")
+@RequiredArgsConstructor
+public class AuthController {
+
+    private final AuthService authService;
+
+    @PostMapping("/register")
+    public ResponseEntity<RegisterResponse> register(@Valid @RequestBody RegisterRequest request) {
+        RegisterResponse response = authService.register(request);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
+        LoginResponse response = authService.login(request);
+        return ResponseEntity.ok(response);
+    }
+}
+
+
+====================================================
+FILE: D:\EcoTrack\backend\src\main\java\com\ecotrack\backend\controller\BaseController.java
+====================================================
+package com.ecotrack.backend.controller;
+
+/**
+ * Base Controller class for common API logic (e.g., standardizing responses).
+ */
+public abstract class BaseController {
+    // Placeholder: Common response building logic.
+}
+
+
+====================================================
+FILE: D:\EcoTrack\backend\src\main\java\com\ecotrack\backend\controller\UserController.java
+====================================================
+package com.ecotrack.backend.controller;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Map;
+
+@RestController
+@RequestMapping("/api/v1/user")
+public class UserController {
+
+    @GetMapping("/profile")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    public ResponseEntity<Map<String, String>> getUserProfile() {
+        return ResponseEntity.ok(Map.of("message", "Welcome to the User Profile"));
+    }
+
+    @GetMapping("/dashboard")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    public ResponseEntity<Map<String, String>> getUserDashboard() {
+        return ResponseEntity.ok(Map.of("message", "Welcome to the User Dashboard"));
+    }
+}
+
+
+====================================================
+FILE: D:\EcoTrack\backend\src\main\java\com\ecotrack\backend\dto\request\LoginRequest.java
+====================================================
+package com.ecotrack.backend.dto.request;
+
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+public class LoginRequest {
+
+    @NotBlank(message = "Email is required")
+    @Email(message = "Invalid email format")
+    private String email;
+
+    @NotBlank(message = "Password is required")
+    private String password;
+}
+
+
+====================================================
+FILE: D:\EcoTrack\backend\src\main\java\com\ecotrack\backend\dto\request\RegisterRequest.java
+====================================================
+package com.ecotrack.backend.dto.request;
+
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class RegisterRequest {
+
+    @NotBlank
+    @Size(max = 100)
+    private String fullName;
+
+    @NotBlank
+    @Email
+    @Size(max = 255)
+    private String email;
+
+    @NotBlank
+    @Size(min = 8, max = 100)
+    private String password;
+}
+
+
+====================================================
+FILE: D:\EcoTrack\backend\src\main\java\com\ecotrack\backend\dto\response\LoginResponse.java
+====================================================
+package com.ecotrack.backend.dto.response;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+public class LoginResponse {
+
+    private String token;
+    private String tokenType;
+    private long expiresIn;
+    
+    private Long id;
+    private String fullName;
+    private String email;
+    private String role;
+}
+
+
+====================================================
+FILE: D:\EcoTrack\backend\src\main\java\com\ecotrack\backend\dto\response\RegisterResponse.java
+====================================================
+package com.ecotrack.backend.dto.response;
+
+import com.ecotrack.backend.enums.Role;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.time.LocalDateTime;
+
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class RegisterResponse {
+
+    private Long id;
+    
+    private String fullName;
+    
+    private String email;
+    
+    private Role role;
+    
+    private Integer ecoPoints;
+    
+    private Boolean active;
+    
+    private LocalDateTime createdAt;
+}
+
+
+====================================================
+FILE: D:\EcoTrack\backend\src\main\java\com\ecotrack\backend\entity\User.java
+====================================================
+package com.ecotrack.backend.entity;
+import com.ecotrack.backend.enums.Role;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.List;
+@Entity
+@Table(name = "users")
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class User implements UserDetails {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @NotBlank
+    @Column(nullable = false, length = 100)
+    private String fullName;
+
+    @NotBlank
+    @Email
+    @Column(nullable = false, unique = true, length = 100)
+    private String email;
+
+    @NotBlank
+    @Column(nullable = false)
+    private String password;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private Role role;
+
+    @Column(nullable = false)
+    @Builder.Default
+    private Integer ecoPoints = 0;
+
+    @Column(length = 255)
+    private String profileImage;
+
+    @Column(nullable = false)
+    @Builder.Default
+    private Boolean active = true;
+
+    @CreationTimestamp
+    @Column(updatable = false, nullable = false)
+    private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    @Column(nullable = false)
+    private LocalDateTime updatedAt;
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority("ROLE_" + role.name()));
+    }
+
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return active;
+    }
+}
+
+
+====================================================
+FILE: D:\EcoTrack\backend\src\main\java\com\ecotrack\backend\enums\Role.java
+====================================================
+package com.ecotrack.backend.enums;
+
+public enum Role {
+    USER,
+    ADMIN
+}
+
+
+====================================================
+FILE: D:\EcoTrack\backend\src\main\java\com\ecotrack\backend\exception\custom\EmailAlreadyExistsException.java
+====================================================
+package com.ecotrack.backend.exception.custom;
+
+public class EmailAlreadyExistsException extends RuntimeException {
+
+    public EmailAlreadyExistsException(String message) {
+        super(message);
+    }
+}
+
+
+====================================================
+FILE: D:\EcoTrack\backend\src\main\java\com\ecotrack\backend\exception\custom\InvalidCredentialsException.java
+====================================================
+package com.ecotrack.backend.exception.custom;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
+
+@ResponseStatus(HttpStatus.UNAUTHORIZED)
+public class InvalidCredentialsException extends RuntimeException {
+    public InvalidCredentialsException(String message) {
+        super(message);
+    }
+}
+
+
+====================================================
+FILE: D:\EcoTrack\backend\src\main\java\com\ecotrack\backend\exception\handler\GlobalExceptionHandler.java
+====================================================
+package com.ecotrack.backend.exception.handler;
+
+import com.ecotrack.backend.exception.custom.EmailAlreadyExistsException;
+import com.ecotrack.backend.exception.custom.InvalidCredentialsException;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import java.time.LocalDateTime;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+/**
+ * Global Exception Handler to intercept and format exceptions across all controllers.
+ */
+@RestControllerAdvice
+public class GlobalExceptionHandler {
+
+    @ExceptionHandler(EmailAlreadyExistsException.class)
+    public ResponseEntity<Object> handleEmailAlreadyExistsException(
+            EmailAlreadyExistsException ex, HttpServletRequest request) {
+
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("timestamp", LocalDateTime.now());
+        body.put("status", HttpStatus.CONFLICT.value());
+        body.put("error", HttpStatus.CONFLICT.getReasonPhrase());
+        body.put("message", ex.getMessage());
+        body.put("path", request.getRequestURI());
+
+        return new ResponseEntity<>(body, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(InvalidCredentialsException.class)
+    public ResponseEntity<Object> handleInvalidCredentialsException(
+            InvalidCredentialsException ex, HttpServletRequest request) {
+
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("timestamp", LocalDateTime.now());
+        body.put("status", HttpStatus.UNAUTHORIZED.value());
+        body.put("error", HttpStatus.UNAUTHORIZED.getReasonPhrase());
+        body.put("message", ex.getMessage());
+        body.put("path", request.getRequestURI());
+
+        return new ResponseEntity<>(body, HttpStatus.UNAUTHORIZED);
+    }
+}
+
+
+====================================================
+FILE: D:\EcoTrack\backend\src\main\java\com\ecotrack\backend\mapper\UserMapper.java
+====================================================
+package com.ecotrack.backend.mapper;
+
+import com.ecotrack.backend.dto.response.RegisterResponse;
+import com.ecotrack.backend.entity.User;
+import org.springframework.stereotype.Component;
+
+@Component
+public class UserMapper {
+
+    public RegisterResponse toRegisterResponse(User user) {
+        return RegisterResponse.builder()
+                .id(user.getId())
+                .fullName(user.getFullName())
+                .email(user.getEmail())
+                .role(user.getRole())
+                .ecoPoints(user.getEcoPoints())
+                .active(user.getActive())
+                .createdAt(user.getCreatedAt())
+                .build();
+    }
+}
+
+
+====================================================
+FILE: D:\EcoTrack\backend\src\main\java\com\ecotrack\backend\repository\UserRepository.java
+====================================================
+package com.ecotrack.backend.repository;
+
+import com.ecotrack.backend.entity.User;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.Optional;
+
+@Repository
+public interface UserRepository extends JpaRepository<User, Long> {
+
+    Optional<User> findByEmail(String email);
+
+    boolean existsByEmail(String email);
+}
+
+
+====================================================
+FILE: D:\EcoTrack\backend\src\main\java\com\ecotrack\backend\security\config\PasswordConfig.java
+====================================================
+package com.ecotrack.backend.security.config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
+@Configuration
+public class PasswordConfig {
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+}
+
+
+====================================================
+FILE: D:\EcoTrack\backend\src\main\java\com\ecotrack\backend\security\config\SecurityConfig.java
+====================================================
+package com.ecotrack.backend.security.config;
+
+import com.ecotrack.backend.security.jwt.JwtAuthenticationFilter;
+import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import jakarta.servlet.http.HttpServletResponse;
+
+@Configuration
+@EnableWebSecurity
+@EnableMethodSecurity
+@RequiredArgsConstructor
+public class SecurityConfig {
+
+    private final JwtAuthenticationFilter jwtAuthFilter;
+    private final UserDetailsService userDetailsService;
+    private final PasswordEncoder passwordEncoder;
+
+    @Bean
+    public AuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider(userDetailsService);
+        authProvider.setPasswordEncoder(passwordEncoder);
+        return authProvider;
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+        return config.getAuthenticationManager();
+    }
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+                .csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/v1/auth/**", "/actuator/**").permitAll()
+                        .anyRequest().authenticated()
+                )
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
+                .exceptionHandling(exceptions -> exceptions
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                            response.setContentType("application/json");
+                            response.getWriter().write("{\"error\": \"Unauthorized\", \"message\": \"" + authException.getMessage() + "\"}");
+                        })
+                        .accessDeniedHandler((request, response, accessDeniedException) -> {
+                            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                            response.setContentType("application/json");
+                            response.getWriter().write("{\"error\": \"Forbidden\", \"message\": \"" + accessDeniedException.getMessage() + "\"}");
+                        })
+                )
+                .authenticationProvider(authenticationProvider())
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+
+        return http.build();
+    }
+}
+
+
+====================================================
+FILE: D:\EcoTrack\backend\src\main\java\com\ecotrack\backend\security\jwt\JwtAuthenticationFilter.java
+====================================================
+package com.ecotrack.backend.security.jwt;
+
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
+import org.springframework.lang.NonNull;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
+
+import java.io.IOException;
+
+@Component
+@RequiredArgsConstructor
+public class JwtAuthenticationFilter extends OncePerRequestFilter {
+
+    private final JwtService jwtService;
+    private final UserDetailsService userDetailsService;
+
+    @Override
+    protected void doFilterInternal(
+            @NonNull HttpServletRequest request,
+            @NonNull HttpServletResponse response,
+            @NonNull FilterChain filterChain
+    ) throws ServletException, IOException {
+        
+        final String authHeader = request.getHeader("Authorization");
+        final String jwt;
+        final String userEmail;
+        
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+        
+        jwt = authHeader.substring(7);
+        userEmail = jwtService.extractUsername(jwt);
+        
+        if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
+            
+            if (jwtService.isTokenValid(jwt, userDetails)) {
+                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                        userDetails,
+                        null,
+                        userDetails.getAuthorities()
+                );
+                authToken.setDetails(
+                        new WebAuthenticationDetailsSource().buildDetails(request)
+                );
+                SecurityContextHolder.getContext().setAuthentication(authToken);
+            }
+        }
+        filterChain.doFilter(request, response);
+    }
+}
+
+
+====================================================
+FILE: D:\EcoTrack\backend\src\main\java\com\ecotrack\backend\security\jwt\JwtService.java
+====================================================
+package com.ecotrack.backend.security.jwt;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Service;
+
+import java.security.Key;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Function;
+
+@Service
+public class JwtService {
+
+    @Value("${security.jwt.secret-key}")
+    private String secretKey;
+
+    @Value("${security.jwt.expiration-time}")
+    private long jwtExpiration;
+
+    public String extractUsername(String token) {
+        return extractClaim(token, Claims::getSubject);
+    }
+
+    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
+        final Claims claims = extractAllClaims(token);
+        return claimsResolver.apply(claims);
+    }
+
+    public String generateToken(UserDetails userDetails) {
+        return generateToken(new HashMap<>(), userDetails);
+    }
+
+    public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
+        return buildToken(extraClaims, userDetails, jwtExpiration);
+    }
+
+    private String buildToken(Map<String, Object> extraClaims, UserDetails userDetails, long expiration) {
+        return Jwts
+                .builder()
+                .setClaims(extraClaims)
+                .setSubject(userDetails.getUsername())
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + expiration))
+                .signWith(getSignInKey(), SignatureAlgorithm.HS256)
+                .compact();
+    }
+
+    public boolean isTokenValid(String token, UserDetails userDetails) {
+        final String username = extractUsername(token);
+        return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
+    }
+
+    private boolean isTokenExpired(String token) {
+        return extractExpiration(token).before(new Date());
+    }
+
+    private Date extractExpiration(String token) {
+        return extractClaim(token, Claims::getExpiration);
+    }
+
+    private Claims extractAllClaims(String token) {
+        return Jwts
+                .parserBuilder()
+                .setSigningKey(getSignInKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+    }
+
+    private Key getSignInKey() {
+        byte[] keyBytes = Decoders.BASE64.decode(secretKey);
+        return Keys.hmacShaKeyFor(keyBytes);
+    }
+}
+
+
+====================================================
+FILE: D:\EcoTrack\backend\src\main\java\com\ecotrack\backend\security\service\CustomUserDetailsService.java
+====================================================
+package com.ecotrack.backend.security.service;
+
+import com.ecotrack.backend.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
+public class CustomUserDetailsService implements UserDetailsService {
+
+    private final UserRepository userRepository;
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return userRepository.findByEmail(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + username));
+    }
+}
+
+
+====================================================
+FILE: D:\EcoTrack\backend\src\main\java\com\ecotrack\backend\service\impl\AuthServiceImpl.java
+====================================================
+package com.ecotrack.backend.service.impl;
+
+import com.ecotrack.backend.dto.request.LoginRequest;
+import com.ecotrack.backend.dto.request.RegisterRequest;
+import com.ecotrack.backend.dto.response.LoginResponse;
+import com.ecotrack.backend.dto.response.RegisterResponse;
+import com.ecotrack.backend.entity.User;
+import com.ecotrack.backend.enums.Role;
+import com.ecotrack.backend.repository.UserRepository;
+import com.ecotrack.backend.service.interfaces.AuthService;
+import com.ecotrack.backend.exception.custom.EmailAlreadyExistsException;
+import com.ecotrack.backend.exception.custom.InvalidCredentialsException;
+import com.ecotrack.backend.security.jwt.JwtService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
+public class AuthServiceImpl implements AuthService {
+
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
+
+    @Value("${security.jwt.expiration-time}")
+    private long jwtExpiration;
+
+    @Override
+    public RegisterResponse register(RegisterRequest request) {
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new EmailAlreadyExistsException("Email already exists");
+        }
+
+        User user = User.builder()
+                .fullName(request.getFullName())
+                .email(request.getEmail())
+                .password(passwordEncoder.encode(request.getPassword()))
+                .role(Role.USER)
+                .ecoPoints(0)
+                .active(true)
+                .build();
+
+        User savedUser = userRepository.save(user);
+
+        return RegisterResponse.builder()
+                .id(savedUser.getId())
+                .fullName(savedUser.getFullName())
+                .email(savedUser.getEmail())
+                .role(savedUser.getRole())
+                .ecoPoints(savedUser.getEcoPoints())
+                .active(savedUser.getActive())
+                .createdAt(savedUser.getCreatedAt())
+                .build();
+    }
+
+    @Override
+    public LoginResponse login(LoginRequest request) {
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new InvalidCredentialsException("Invalid email or password"));
+
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            throw new InvalidCredentialsException("Invalid email or password");
+        }
+
+        String jwtToken = jwtService.generateToken(user);
+
+        return LoginResponse.builder()
+                .token(jwtToken)
+                .tokenType("Bearer")
+                .expiresIn(jwtExpiration)
+                .id(user.getId())
+                .fullName(user.getFullName())
+                .email(user.getEmail())
+                .role(user.getRole().name())
+                .build();
+    }
+}
+
+
+====================================================
+FILE: D:\EcoTrack\backend\src\main\java\com\ecotrack\backend\service\interfaces\AuthService.java
+====================================================
+package com.ecotrack.backend.service.interfaces;
+
+import com.ecotrack.backend.dto.request.LoginRequest;
+import com.ecotrack.backend.dto.request.RegisterRequest;
+import com.ecotrack.backend.dto.response.LoginResponse;
+import com.ecotrack.backend.dto.response.RegisterResponse;
+
+public interface AuthService {
+
+    RegisterResponse register(RegisterRequest request);
+    
+    LoginResponse login(LoginRequest request);
+}
+
+
+====================================================
+FILE: D:\EcoTrack\backend\src\main\java\com\ecotrack\backend\EcotrackBackendApplication.java
+====================================================
+package com.ecotrack.backend;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class EcotrackBackendApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(EcotrackBackendApplication.class, args);
+	}
+
+}
+
+
+====================================================
+FILE: D:\EcoTrack\backend\src\main\resources\application.properties
+====================================================
+spring.application.name=ecotrack-backend
+
+spring.datasource.url=jdbc:postgresql://localhost:5432/ecotrack
+spring.datasource.username=fahadfurquan
+spring.datasource.password=
+
+spring.datasource.driver-class-name=org.postgresql.Driver
+
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.format_sql=true
+
+server.port=8080
+
+# JWT Configuration (86400000 = 24 hours in ms)
+security.jwt.secret-key=404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+security.jwt.expiration-time=86400000
+
+
+====================================================
+FILE: D:\EcoTrack\backend\src\test\java\com\ecotrack\backend\EcotrackBackendApplicationTests.java
+====================================================
+package com.ecotrack.backend;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+
+@SpringBootTest
+class EcotrackBackendApplicationTests {
+
+	@Test
+	void contextLoads() {
+	}
+
+}
+
+
+====================================================
+FILE: D:\EcoTrack\backend\target\classes\application.properties
+====================================================
+spring.application.name=ecotrack-backend
+
+spring.datasource.url=jdbc:postgresql://localhost:5432/ecotrack
+spring.datasource.username=fahadfurquan
+spring.datasource.password=
+
+spring.datasource.driver-class-name=org.postgresql.Driver
+
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.format_sql=true
+
+server.port=8080
+
+# JWT Configuration (86400000 = 24 hours in ms)
+security.jwt.secret-key=404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+security.jwt.expiration-time=86400000
+
+
+====================================================
+FILE: D:\EcoTrack\backend\pom.xml
+====================================================
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>4.1.0</version>
+		<relativePath/> <!-- lookup parent from repository -->
+	</parent>
+	<groupId>com.ecotrack</groupId>
+	<artifactId>ecotrack-backend</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name/>
+	<description/>
+	<url/>
+	<licenses>
+		<license/>
+	</licenses>
+	<developers>
+		<developer/>
+	</developers>
+	<scm>
+		<connection/>
+		<developerConnection/>
+		<tag/>
+		<url/>
+	</scm>
+	<properties>
+		<java.version>21</java.version>
+		<spring-boot-admin.version>4.1.2</spring-boot-admin.version>
+	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-validation</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-webmvc</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>de.codecentric</groupId>
+			<artifactId>spring-boot-admin-starter-server</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-devtools</artifactId>
+			<scope>runtime</scope>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-validation-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-webmvc-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<!-- JWT dependencies -->
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-api</artifactId>
+			<version>0.11.5</version>
+		</dependency>
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-impl</artifactId>
+			<version>0.11.5</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-jackson</artifactId>
+			<version>0.11.5</version>
+			<scope>runtime</scope>
+		</dependency>
+	</dependencies>
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>de.codecentric</groupId>
+				<artifactId>spring-boot-admin-dependencies</artifactId>
+				<version>${spring-boot-admin.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<excludes>
+						<exclude>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+						</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>default-compile</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>compile</goal>
+						</goals>
+						<configuration>
+							<annotationProcessorPaths>
+								<path>
+									<groupId>org.projectlombok</groupId>
+									<artifactId>lombok</artifactId>
+								</path>
+							</annotationProcessorPaths>
+						</configuration>
+					</execution>
+					<execution>
+						<id>default-testCompile</id>
+						<phase>test-compile</phase>
+						<goals>
+							<goal>testCompile</goal>
+						</goals>
+						<configuration>
+							<annotationProcessorPaths>
+								<path>
+									<groupId>org.projectlombok</groupId>
+									<artifactId>lombok</artifactId>
+								</path>
+							</annotationProcessorPaths>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>
+
+
+====================================================
+FILE: D:\EcoTrack\frontend\ecotrack-frontend\node_modules\aos\.travis.yml
+====================================================
+language: node_js
+sudo: false
+node_js:
+- '8'
+
+env:
+  global:
+
+before_install:
+- export CHROME_BIN=chromium-browser
+- export DISPLAY=:99.0
+- sh -e /etc/init.d/xvfb start
+
+install:
+- npm config set registry http://registry.npmjs.org/
+- npm install -g karma
+- npm install
+
+cache:
+  directories:
+  - "$HOME/.nvm"
+
+
+====================================================
+FILE: D:\EcoTrack\frontend\ecotrack-frontend\node_modules\call-bind-apply-helpers\.github\FUNDING.yml
+====================================================
+# These are supported funding model platforms
+
+github: [ljharb]
+patreon: # Replace with a single Patreon username
+open_collective: # Replace with a single Open Collective username
+ko_fi: # Replace with a single Ko-fi username
+tidelift: npm/call-bind-apply-helpers
+community_bridge: # Replace with a single Community Bridge project-name e.g., cloud-foundry
+liberapay: # Replace with a single Liberapay username
+issuehunt: # Replace with a single IssueHunt username
+otechie: # Replace with a single Otechie username
+custom: # Replace with up to 4 custom sponsorship URLs e.g., ['link1', 'link2']
+
+
+====================================================
+FILE: D:\EcoTrack\frontend\ecotrack-frontend\node_modules\call-bound\.github\FUNDING.yml
+====================================================
+# These are supported funding model platforms
+
+github: [ljharb]
+patreon: # Replace with a single Patreon username
+open_collective: # Replace with a single Open Collective username
+ko_fi: # Replace with a single Ko-fi username
+tidelift: npm/call-bound
+community_bridge: # Replace with a single Community Bridge project-name e.g., cloud-foundry
+liberapay: # Replace with a single Liberapay username
+issuehunt: # Replace with a single IssueHunt username
+otechie: # Replace with a single Otechie username
+custom: # Replace with up to 4 custom sponsorship URLs e.g., ['link1', 'link2']
+
+
+====================================================
+FILE: D:\EcoTrack\frontend\ecotrack-frontend\node_modules\classlist-polyfill\.travis.yml
+====================================================
+script: script/test
+language: node_js
+node_js:
+- '0.10'
+
+
+====================================================
+FILE: D:\EcoTrack\frontend\ecotrack-frontend\node_modules\dunder-proto\.github\FUNDING.yml
+====================================================
+# These are supported funding model platforms
+
+github: [ljharb]
+patreon: # Replace with a single Patreon username
+open_collective: # Replace with a single Open Collective username
+ko_fi: # Replace with a single Ko-fi username
+tidelift: npm/dunder-proto
+community_bridge: # Replace with a single Community Bridge project-name e.g., cloud-foundry
+liberapay: # Replace with a single Liberapay username
+issuehunt: # Replace with a single IssueHunt username
+otechie: # Replace with a single Otechie username
+custom: # Replace with up to 4 custom sponsorship URLs e.g., ['link1', 'link2']
+
+
+====================================================
+FILE: D:\EcoTrack\frontend\ecotrack-frontend\node_modules\es-define-property\.github\FUNDING.yml
+====================================================
+# These are supported funding model platforms
+
+github: [ljharb]
+patreon: # Replace with a single Patreon username
+open_collective: # Replace with a single Open Collective username
+ko_fi: # Replace with a single Ko-fi username
+tidelift: npm/es-define-property
+community_bridge: # Replace with a single Community Bridge project-name e.g., cloud-foundry
+liberapay: # Replace with a single Liberapay username
+issuehunt: # Replace with a single IssueHunt username
+otechie: # Replace with a single Otechie username
+custom: # Replace with a single custom sponsorship URL
+
+
+====================================================
+FILE: D:\EcoTrack\frontend\ecotrack-frontend\node_modules\es-errors\.github\FUNDING.yml
+====================================================
+# These are supported funding model platforms
+
+github: [ljharb]
+patreon: # Replace with a single Patreon username
+open_collective: # Replace with a single Open Collective username
+ko_fi: # Replace with a single Ko-fi username
+tidelift: npm/es-errors
+community_bridge: # Replace with a single Community Bridge project-name e.g., cloud-foundry
+liberapay: # Replace with a single Liberapay username
+issuehunt: # Replace with a single IssueHunt username
+otechie: # Replace with a single Otechie username
+custom: # Replace with a single custom sponsorship URL
+
+
+====================================================
+FILE: D:\EcoTrack\frontend\ecotrack-frontend\node_modules\es-object-atoms\.github\FUNDING.yml
+====================================================
+# These are supported funding model platforms
+
+github: [ljharb]
+patreon: # Replace with a single Patreon username
+open_collective: # Replace with a single Open Collective username
+ko_fi: # Replace with a single Ko-fi username
+tidelift: npm/es-object
+community_bridge: # Replace with a single Community Bridge project-name e.g., cloud-foundry
+liberapay: # Replace with a single Liberapay username
+issuehunt: # Replace with a single IssueHunt username
+otechie: # Replace with a single Otechie username
+custom: # Replace with a single custom sponsorship URL
+
+
+====================================================
+FILE: D:\EcoTrack\frontend\ecotrack-frontend\node_modules\fast-uri\.github\workflows\ci.yml
+====================================================
+name: CI
+
+on:
+  push:
+    branches:
+     - main
+     - next
+     - 'v*'
+    paths-ignore:
+      - 'docs/**'
+      - '*.md'
+  pull_request:
+    paths-ignore:
+      - 'docs/**'
+      - '*.md'
+
+# This allows a subsequently queued workflow run to interrupt previous runs
+concurrency:
+    group: "${{ github.workflow }}-${{ github.event.pull_request.head.label || github.head_ref || github.ref }}"
+    cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  test-regression-check-node10:
+    name: Test compatibility with Node.js 10
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '10'
+          cache: 'npm'
+          cache-dependency-path: package.json
+          check-latest: true
+
+      - name: Install
+        run: |
+          npm install --ignore-scripts
+
+      - name: Copy project as fast-uri to node_node_modules
+        run: |
+          rm -rf ./node_modules/fast-uri/lib &&
+          rm -rf ./node_modules/fast-uri/index.js &&
+          cp -r ./lib ./node_modules/fast-uri/lib &&
+          cp ./index.js ./node_modules/fast-uri/index.js
+
+      - name: Run tests
+        run: |
+          npm run test:unit
+        env:
+          NODE_OPTIONS: no-network-family-autoselection
+
+  test-browser:
+    name: Test browser compatibility
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ['ubuntu-latest', 'windows-latest', 'macos-latest']
+        browser: ['chromium', 'firefox', 'webkit']
+        exclude:
+          - os: ubuntu-latest
+            browser: webkit
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: 'npm'
+          cache-dependency-path: package.json
+          check-latest: true
+
+      - name: Install dependencies
+        run: |
+          npm install --ignore-scripts
+
+      - if: ${{ matrix.os == 'windows-latest' }}
+        run: npx playwright install winldd
+
+      - name: Run browser tests
+        run: |
+          npm run test:browser:${{ matrix.browser }}
+
+  test:
+    needs:
+      - test-regression-check-node10
+    permissions:
+      contents: write
+      pull-requests: write
+    uses: fastify/workflows/.github/workflows/plugins-ci.yml@v6
+    with:
+      license-check: true
+      lint: true
+      node-versions: '["16", "18", "20", "22", "24"]'
+
+
+====================================================
+FILE: D:\EcoTrack\frontend\ecotrack-frontend\node_modules\fast-uri\.github\workflows\lock-threads.yml
+====================================================
+name: Lock Threads
+
+on:
+  schedule:
+    - cron: '0 0 1 * *'
+  workflow_dispatch:
+
+concurrency:
+  group: lock
+
+permissions:
+  contents: read
+
+jobs:
+  lock-threads:
+    permissions:
+      issues: write
+      pull-requests: write
+    uses: fastify/workflows/.github/workflows/lock-threads.yml@v6
+
+
+====================================================
+FILE: D:\EcoTrack\frontend\ecotrack-frontend\node_modules\fast-uri\.github\workflows\package-manager-ci.yml
+====================================================
+name: package-manager-ci
+
+on:
+  push:
+    branches:
+     - main
+     - next
+     - 'v*'
+    paths-ignore:
+      - 'docs/**'
+      - '*.md'
+  pull_request:
+    paths-ignore:
+      - 'docs/**'
+      - '*.md'
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    permissions:
+      contents: read
+    uses: fastify/workflows/.github/workflows/plugins-ci-package-manager.yml@v6
+
+
+====================================================
+FILE: D:\EcoTrack\frontend\ecotrack-frontend\node_modules\fast-uri\.github\dependabot.yml
+====================================================
+version: 2
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    open-pull-requests-limit: 10
+
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    open-pull-requests-limit: 10
+
+
+====================================================
+FILE: D:\EcoTrack\frontend\ecotrack-frontend\node_modules\function-bind\.github\FUNDING.yml
+====================================================
+# These are supported funding model platforms
+
+github: [ljharb]
+patreon: # Replace with a single Patreon username
+open_collective: # Replace with a single Open Collective username
+ko_fi: # Replace with a single Ko-fi username
+tidelift: npm/function-bind
+community_bridge: # Replace with a single Community Bridge project-name e.g., cloud-foundry
+liberapay: # Replace with a single Liberapay username
+issuehunt: # Replace with a single IssueHunt username
+otechie: # Replace with a single Otechie username
+custom: # Replace with up to 4 custom sponsorship URLs e.g., ['link1', 'link2']
+
+
+====================================================
+FILE: D:\EcoTrack\frontend\ecotrack-frontend\node_modules\get-intrinsic\.github\FUNDING.yml
+====================================================
+# These are supported funding model platforms
+
+github: [ljharb]
+patreon: # Replace with a single Patreon username
+open_collective: # Replace with a single Open Collective username
+ko_fi: # Replace with a single Ko-fi username
+tidelift: npm/get-intrinsic
+community_bridge: # Replace with a single Community Bridge project-name e.g., cloud-foundry
+liberapay: # Replace with a single Liberapay username
+issuehunt: # Replace with a single IssueHunt username
+otechie: # Replace with a single Otechie username
+custom: # Replace with up to 4 custom sponsorship URLs e.g., ['link1', 'link2']
+
+
+====================================================
+FILE: D:\EcoTrack\frontend\ecotrack-frontend\node_modules\get-proto\.github\FUNDING.yml
+====================================================
+# These are supported funding model platforms
+
+github: [ljharb]
+patreon: # Replace with a single Patreon username
+open_collective: # Replace with a single Open Collective username
+ko_fi: # Replace with a single Ko-fi username
+tidelift: npm/get-proto
+community_bridge: # Replace with a single Community Bridge project-name e.g., cloud-foundry
+liberapay: # Replace with a single Liberapay username
+issuehunt: # Replace with a single IssueHunt username
+otechie: # Replace with a single Otechie username
+custom: # Replace with up to 4 custom sponsorship URLs e.g., ['link1', 'link2']
+
+
+====================================================
+FILE: D:\EcoTrack\frontend\ecotrack-frontend\node_modules\glob-to-regexp\.travis.yml
+====================================================
+language: node_js
+node_js:
+  - 0.8
+  - "0.10"
+
+
+====================================================
+FILE: D:\EcoTrack\frontend\ecotrack-frontend\node_modules\gopd\.github\FUNDING.yml
+====================================================
+# These are supported funding model platforms
+
+github: [ljharb]
+patreon: # Replace with a single Patreon username
+open_collective: # Replace with a single Open Collective username
+ko_fi: # Replace with a single Ko-fi username
+tidelift: npm/gopd
+community_bridge: # Replace with a single Community Bridge project-name e.g., cloud-foundry
+liberapay: # Replace with a single Liberapay username
+issuehunt: # Replace with a single IssueHunt username
+otechie: # Replace with a single Otechie username
+custom: # Replace with up to 4 custom sponsorship URLs e.g., ['link1', 'link2']
+
+
+====================================================
+FILE: D:\EcoTrack\frontend\ecotrack-frontend\node_modules\has-symbols\.github\FUNDING.yml
+====================================================
+# These are supported funding model platforms
+
+github: [ljharb]
+patreon: # Replace with a single Patreon username
+open_collective: # Replace with a single Open Collective username
+ko_fi: # Replace with a single Ko-fi username
+tidelift: npm/has-symbols
+community_bridge: # Replace with a single Community Bridge project-name e.g., cloud-foundry
+liberapay: # Replace with a single Liberapay username
+issuehunt: # Replace with a single IssueHunt username
+otechie: # Replace with a single Otechie username
+custom: # Replace with up to 4 custom sponsorship URLs e.g., ['link1', 'link2']
+
+
+====================================================
+FILE: D:\EcoTrack\frontend\ecotrack-frontend\node_modules\hasown\.github\FUNDING.yml
+====================================================
+# These are supported funding model platforms
+
+github: [ljharb]
+patreon: # Replace with a single Patreon username
+open_collective: # Replace with a single Open Collective username
+ko_fi: # Replace with a single Ko-fi username
+tidelift: npm/hasown
+community_bridge: # Replace with a single Community Bridge project-name e.g., cloud-foundry
+liberapay: # Replace with a single Liberapay username
+issuehunt: # Replace with a single IssueHunt username
+otechie: # Replace with a single Otechie username
+custom: # Replace with a single custom sponsorship URL
+
+
+====================================================
+FILE: D:\EcoTrack\frontend\ecotrack-frontend\node_modules\json-schema-traverse\.github\workflows\build.yml
+====================================================
+name: build
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: ["*"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [10.x, 12.x, 14.x]
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: npm install
+      - run: npm test
+      - name: Coveralls
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+
+====================================================
+FILE: D:\EcoTrack\frontend\ecotrack-frontend\node_modules\json-schema-traverse\.github\workflows\publish.yml
+====================================================
+name: publish
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  publish-npm:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 14
+          registry-url: https://registry.npmjs.org/
+      - run: npm install
+      - run: npm test
+      - name: Publish beta version to npm
+        if: "github.event.release.prerelease"
+        run: npm publish --tag beta
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Publish to npm
+        if: "!github.event.release.prerelease"
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+
+====================================================
+FILE: D:\EcoTrack\frontend\ecotrack-frontend\node_modules\json-schema-traverse\.github\FUNDING.yml
+====================================================
+github: epoberezkin
+tidelift: "npm/json-schema-traverse"
+
+
+====================================================
+FILE: D:\EcoTrack\frontend\ecotrack-frontend\node_modules\json-schema-traverse\spec\.eslintrc.yml
+====================================================
+parserOptions:
+  ecmaVersion: 6
+globals:
+  beforeEach: false
+  describe: false
+  it: false
+
+
+====================================================
+FILE: D:\EcoTrack\frontend\ecotrack-frontend\node_modules\json-schema-traverse\.eslintrc.yml
+====================================================
+extends: eslint:recommended
+env:
+  node: true
+  browser: true
+rules:
+  block-scoped-var: 2
+  complexity: [2, 15]
+  curly: [2, multi-or-nest, consistent]
+  dot-location: [2, property]
+  dot-notation: 2
+  indent: [2, 2, SwitchCase: 1]
+  linebreak-style: [2, unix]
+  new-cap: 2
+  no-console: [2, allow: [warn, error]]
+  no-else-return: 2
+  no-eq-null: 2
+  no-fallthrough: 2
+  no-invalid-this: 2
+  no-return-assign: 2
+  no-shadow: 1
+  no-trailing-spaces: 2
+  no-use-before-define: [2, nofunc]
+  quotes: [2, single, avoid-escape]
+  semi: [2, always]
+  strict: [2, global]
+  valid-jsdoc: [2, requireReturn: false]
+  no-control-regex: 0
+
+
+====================================================
+FILE: D:\EcoTrack\frontend\ecotrack-frontend\node_modules\math-intrinsics\.github\FUNDING.yml
+====================================================
+# These are supported funding model platforms
+
+github: [ljharb]
+patreon: # Replace with a single Patreon username
+open_collective: # Replace with a single Open Collective username
+ko_fi: # Replace with a single Ko-fi username
+tidelift: npm/math-intrinsics
+community_bridge: # Replace with a single Community Bridge project-name e.g., cloud-foundry
+liberapay: # Replace with a single Liberapay username
+issuehunt: # Replace with a single IssueHunt username
+otechie: # Replace with a single Otechie username
+custom: # Replace with a single custom sponsorship URL
+
+
+====================================================
+FILE: D:\EcoTrack\frontend\ecotrack-frontend\node_modules\object-inspect\.github\FUNDING.yml
+====================================================
+# These are supported funding model platforms
+
+github: [ljharb]
+patreon: # Replace with a single Patreon username
+open_collective: # Replace with a single Open Collective username
+ko_fi: # Replace with a single Ko-fi username
+tidelift: npm/object-inspect
+community_bridge: # Replace with a single Community Bridge project-name e.g., cloud-foundry
+liberapay: # Replace with a single Liberapay username
+issuehunt: # Replace with a single IssueHunt username
+otechie: # Replace with a single Otechie username
+custom: # Replace with up to 4 custom sponsorship URLs e.g., ['link1', 'link2']
+
+
+====================================================
+FILE: D:\EcoTrack\frontend\ecotrack-frontend\node_modules\ordered-binary\.idea\modules.xml
+====================================================
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/ordered-binary.iml" filepath="$PROJECT_DIR$/.idea/ordered-binary.iml" />
+    </modules>
+  </component>
+</project>
+
+
+====================================================
+FILE: D:\EcoTrack\frontend\ecotrack-frontend\node_modules\qs\.github\FUNDING.yml
+====================================================
+# These are supported funding model platforms
+
+github: [ljharb]
+patreon: # Replace with a single Patreon username
+open_collective: # Replace with a single Open Collective username
+ko_fi: # Replace with a single Ko-fi username
+tidelift: npm/qs
+community_bridge: # Replace with a single Community Bridge project-name e.g., cloud-foundry
+liberapay: # Replace with a single Liberapay username
+issuehunt: # Replace with a single IssueHunt username
+otechie: # Replace with a single Otechie username
+custom: # Replace with a single custom sponsorship URL
+
+
+====================================================
+FILE: D:\EcoTrack\frontend\ecotrack-frontend\node_modules\rfdc\.github\workflows\ci.yml
+====================================================
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        node-version: [8.x, 10.x, 12.x, 14.x, 16.x, 18.x, 20.x, 22.x]
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    - run: npm install
+    - run: npm run ci
+
+
+====================================================
+FILE: D:\EcoTrack\frontend\ecotrack-frontend\node_modules\side-channel\.github\FUNDING.yml
+====================================================
+# These are supported funding model platforms
+
+github: [ljharb]
+patreon: # Replace with a single Patreon username
+open_collective: # Replace with a single Open Collective username
+ko_fi: # Replace with a single Ko-fi username
+tidelift: npm/side-channel
+community_bridge: # Replace with a single Community Bridge project-name e.g., cloud-foundry
+liberapay: # Replace with a single Liberapay username
+issuehunt: # Replace with a single IssueHunt username
+otechie: # Replace with a single Otechie username
+custom: # Replace with up to 4 custom sponsorship URLs e.g., ['link1', 'link2']
+
+
+====================================================
+FILE: D:\EcoTrack\frontend\ecotrack-frontend\node_modules\side-channel-list\.github\FUNDING.yml
+====================================================
+# These are supported funding model platforms
+
+github: [ljharb]
+patreon: # Replace with a single Patreon username
+open_collective: # Replace with a single Open Collective username
+ko_fi: # Replace with a single Ko-fi username
+tidelift: npm/side-channel-list
+community_bridge: # Replace with a single Community Bridge project-name e.g., cloud-foundry
+liberapay: # Replace with a single Liberapay username
+issuehunt: # Replace with a single IssueHunt username
+otechie: # Replace with a single Otechie username
+custom: # Replace with up to 4 custom sponsorship URLs e.g., ['link1', 'link2']
+
+
+====================================================
+FILE: D:\EcoTrack\frontend\ecotrack-frontend\node_modules\side-channel-map\.github\FUNDING.yml
+====================================================
+# These are supported funding model platforms
+
+github: [ljharb]
+patreon: # Replace with a single Patreon username
+open_collective: # Replace with a single Open Collective username
+ko_fi: # Replace with a single Ko-fi username
+tidelift: npm/side-channel-map
+community_bridge: # Replace with a single Community Bridge project-name e.g., cloud-foundry
+liberapay: # Replace with a single Liberapay username
+issuehunt: # Replace with a single IssueHunt username
+otechie: # Replace with a single Otechie username
+custom: # Replace with up to 4 custom sponsorship URLs e.g., ['link1', 'link2']
+
+
+====================================================
+FILE: D:\EcoTrack\frontend\ecotrack-frontend\node_modules\side-channel-weakmap\.github\FUNDING.yml
+====================================================
+# These are supported funding model platforms
+
+github: [ljharb]
+patreon: # Replace with a single Patreon username
+open_collective: # Replace with a single Open Collective username
+ko_fi: # Replace with a single Ko-fi username
+tidelift: npm/side-channel-weakmap
+community_bridge: # Replace with a single Community Bridge project-name e.g., cloud-foundry
+liberapay: # Replace with a single Liberapay username
+issuehunt: # Replace with a single IssueHunt username
+otechie: # Replace with a single Otechie username
+custom: # Replace with up to 4 custom sponsorship URLs e.g., ['link1', 'link2']
+
+
+====================================================
+FILE: D:\EcoTrack\frontend\ecotrack-frontend\node_modules\siginfo\.travis.yml
+====================================================
+notifications:
+  email: false
+language: node_js
+node_js:
+- node
+deploy:
+  provider: npm
+  email:
+    secure: Y10Dvn9UbfpZPbulnl/e7dsiN/1xr06h7k6nJZyxRzr9Hh0UUFPism6k5CFaSegyPIF7sODNBQz4lvXIi2NwcvTLQruw5ehXW0NJ/G7x1TU94pzzhVJ31KBlRWzjKdvVTDsDzFxe5wKWxagPUTkieiIN9CWTQjafByNs3zbK8HL7cmu4Nc42JquVGbtpGgLs7Js+tY+WVB1dMQ4SfqpFgWjm2h05uyXCWHLK5amEAZJLP755lOVgMzw/jQGRg7J4vX4+eRE0r/g0v09x9FUU3ROEmJvqYa14CmGESRhSUyRlv4pnMIs/aK8ZDD8ia3eoTSvMJv8mzdvpkvKzWV1HSZFUX3QZVgWJEmeoF6XP+mdkWu5gnZVlOIBc8NANcS60Dr8QwF470xpPxsyAyf2o9UzX8Xy2qO8XNY/TykGO4soCfOEuVNdw5F9hHEldMHY8p9Z8EJSCn/xfM//LEvxRKREYsMqFtsnwUsv+qiAkHPSHXWQo6HYp+/xDchv63NxtjGHdPs9VpUFr1F8CxZjdis2HZfOnx51W0JIwNYlXNxeqC3WjRUqvRp2NknS982lRHCkHtZfHijGvMm7kj3QL+Ufc7pIfEGnMAKKiNv9kOryjQc29046pRZww9lWjrhoCeEPRhFbkgFV7Mo3bvOExstsSdRnOTlogCe4NviKOwfE=
+  api_key:
+    secure: cAmf8extX/sPl+sxC/6sWTmaiSGrXQY9C/lLg9c76Qn12MLysxDYgCRXfl8Az3RIbRuajq0SbyWXeDa/4wZc1PazuUGjZG82na+kuEDg8m5z0gLiJlhp60C0nj3WMJaRBRsOha1Jbs59eU3XNy+H0U5VczHrdw6v2yCHTlauhT/NYiPXMyKmTIJPB/X7gryFuXVhCPNdRBp3rPicbt0d68J+vWv9KNpjA1WB0WDUSl5rMUQbjjsRF2/DKj9WxXjmci+ac+/pCN3rQxgYZ0Ot5o5/RcWucc21ZdFgsLo8dq5YZDl/EQf/pPmkhquiiLRhiTyCBbEw1sDzYHTbTJThrukrZALg0on7XvxbXSQrxgc/IMJ/RT0PoGLEqyAZUSzGa6HPVlHUBt4LB3zgrswGmGUVkZmbiag0foIFeCKlydwEyBYfnFdRddxF6n3irft1l1NJ1HKNxKLnKvyt8iaOlGteXOOfLXzU17DgMgwTsZsvFmtFQcs6yolLHW9RnRTLf56+x/kJZ4kVJjHuyb/98pS4F7etJ2SpZqt1cVUFd/AYtnxL3jKiUhJLNL8hNUIH3eSpMfZUOUxGv1OWuwgyEhSONkITF2VPn4yuyxS23Ewq4LLj/u/9sPlLaGSN4Avaw21gi6L+M9x620sTZHYtNLniVMTAu6aPiM32zPreK2I=
+  on:
+    tags: true
+
+
+====================================================
+FILE: D:\EcoTrack\frontend\ecotrack-frontend\node_modules\smart-buffer\.prettierrc.yaml
+====================================================
+parser: typescript
+printWidth: 120
+tabWidth: 2
+singleQuote: true
+trailingComma: none
+
+
+====================================================
+FILE: D:\EcoTrack\frontend\ecotrack-frontend\node_modules\smart-buffer\.travis.yml
+====================================================
+language: node_js
+node_js:
+  - 6
+  - 8
+  - 10
+  - 12
+  - stable
+
+before_script:
+  - npm install -g typescript
+  - tsc -p ./
+
+script: "npm run coveralls"
+
+
+====================================================
+FILE: D:\EcoTrack\frontend\ecotrack-frontend\node_modules\socks\.prettierrc.yaml
+====================================================
+parser: typescript
+printWidth: 80
+tabWidth: 2
+singleQuote: true
+trailingComma: all
+arrowParens: always
+bracketSpacing: false
+
+
+====================================================
+FILE: D:\EcoTrack\frontend\ecotrack-frontend\node_modules\stackback\.travis.yml
+====================================================
+language: node_js
+node_js:
+    - 0.6
+    - 0.8
+
+
+====================================================
+FILE: D:\EcoTrack\frontend\ecotrack-frontend\node_modules\why-is-node-running\.github\FUNDING.yml
+====================================================
+github: mafintosh
+
+
+====================================================
+FILE: D:\EcoTrack\frontend\ecotrack-frontend\node_modules\zod-to-json-schema\.github\FUNDING.yml
+====================================================
+github: [StefanTerdell]
+
+
