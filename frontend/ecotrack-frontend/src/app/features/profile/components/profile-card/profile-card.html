@@ -12,9 +12,10 @@
 
         <label
           class="camera-icon"
-          for="profileUpload">
+          for="profileUpload"
+          [title]="isUploading ? 'Uploading...' : 'Change photo'">
 
-          📷
+          {{ isUploading ? '...' : '📷' }}
 
         </label>
 
