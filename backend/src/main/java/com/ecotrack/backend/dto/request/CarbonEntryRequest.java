@@ -27,8 +27,4 @@ public class CarbonEntryRequest {
 
     @NotBlank(message = "Unit is required")
     private String unit;
-
-    // Temporary: Accept carbonEmission directly from the user for this phase.
-    @NotNull(message = "Carbon emission is required")
-    private Double carbonEmission;
 }

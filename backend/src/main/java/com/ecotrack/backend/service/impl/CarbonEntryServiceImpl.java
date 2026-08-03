@@ -21,10 +21,17 @@ public class CarbonEntryServiceImpl implements CarbonEntryService {
 
     private final CarbonEntryRepository carbonEntryRepository;
     private final UserRepository userRepository;
+    private final com.ecotrack.backend.service.interfaces.CarbonCalculationService carbonCalculationService;
 
     @Override
     public CarbonEntryResponse createCarbonEntry(String email, CarbonEntryRequest request) {
         User user = getUserByEmail(email);
+
+        Double calculatedEmission = carbonCalculationService.calculateEmission(
+                request.getCategory(), 
+                request.getActivity(), 
+                request.getQuantity()
+        );
 
         CarbonEntry entry = CarbonEntry.builder()
                 .user(user)
@@ -32,7 +39,7 @@ public class CarbonEntryServiceImpl implements CarbonEntryService {
                 .activity(request.getActivity())
                 .quantity(request.getQuantity())
                 .unit(request.getUnit())
-                .carbonEmission(request.getCarbonEmission())
+                .carbonEmission(calculatedEmission)
                 .build();
 
         CarbonEntry savedEntry = carbonEntryRepository.save(entry);
@@ -58,12 +65,17 @@ public class CarbonEntryServiceImpl implements CarbonEntryService {
     public CarbonEntryResponse updateCarbonEntry(String email, Long id, CarbonEntryRequest request) {
         CarbonEntry entry = getEntryByIdAndValidateUser(email, id);
 
+        Double calculatedEmission = carbonCalculationService.calculateEmission(
+                request.getCategory(), 
+                request.getActivity(), 
+                request.getQuantity()
+        );
+
         entry.setCategory(request.getCategory());
         entry.setActivity(request.getActivity());
         entry.setQuantity(request.getQuantity());
         entry.setUnit(request.getUnit());
-        entry.setCarbonEmission(request.getCarbonEmission());
-
+        entry.setCarbonEmission(calculatedEmission);
         CarbonEntry updatedEntry = carbonEntryRepository.save(entry);
         return mapToResponse(updatedEntry);
     }
