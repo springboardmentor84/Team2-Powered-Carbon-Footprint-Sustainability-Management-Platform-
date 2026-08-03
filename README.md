@@ -49,37 +49,6 @@ cd Team2-Powered-Carbon-Footprint-Sustainability-Management-Platform-
 
 ---
 
-### 3. Configure application.properties
-
-Navigate to `backend/src/main/resources/application.properties` and update with your local credentials:
-
-```properties
-spring.application.name=ecotrack-backend
-
-spring.datasource.url=jdbc:postgresql://localhost:5432/ecotrack
-spring.datasource.username=YOUR_POSTGRES_USERNAME
-spring.datasource.password=YOUR_POSTGRES_PASSWORD
-
-spring.datasource.driver-class-name=org.postgresql.Driver
-
-spring.jpa.hibernate.ddl-auto=update
-spring.jpa.show-sql=true
-spring.jpa.properties.hibernate.format_sql=true
-
-server.port=8080
-
-# JWT Configuration (86400000 = 24 hours in ms)
-security.jwt.secret-key=404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
-security.jwt.expiration-time=86400000
-
-# Cloudinary Configuration
-cloudinary.cloud-name=ddszr1sdv
-cloudinary.api-key=439172672988712
-cloudinary.api-secret=ivDQR-Ao72Mc0TQV1ObcyktN4RA
-```
-
----
-
 ### 4. Run the Backend
 
 Navigate to the `backend` folder and run:
@@ -90,12 +59,9 @@ Navigate to the `backend` folder and run:
 
 The backend will start at: **http://localhost:8080**
 
-You should see:
-```
-Started EcotrackBackendApplication in X seconds
-```
 
----
+
+
 
 ## API Endpoints
 
@@ -185,8 +151,7 @@ Frontend runs at: **http://localhost:4200**
 
 ## Team
 
-Team 2 — Springboard Mentorship Program
-
+Team 2 — Powered_Carbon_Footprint_Sustainablity_Management
 ---
 
 ## Notes
