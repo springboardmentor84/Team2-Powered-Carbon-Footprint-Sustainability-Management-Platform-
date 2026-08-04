@@ -37,25 +37,38 @@ public class CloudinaryServiceImpl implements CloudinaryService {
         }
         
         // Generate a unique filename using UUID to prevent collisions
-        String publicId = UUID.randomUUID().toString();
+        String publicId = "ecotrack/profiles/" + UUID.randomUUID().toString();
         
-        log.info("Uploading new image. Generated base public_id: {}", publicId);
-        Map uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap(
-                "public_id", publicId,
-                "folder", "ecotrack/profiles"
-        ));
+        log.info("Uploading image...");
+        log.info("Generated base public_id: {}", publicId);
         
-        log.info("Cloudinary upload response public_id: {}", uploadResult.get("public_id"));
+        Map uploadResult;
+        try {
+            uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap(
+                    "public_id", publicId
+            ));
+        } catch (Exception e) {
+            log.error("Cloudinary upload failed", e);
+            throw new IOException("Cloudinary upload failed: " + e.getMessage(), e);
+        }
+        
+        log.info("Upload response...");
+        
+        String secureUrl = uploadResult.get("secure_url").toString();
+        String storedPublicId = uploadResult.get("public_id").toString();
+        
+        log.info("Stored URL: {}", secureUrl);
+        log.info("Stored Public ID: {}", storedPublicId);
         
         return Map.of(
-            "secure_url", uploadResult.get("secure_url").toString(),
-            "public_id", uploadResult.get("public_id").toString()
+            "secure_url", secureUrl,
+            "public_id", storedPublicId
         );
     }
 
     @Override
     public void deleteImage(String publicId) {
-        log.info("Attempting to delete image with publicId: '{}'", publicId);
+        log.info("Deleting old image...");
         if (publicId == null || publicId.isEmpty()) {
             log.info("publicId is null or empty, skipping deletion");
             return;
@@ -63,6 +76,7 @@ public class CloudinaryServiceImpl implements CloudinaryService {
         
         try {
             Map result = cloudinary.uploader().destroy(publicId, ObjectUtils.asMap("invalidate", true));
+            log.info("Destroy response...");
             log.info("Cloudinary destroy result for '{}': {}", publicId, result);
         } catch (Exception e) {
             log.error("Failed to delete image from Cloudinary: {}", publicId, e);

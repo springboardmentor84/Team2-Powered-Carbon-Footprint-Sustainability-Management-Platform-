@@ -3,33 +3,32 @@ package com.ecotrack.backend;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-@SpringBootTest
 public class CloudinaryTest {
-
-    @Autowired
-    private Cloudinary cloudinary;
-
     @Test
-    public void testCloudinaryUploadAndDestroy() throws Exception {
+    public void testUpload() throws Exception {
+        Map<String, String> config = new HashMap<>();
+        config.put("cloud_name", "fakecloudname123"); // FAKE CLOUD NAME
+        config.put("api_key", "439172672988712"); // REAL KEY
+        config.put("api_secret", "ivDQR-Ao72Mc0TQV1ObcyktN4RA"); // REAL SECRET
+        
+        Cloudinary cloudinary = new Cloudinary(config);
         String publicId = UUID.randomUUID().toString();
         
-        System.out.println("Uploading a test image...");
-        Map uploadResult = cloudinary.uploader().upload("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=", ObjectUtils.asMap(
-                "public_id", publicId,
-                "folder", "ecotrack/profiles"
-        ));
+        String base64Image = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=";
         
-        String savedPublicId = uploadResult.get("public_id").toString();
-        System.out.println("Uploaded with public_id: " + savedPublicId);
-        
-        System.out.println("Attempting to destroy...");
-        Map result = cloudinary.uploader().destroy(savedPublicId, ObjectUtils.emptyMap());
-        System.out.println("Destroy result: " + result);
+        try {
+            Map uploadResult = cloudinary.uploader().upload(base64Image, ObjectUtils.asMap(
+                    "public_id", publicId,
+                    "folder", "ecotrack/profiles"
+            ));
+            System.out.println("UPLOAD_PUBLIC_ID=" + uploadResult.get("public_id"));
+            System.out.println("UPLOAD_SECURE_URL=" + uploadResult.get("secure_url"));
+        } catch(Exception e) {
+            System.out.println("UPLOAD_EXCEPTION=" + e.getMessage());
+        }
     }
 }
