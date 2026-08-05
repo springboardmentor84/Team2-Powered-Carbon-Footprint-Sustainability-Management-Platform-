@@ -13,8 +13,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
@@ -25,6 +28,7 @@ public class UserServiceImpl implements UserService {
         User user = getUserByEmail(email);
         
         // Delete old image if it exists
+        log.info("Checking for previous image to delete for user: {}", email);
         if (user.getProfileImagePublicId() != null && !user.getProfileImagePublicId().isEmpty()) {
             cloudinaryService.deleteImage(user.getProfileImagePublicId());
         } else if (user.getProfileImage() != null && user.getProfileImage().contains("cloudinary.com")) {
@@ -37,11 +41,16 @@ public class UserServiceImpl implements UserService {
         }
         
         // Upload new image
+        log.info("Starting upload of new profile image...");
         java.util.Map<String, String> uploadResult = cloudinaryService.uploadImage(file);
+        log.info("New image uploaded successfully. Updating user record.");
         
         user.setProfileImage(uploadResult.get("secure_url"));
         user.setProfileImagePublicId(uploadResult.get("public_id"));
+        
+        log.info("Saving updated profile to PostgreSQL... URL: {}, Public ID: {}", user.getProfileImage(), user.getProfileImagePublicId());
         User updatedUser = userRepository.save(user);
+        log.info("Successfully updated profile image in PostgreSQL.");
         
         return mapToUserProfileResponse(updatedUser);
     }

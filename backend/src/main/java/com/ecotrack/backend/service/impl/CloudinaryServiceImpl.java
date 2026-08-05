@@ -36,29 +36,41 @@ public class CloudinaryServiceImpl implements CloudinaryService {
             throw new IllegalArgumentException("Invalid file type. Only JPG, JPEG, PNG, and WEBP are allowed.");
         }
         
-        // Generate a unique filename using UUID to prevent collisions
-        String publicId = "ecotrack/profiles/" + UUID.randomUUID().toString();
+        String uuid = UUID.randomUUID().toString();
         
         log.info("Uploading image...");
-        log.info("Generated base public_id: {}", publicId);
+        log.info("Original Filename: {}", file.getOriginalFilename());
+        log.info("File Size: {} bytes", file.getSize());
+        log.info("Generated UUID for public_id: {}", uuid);
         
         Map uploadResult;
         try {
-            uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap(
-                    "public_id", publicId
-            ));
+            Map<String, Object> uploadParams = ObjectUtils.asMap(
+                    "folder", "ecotrack/profiles",
+                    "public_id", uuid,
+                    "resource_type", "image"
+            );
+            log.info("Upload options: {}", uploadParams);
+            uploadResult = cloudinary.uploader().upload(file.getBytes(), uploadParams);
         } catch (Exception e) {
             log.error("Cloudinary upload failed", e);
             throw new IOException("Cloudinary upload failed: " + e.getMessage(), e);
         }
         
-        log.info("Upload response...");
+        log.info("Upload response... COMPLETE map: {}", uploadResult);
         
-        String secureUrl = uploadResult.get("secure_url").toString();
-        String storedPublicId = uploadResult.get("public_id").toString();
+        String secureUrl = uploadResult.get("secure_url") != null ? uploadResult.get("secure_url").toString() : null;
+        String storedPublicId = uploadResult.get("public_id") != null ? uploadResult.get("public_id").toString() : null;
+        String assetId = uploadResult.get("asset_id") != null ? uploadResult.get("asset_id").toString() : null;
+        String version = uploadResult.get("version") != null ? uploadResult.get("version").toString() : null;
+        String resourceType = uploadResult.get("resource_type") != null ? uploadResult.get("resource_type").toString() : null;
         
-        log.info("Stored URL: {}", secureUrl);
-        log.info("Stored Public ID: {}", storedPublicId);
+        log.info("Parsed Cloudinary Metadata:");
+        log.info("Returned secure_url... {}", secureUrl);
+        log.info("Returned public_id... {}", storedPublicId);
+        log.info("Returned asset_id... {}", assetId);
+        log.info("Returned version... {}", version);
+        log.info("Returned resource_type... {}", resourceType);
         
         return Map.of(
             "secure_url", secureUrl,

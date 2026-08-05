@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import com.ecotrack.backend.service.interfaces.RewardService;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,8 +24,10 @@ public class CarbonEntryServiceImpl implements CarbonEntryService {
     private final CarbonEntryRepository carbonEntryRepository;
     private final UserRepository userRepository;
     private final com.ecotrack.backend.service.interfaces.CarbonCalculationService carbonCalculationService;
+    private final RewardService rewardService;
 
     @Override
+    @Transactional
     public CarbonEntryResponse createCarbonEntry(String email, CarbonEntryRequest request) {
         User user = getUserByEmail(email);
 
@@ -43,6 +47,10 @@ public class CarbonEntryServiceImpl implements CarbonEntryService {
                 .build();
 
         CarbonEntry savedEntry = carbonEntryRepository.save(entry);
+        
+        // Phase 5.1: Calculate and award eco points automatically
+        rewardService.processRewardForCarbonEntry(savedEntry);
+        
         return mapToResponse(savedEntry);
     }
 
