@@ -82,6 +82,15 @@ public class User implements UserDetails {
     @jakarta.persistence.OneToMany(mappedBy = "user", cascade = jakarta.persistence.CascadeType.ALL, fetch = jakarta.persistence.FetchType.LAZY)
     private List<CarbonEntry> carbonEntries;
 
+    @jakarta.persistence.ManyToMany(cascade = {jakarta.persistence.CascadeType.PERSIST, jakarta.persistence.CascadeType.MERGE})
+    @jakarta.persistence.JoinTable(
+            name = "user_badges",
+            joinColumns = @jakarta.persistence.JoinColumn(name = "user_id"),
+            inverseJoinColumns = @jakarta.persistence.JoinColumn(name = "badge_id")
+    )
+    @Builder.Default
+    private List<Badge> badges = new java.util.ArrayList<>();
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("ROLE_" + role.name()));

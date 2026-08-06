@@ -8,6 +8,7 @@ import com.ecotrack.backend.entity.User;
 import com.ecotrack.backend.repository.RewardTransactionRepository;
 import com.ecotrack.backend.repository.UserRepository;
 import com.ecotrack.backend.service.interfaces.RewardService;
+import com.ecotrack.backend.service.interfaces.BadgeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ public class RewardServiceImpl implements RewardService {
 
     private final RewardTransactionRepository rewardTransactionRepository;
     private final UserRepository userRepository;
+    private final BadgeService badgeService;
 
     @Override
     public List<RewardTransactionResponse> getRewardHistory(String email) {
@@ -61,6 +63,8 @@ public class RewardServiceImpl implements RewardService {
                 
         rewardTransactionRepository.save(transaction);
         userRepository.save(user);
+        
+        badgeService.checkAndUnlockBadges(user);
     }
 
     private int calculatePointsForActivity(String activity) {
