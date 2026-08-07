@@ -4,8 +4,10 @@ import com.ecotrack.backend.dto.response.BadgeResponse;
 import com.ecotrack.backend.entity.Badge;
 import com.ecotrack.backend.entity.User;
 import com.ecotrack.backend.repository.BadgeRepository;
+import com.ecotrack.backend.repository.NotificationRepository;
 import com.ecotrack.backend.repository.UserRepository;
 import com.ecotrack.backend.service.interfaces.BadgeService;
+import com.ecotrack.backend.service.interfaces.NotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -22,6 +24,8 @@ public class BadgeServiceImpl implements BadgeService {
 
     private final BadgeRepository badgeRepository;
     private final UserRepository userRepository;
+    private final NotificationService notificationService;
+    private final NotificationRepository notificationRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -56,6 +60,12 @@ public class BadgeServiceImpl implements BadgeService {
                     user.getBadges().add(badge);
                     unlockedNewBadge = true;
                     log.info("User {} unlocked badge: {}", user.getEmail(), badge.getName());
+
+                    String title = "Badge Unlocked";
+                    String message = "Congratulations! You unlocked the '" + badge.getName() + "' badge.";
+                    if (!notificationRepository.existsByUserAndTitleAndMessage(user, title, message)) {
+                        notificationService.createNotification(user, title, message);
+                    }
                 }
             }
         }

@@ -5,10 +5,12 @@ import com.ecotrack.backend.dto.response.RewardTransactionResponse;
 import com.ecotrack.backend.entity.CarbonEntry;
 import com.ecotrack.backend.entity.RewardTransaction;
 import com.ecotrack.backend.entity.User;
+import com.ecotrack.backend.repository.NotificationRepository;
 import com.ecotrack.backend.repository.RewardTransactionRepository;
 import com.ecotrack.backend.repository.UserRepository;
 import com.ecotrack.backend.service.interfaces.RewardService;
 import com.ecotrack.backend.service.interfaces.BadgeService;
+import com.ecotrack.backend.service.interfaces.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -23,6 +25,8 @@ public class RewardServiceImpl implements RewardService {
     private final RewardTransactionRepository rewardTransactionRepository;
     private final UserRepository userRepository;
     private final BadgeService badgeService;
+    private final NotificationService notificationService;
+    private final NotificationRepository notificationRepository;
 
     @Override
     public List<RewardTransactionResponse> getRewardHistory(String email) {
@@ -65,6 +69,22 @@ public class RewardServiceImpl implements RewardService {
         userRepository.save(user);
         
         badgeService.checkAndUnlockBadges(user);
+        checkAndNotifyMilestones(user);
+    }
+    
+    private void checkAndNotifyMilestones(User user) {
+        int[] milestones = {100, 250, 500, 1000};
+        int currentPoints = user.getEcoPoints();
+        
+        for (int milestone : milestones) {
+            if (currentPoints >= milestone) {
+                String title = "Eco Point Milestone";
+                String message = "You reached " + milestone + " Eco Points. Keep going!";
+                if (!notificationRepository.existsByUserAndTitleAndMessage(user, title, message)) {
+                    notificationService.createNotification(user, title, message);
+                }
+            }
+        }
     }
 
     private int calculatePointsForActivity(String activity) {

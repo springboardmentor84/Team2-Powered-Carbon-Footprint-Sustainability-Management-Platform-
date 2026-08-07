@@ -7,9 +7,11 @@ import com.ecotrack.backend.entity.User;
 import com.ecotrack.backend.enums.GoalStatus;
 import com.ecotrack.backend.exception.custom.ResourceNotFoundException;
 import com.ecotrack.backend.repository.GoalRepository;
+import com.ecotrack.backend.repository.NotificationRepository;
 import com.ecotrack.backend.repository.UserRepository;
 import com.ecotrack.backend.repository.CarbonEntryRepository;
 import com.ecotrack.backend.service.interfaces.GoalService;
+import com.ecotrack.backend.service.interfaces.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -28,6 +30,8 @@ public class GoalServiceImpl implements GoalService {
     private final GoalRepository goalRepository;
     private final UserRepository userRepository;
     private final CarbonEntryRepository carbonEntryRepository;
+    private final NotificationService notificationService;
+    private final NotificationRepository notificationRepository;
 
     @Override
     @Transactional
@@ -136,6 +140,14 @@ public class GoalServiceImpl implements GoalService {
         if (shouldSave) {
             goal.setUpdatedAt(LocalDateTime.now());
             goalRepository.save(goal);
+            
+            if (currentStatus != GoalStatus.COMPLETED && newStatus == GoalStatus.COMPLETED) {
+                String title = "Goal Completed";
+                String message = "Congratulations! You successfully completed your goal '" + goal.getTitle() + "'.";
+                if (!notificationRepository.existsByUserAndTitleAndMessage(user, title, message)) {
+                    notificationService.createNotification(user, title, message);
+                }
+            }
         }
 
         return com.ecotrack.backend.dto.response.GoalProgressResponse.builder()

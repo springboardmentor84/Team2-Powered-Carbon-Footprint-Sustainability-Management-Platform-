@@ -58,20 +58,27 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     SecurityContextHolder.getContext().setAuthentication(authToken);
                 }
             }
-            filterChain.doFilter(request, response);
         } catch (io.jsonwebtoken.ExpiredJwtException ex) {
             sendErrorResponse(response, "Token has expired");
+            return;
         } catch (io.jsonwebtoken.MalformedJwtException ex) {
             sendErrorResponse(response, "Invalid JWT token");
+            return;
         } catch (io.jsonwebtoken.UnsupportedJwtException ex) {
             sendErrorResponse(response, "Unsupported JWT token");
+            return;
         } catch (io.jsonwebtoken.security.SignatureException ex) {
             sendErrorResponse(response, "Invalid JWT signature");
+            return;
         } catch (IllegalArgumentException ex) {
             sendErrorResponse(response, "JWT claims string is empty");
+            return;
         } catch (Exception ex) {
             sendErrorResponse(response, "Unauthorized or invalid token");
+            return;
         }
+
+        filterChain.doFilter(request, response);
     }
 
     private void sendErrorResponse(HttpServletResponse response, String message) throws IOException {
