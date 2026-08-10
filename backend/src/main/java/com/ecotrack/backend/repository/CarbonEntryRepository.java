@@ -31,4 +31,6 @@ public interface CarbonEntryRepository extends JpaRepository<CarbonEntry, Long> 
     );
 
     List<CarbonEntry> findTop5ByUser_EmailOrderByCreatedAtDesc(String email);
+
+    List<CarbonEntry> findByUser_EmailAndCreatedAtBetween(String email, LocalDateTime startDate, LocalDateTime endDate);
 }
