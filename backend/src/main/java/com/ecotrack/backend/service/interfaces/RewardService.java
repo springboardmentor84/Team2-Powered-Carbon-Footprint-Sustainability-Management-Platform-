@@ -11,4 +11,5 @@ public interface RewardService {
     RewardPointsResponse getTotalPoints(String email);
     void processRewardForCarbonEntry(CarbonEntry carbonEntry);
     void revertRewardForCarbonEntry(CarbonEntry carbonEntry);
+    void processRewardForChallengeCompletion(com.ecotrack.backend.entity.User user, com.ecotrack.backend.entity.Challenge challenge);
 }

@@ -115,6 +115,30 @@ public class RewardServiceImpl implements RewardService {
         }
     }
 
+    @Override
+    @org.springframework.transaction.annotation.Transactional
+    public void processRewardForChallengeCompletion(com.ecotrack.backend.entity.User user, com.ecotrack.backend.entity.Challenge challenge) {
+        String reason = "Challenge Completed: " + challenge.getId();
+        if (rewardTransactionRepository.existsByUser_IdAndReason(user.getId(), reason)) {
+            return;
+        }
+
+        int points = challenge.getRewardPoints();
+        user.setEcoPoints(user.getEcoPoints() + points);
+
+        RewardTransaction transaction = RewardTransaction.builder()
+                .user(user)
+                .points(points)
+                .reason(reason)
+                .build();
+
+        rewardTransactionRepository.save(transaction);
+        userRepository.save(user);
+
+        badgeService.checkAndUnlockBadges(user);
+        checkAndNotifyMilestones(user);
+    }
+
     private int calculatePointsForActivity(String activity) {
         if (activity == null) return 1;
         
