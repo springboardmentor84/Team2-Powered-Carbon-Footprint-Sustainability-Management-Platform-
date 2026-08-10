@@ -72,6 +72,34 @@ public class RewardServiceImpl implements RewardService {
         checkAndNotifyMilestones(user);
     }
     
+    @Override
+    public void revertRewardForCarbonEntry(CarbonEntry carbonEntry) {
+        List<RewardTransaction> transactions = rewardTransactionRepository.findByCarbonEntryId(carbonEntry.getId());
+        
+        int totalPointsToDeduct = 0;
+        for (RewardTransaction tx : transactions) {
+            totalPointsToDeduct += tx.getPoints();
+            tx.setCarbonEntry(null);
+            rewardTransactionRepository.save(tx);
+        }
+        
+        if (totalPointsToDeduct > 0) {
+            User user = carbonEntry.getUser();
+            int newPoints = Math.max(0, user.getEcoPoints() - totalPointsToDeduct);
+            user.setEcoPoints(newPoints);
+            
+            RewardTransaction negativeTransaction = RewardTransaction.builder()
+                    .user(user)
+                    .carbonEntry(null)
+                    .points(-totalPointsToDeduct)
+                    .reason("Carbon entry deleted")
+                    .build();
+                    
+            rewardTransactionRepository.save(negativeTransaction);
+            userRepository.save(user);
+        }
+    }
+    
     private void checkAndNotifyMilestones(User user) {
         int[] milestones = {100, 250, 500, 1000};
         int currentPoints = user.getEcoPoints();

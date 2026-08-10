@@ -36,7 +36,8 @@ public class RewardTransaction {
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "carbon_entry_id", nullable = false)
+    @JoinColumn(name = "carbon_entry_id")
+    @org.hibernate.annotations.OnDelete(action = org.hibernate.annotations.OnDeleteAction.SET_NULL)
     private CarbonEntry carbonEntry;
 
     @Column(nullable = false)

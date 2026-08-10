@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface RewardTransactionRepository extends JpaRepository<RewardTransaction, Long> {
     List<RewardTransaction> findByUserEmailOrderByCreatedAtDesc(String email);
+    List<RewardTransaction> findByCarbonEntryId(Long carbonEntryId);
 }

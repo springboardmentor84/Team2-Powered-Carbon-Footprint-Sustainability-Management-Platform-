@@ -10,4 +10,5 @@ public interface RewardService {
     List<RewardTransactionResponse> getRewardHistory(String email);
     RewardPointsResponse getTotalPoints(String email);
     void processRewardForCarbonEntry(CarbonEntry carbonEntry);
+    void revertRewardForCarbonEntry(CarbonEntry carbonEntry);
 }
