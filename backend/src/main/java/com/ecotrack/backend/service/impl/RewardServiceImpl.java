@@ -137,6 +137,12 @@ public class RewardServiceImpl implements RewardService {
 
         badgeService.checkAndUnlockBadges(user);
         checkAndNotifyMilestones(user);
+
+        String title = "Challenge Completed";
+        String message = "Congratulations! You completed the '" + challenge.getTitle() + "' challenge and earned " + challenge.getRewardPoints() + " Eco Points.";
+        if (!notificationRepository.existsByUserAndTitleAndMessage(user, title, message)) {
+            notificationService.createNotification(user, title, message);
+        }
     }
 
     private int calculatePointsForActivity(String activity) {
