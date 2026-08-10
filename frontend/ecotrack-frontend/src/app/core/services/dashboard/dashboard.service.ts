@@ -1,311 +1,106 @@
 import { Injectable, inject } from '@angular/core';
-import { ActivityService } from '../activity.service';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable } from 'rxjs';
+
+import { environment } from '../../../../environments/environment';
+
+export interface DashboardSummary {
+  totalEntries: number;
+  totalCarbonEmission: number;
+  averageEmission: number;
+}
+
+export interface CategoryEmission {
+  category: string;
+  totalEmission: number;
+}
+
+export interface RecentCarbonEntry {
+  id: number;
+  category: string;
+  activity: string;
+  quantity: number;
+  unit: string;
+  carbonEmission: number;
+  createdAt: string;
+  updatedAt: string;
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class DashboardService {
 
-  private activityService = inject(ActivityService);
+  private http = inject(HttpClient);
 
-  // ==========================
-  // Statistics
-  // ==========================
+  private apiUrl = `${environment.apiUrl}/dashboard`;
 
-  getDashboardStats() {
+  private getHeaders(): HttpHeaders {
 
-    return {
+    const token = localStorage.getItem('token');
 
-      carbonSaved: this.activityService.getCarbonSaved(),
-
-      activities: this.activityService.getActivities().length,
-
-      sustainabilityScore: this.activityService.getSustainabilityScore(),
-
-      goalProgress: this.activityService.getGoalProgress()
-
-    };
-
-  }
-
-  // ==========================
-  // Weekly Chart
-  // ==========================
-
-  getWeeklyCarbonData(): number[] {
-
-    const totals = [0,0,0,0,0,0,0];
-
-    this.activityService.getActivities().forEach(activity=>{
-
-      const date = new Date(activity.date);
-
-      let day = date.getDay();
-
-      day = day===0 ? 6 : day-1;
-
-      totals[day]+=activity.carbon;
-
+    return new HttpHeaders({
+      Authorization: `Bearer ${token}`
     });
-
-    return totals;
-
   }
 
-  // ==========================
-  // Monthly Chart
-  // ==========================
-
-  getMonthlyCarbonData(): number[] {
-
-    const totals = new Array(12).fill(0);
-
-    this.activityService.getActivities().forEach(activity=>{
-
-      const month = new Date(activity.date).getMonth();
-
-      totals[month]+=activity.carbon;
-
-    });
-
-    return totals;
-
-  }
-
-  // ==========================
-  // Recent Activities
-  // ==========================
-
-  getRecentActivities(limit:number=5){
-
-    return this.activityService
-
-      .getActivities()
-
-      .slice(0,limit);
-
-  }
-
-  // ==========================
-  // Notifications
-  // ==========================
-
-  getNotifications(){
-
-    const notifications=[];
-
-    const carbon=this.activityService.getCarbonSaved();
-
-    const score=this.activityService.getSustainabilityScore();
-
-    const activities=this.activityService.getActivities().length;
-
-    if(carbon>=100){
-
-      notifications.push({
-
-        icon:'🏆',
-
-        title:'Weekly Goal Achieved',
-
-        description:'Congratulations!'
-
-      });
-
-    }else{
-
-      notifications.push({
-
-        icon:'🎯',
-
-        title:'Goal Progress',
-
-        description:`${(100-carbon).toFixed(1)} kg remaining`
-
-      });
-
-    }
-
-    if(score>=80){
-
-      notifications.push({
-
-        icon:'🌱',
-
-        title:'Excellent Sustainability',
-
-        description:'Keep it up.'
-
-      });
-
-    }
-
-    if(activities===0){
-
-      notifications.push({
-
-        icon:'📢',
-
-        title:'No Activities',
-
-        description:'Add your first activity.'
-
-      });
-
-    }
-
-    return notifications;
-
-  }
-
-  // ==========================
-  // AI Recommendation
-  // ==========================
-
-  getRecommendation(){
-
-    const score=this.activityService.getSustainabilityScore();
-
-    if(score<30){
-
-      return{
-
-        icon:'🚶',
-
-        title:'Walk More',
-
-        saving:'≈2kg/day'
-
-      };
-
-    }
-
-    if(score<60){
-
-      return{
-
-        icon:'🚴',
-
-        title:'Cycle More',
-
-        saving:'≈3kg/day'
-
-      };
-
-    }
-
-    if(score<80){
-
-      return{
-
-        icon:'♻',
-
-        title:'Recycle More',
-
-        saving:'≈1.5kg/day'
-
-      };
-
-    }
-
-    return{
-
-      icon:'🌱',
-
-      title:'Excellent',
-
-      saving:'Maintain your lifestyle'
-
-    };
-
-  }
-
-  // ==========================
-  // Streak
-  // ==========================
-
-  getCurrentStreak():number{
-
-    const activities=[
-
-      ...this.activityService.getActivities()
-
-    ].sort(
-
-      (a,b)=>
-
-      new Date(b.date).getTime()
-
-      -
-
-      new Date(a.date).getTime()
-
-    );
-
-    if(!activities.length){
-
-      return 0;
-
-    }
-
-    let streak=1;
-
-    for(let i=1;i<activities.length;i++){
-
-      const prev=new Date(activities[i-1].date);
-
-      const curr=new Date(activities[i].date);
-
-      const diff=Math.floor(
-
-        (prev.getTime()-curr.getTime())
-
-        /(1000*60*60*24)
-
-      );
-
-      if(diff===1){
-
-        streak++;
-
-      }else{
-
-        break;
-
+  getSummary(): Observable<DashboardSummary> {
+
+    return this.http.get<DashboardSummary>(
+      `${this.apiUrl}/summary`,
+      {
+        headers: this.getHeaders()
       }
-
-    }
-
-    return streak;
-
+    );
   }
 
-  // ==========================
-  // Achievements
-  // ==========================
+  getCategory(): Observable<CategoryEmission[]> {
 
-  getUnlockedBadges(){
-
-    const carbon=this.activityService.getCarbonSaved();
-
-    const score=this.activityService.getSustainabilityScore();
-
-    const activities=this.activityService.getActivities().length;
-
-    let badges=0;
-
-    if(activities>=1) badges++;
-
-    if(activities>=5) badges++;
-
-    if(carbon>=20) badges++;
-
-    if(score>=60) badges++;
-
-    if(score>=90) badges++;
-
-    return badges;
-
+    return this.http.get<CategoryEmission[]>(
+      `${this.apiUrl}/category`,
+      {
+        headers: this.getHeaders()
+      }
+    );
   }
 
+  getDaily(): Observable<number> {
+
+    return this.http.get<number>(
+      `${this.apiUrl}/daily`,
+      {
+        headers: this.getHeaders()
+      }
+    );
+  }
+
+  getWeekly(): Observable<number> {
+
+    return this.http.get<number>(
+      `${this.apiUrl}/weekly`,
+      {
+        headers: this.getHeaders()
+      }
+    );
+  }
+
+  getMonthly(): Observable<number> {
+
+    return this.http.get<number>(
+      `${this.apiUrl}/monthly`,
+      {
+        headers: this.getHeaders()
+      }
+    );
+  }
+
+  getRecent(): Observable<RecentCarbonEntry[]> {
+
+    return this.http.get<RecentCarbonEntry[]>(
+      `${this.apiUrl}/recent`,
+      {
+        headers: this.getHeaders()
+      }
+    );
+  }
 }

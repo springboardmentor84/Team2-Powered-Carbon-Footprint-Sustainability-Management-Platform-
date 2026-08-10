@@ -1,15 +1,10 @@
 export interface Activity {
-
   id: number;
-
-  title: string;
-
   category: string;
-
-  carbon: number;
-
-  date: string;
-
-  status: 'Completed' | 'Pending';
-
+  activity: string;
+  quantity: number;
+  unit: string;
+  carbonEmission: number;
+  createdAt: string;
+  updatedAt: string;
 }

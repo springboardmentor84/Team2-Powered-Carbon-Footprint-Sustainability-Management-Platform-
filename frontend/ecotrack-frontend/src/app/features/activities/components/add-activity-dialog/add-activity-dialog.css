@@ -1,121 +1,26 @@
-:host{
-  display:block;
+:host {
+  display: block;
 }
 
-mat-dialog-content{
-
-  display:flex;
-
-  flex-direction:column;
-
-  gap:18px;
-
-  min-width:480px;
-
-  padding-top:12px;
-
-  padding-bottom:10px;
-
-  overflow:hidden;
-
+mat-dialog-content {
+  padding-top: 8px;
 }
 
-.full-width{
-
-  width:100%;
-
+.full-width {
+  width: 100%;
+  display: block;
+  margin-bottom: 8px;
 }
 
-mat-form-field{
-
-  width:100%;
-
+.error-message {
+  color: #d32f2f;
+  background: #ffebee;
+  border-radius: 6px;
+  padding: 10px 12px;
+  margin-top: 4px;
+  margin-bottom: 8px;
 }
 
-mat-dialog-title{
-
-  font-size:24px;
-
-  font-weight:700;
-
-  color:#2E7D32;
-
-  margin-bottom:8px;
-
-}
-
-textarea{
-
-  resize:none;
-
-}
-
-mat-dialog-actions{
-
-  display:flex;
-
-  justify-content:flex-end;
-
-  gap:12px;
-
-  padding:20px 0 8px;
-
-}
-
-button{
-
-  min-width:120px;
-
-  border-radius:10px;
-
-}
-
-button[mat-raised-button]{
-
-  font-weight:600;
-
-}
-
-button[mat-stroked-button]{
-
-  border-radius:10px;
-
-}
-
-mat-hint{
-
-  font-size:12px;
-
-  color:#757575;
-
-}
-
-@media(max-width:768px){
-
-  mat-dialog-content{
-
-    min-width:100%;
-
-    width:100%;
-
-  }
-
-}
-
-@media(max-width:480px){
-
-  mat-dialog-actions{
-
-    flex-direction:column-reverse;
-
-    align-items:stretch;
-
-  }
-
-  button{
-
-    width:100%;
-
-  }
-
+mat-dialog-actions {
+  padding: 16px 24px;
 }

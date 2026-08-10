@@ -1,185 +1,551 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, of } from 'rxjs';
+import { Injectable, inject } from '@angular/core';
+import {
+  HttpClient,
+  HttpErrorResponse
+} from '@angular/common/http';
+
+import {
+  BehaviorSubject,
+  Observable,
+  throwError
+} from 'rxjs';
+
+import {
+  catchError,
+  map,
+  tap
+} from 'rxjs/operators';
+
+import { environment } from '../../../environments/environment';
+
+const API_ENDPOINTS = {
+
+  CARBON: {
+
+    BASE: '/api/v1/carbon',
+
+    BY_ID: (id: number) => `/api/v1/carbon/${id}`
+
+  }
+
+};
+
+
+// ============================================
+// FRONTEND ACTIVITY MODEL
+// ============================================
 
 export interface Activity {
+
   id: number;
-  userId?: number;
+
   title: string;
+
+  activity?: string;
+
   category: string;
+
+  quantity: number;
+
+  unit: string;
+
   carbon: number;
+
+  carbonEmission?: number;
+
   date: string;
+
   notes: string;
+
   createdAt?: string;
+
   updatedAt?: string;
 }
+
+
+// ============================================
+// BACKEND REQUEST
+// ============================================
+
+export interface CarbonEntryRequest {
+
+  category: string;
+
+  activity: string;
+
+  quantity: number;
+
+  unit: string;
+}
+
+
+// ============================================
+// BACKEND RESPONSE
+// ============================================
+
+export interface CarbonEntryResponse {
+
+  id: number;
+
+  category: string;
+
+  activity: string;
+
+  quantity: number;
+
+  unit: string;
+
+  carbonEmission: number;
+
+  createdAt: string;
+
+  updatedAt: string;
+}
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class ActivityService {
 
-  private readonly STORAGE_KEY = 'ecotrack_activities';
+  private http = inject(HttpClient);
+
 
   private readonly activitiesSubject =
-    new BehaviorSubject<Activity[]>(this.loadActivities());
+    new BehaviorSubject<Activity[]>([]);
 
-  readonly activities$ = this.activitiesSubject.asObservable();
+
+  readonly activities$ =
+    this.activitiesSubject.asObservable();
+
 
   constructor() {
-    this.persist();
-  }
 
-  // ============================
-  // Repository Layer (Temporary)
-  // Replace ONLY these methods later
-  // ============================
-
-  private loadActivities(): Activity[] {
-
-    const data = localStorage.getItem(this.STORAGE_KEY);
-
-    if (data) {
-      return JSON.parse(data);
-    }
-
-    const defaultActivities: Activity[] = [
-
-      {
-        id: 1,
-        userId: 1,
-        title: 'Walk 4 km',
-        category: 'Walking',
-        carbon: 2.5,
-        date: '2026-07-26',
-        notes: 'Morning Walk',
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      },
-
-      {
-        id: 2,
-        userId: 1,
-        title: 'Recycled Plastic',
-        category: 'Recycling',
-        carbon: 1.8,
-        date: '2026-07-25',
-        notes: 'Home Recycling',
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      }
-
-    ];
-
-    localStorage.setItem(
-      this.STORAGE_KEY,
-      JSON.stringify(defaultActivities)
-    );
-
-    return defaultActivities;
+    this.loadActivities();
 
   }
 
-  private persist(): void {
 
-    localStorage.setItem(
-      this.STORAGE_KEY,
-      JSON.stringify(this.activitiesSubject.value)
-    );
+  // ============================================
+  // FRONTEND CATEGORY → BACKEND ENUM
+  // ============================================
 
-  }
+  private normalizeCategory(
+    category: string
+  ): string {
 
-  // ============================
-  // API READY METHODS
-  // ============================
+    const value =
+      category
+        .trim()
+        .toUpperCase();
 
-  getActivities(): Activity[] {
-    return this.activitiesSubject.value;
-  }
 
-  getActivities$(): Observable<Activity[]> {
-    return this.activities$;
-  }
+    const mapping: Record<string, string> = {
 
-  getActivityById(id: number): Observable<Activity | undefined> {
-    return of(
-      this.activitiesSubject.value.find(x => x.id === id)
-    );
-  }
+      'TRANSPORTATION': 'TRANSPORT',
 
-  addActivity(activity: Omit<Activity, 'id'>): void {
+      'TRANSPORT': 'TRANSPORT',
 
-    const newActivity: Activity = {
+      'ELECTRICITY': 'ELECTRICITY',
 
-      id: Date.now(),
+      'WATER': 'WATER',
 
-      createdAt: new Date().toISOString(),
+      'FOOD': 'FOOD',
 
-      updatedAt: new Date().toISOString(),
+      'WASTE': 'WASTE',
 
-      ...activity
+      'SHOPPING': 'SHOPPING',
+
+      'OTHERS': 'OTHER',
+
+      'OTHER': 'OTHER'
 
     };
 
-    this.activitiesSubject.next([
-      newActivity,
-      ...this.activitiesSubject.value
-    ]);
-    this.persist();
+
+    return mapping[value] || value;
 
   }
 
-  updateActivity(updated: Activity): void {
 
-    const list = this.activitiesSubject.value.map(item =>
+  // ============================================
+  // BACKEND → FRONTEND MAPPING
+  // ============================================
 
-      item.id === updated.id
+  private mapResponseToActivity(
+    response: CarbonEntryResponse
+  ): Activity {
 
-        ? {
-            ...updated,
-            updatedAt: new Date().toISOString()
-          }
+    return {
 
-        : item
+      id: response.id,
 
-    );
+      title: response.activity,
 
-    this.activitiesSubject.next(list);
+      activity: response.activity,
 
-    this.persist();
+      category: this.displayCategory(
+        response.category
+      ),
+
+      quantity: response.quantity,
+
+      unit: response.unit,
+
+      carbon: response.carbonEmission,
+
+      carbonEmission:
+        response.carbonEmission,
+
+      date: response.createdAt,
+
+      notes: '',
+
+      createdAt: response.createdAt,
+
+      updatedAt: response.updatedAt
+
+    };
 
   }
 
-  deleteActivity(id: number): void {
 
-    this.activitiesSubject.next(
+  // ============================================
+  // BACKEND ENUM → DISPLAY NAME
+  // ============================================
 
-      this.activitiesSubject.value.filter(
-        activity => activity.id !== id
+  private displayCategory(
+    category: string
+  ): string {
+
+    const mapping: Record<string, string> = {
+
+      'TRANSPORT': 'Transportation',
+
+      'ELECTRICITY': 'Electricity',
+
+      'WATER': 'Water',
+
+      'FOOD': 'Food',
+
+      'WASTE': 'Waste',
+
+      'SHOPPING': 'Shopping',
+
+      'OTHER': 'Others'
+
+    };
+
+
+    return mapping[category] || category;
+
+  }
+
+
+  // ============================================
+  // GET ALL ACTIVITIES
+  // GET /api/v1/carbon
+  // ============================================
+
+  loadActivities(): void {
+
+    this.http
+      .get<CarbonEntryResponse[]>(
+        `${environment.apiUrl}${API_ENDPOINTS.CARBON.BASE}`
       )
+      .pipe(
 
-    );
+        catchError((error: HttpErrorResponse) => {
 
-    this.persist();
+          console.error(
+            'Failed to load carbon entries:',
+            error
+          );
+
+          return throwError(
+            () => error
+          );
+
+        })
+
+      )
+      .subscribe({
+
+        next: (responses) => {
+
+          const activities =
+            responses.map(response =>
+              this.mapResponseToActivity(response)
+            );
+
+
+          this.activitiesSubject.next(
+            activities
+          );
+
+        },
+
+
+        error: (error) => {
+
+          console.error(
+            'Activity loading failed:',
+            error
+          );
+
+          this.activitiesSubject.next([]);
+
+        }
+
+      });
 
   }
+
+
+  // ============================================
+  // GET ACTIVITIES
+  // ============================================
+
+  getActivities(): Activity[] {
+
+    return this.activitiesSubject.value;
+
+  }
+
+
+  getActivities$():
+    Observable<Activity[]> {
+
+    return this.activities$;
+
+  }
+
+
+  // ============================================
+  // GET SINGLE ACTIVITY
+  // GET /api/v1/carbon/{id}
+  // ============================================
+
+  getActivityById(
+    id: number
+  ): Observable<Activity> {
+
+    return this.http
+      .get<CarbonEntryResponse>(
+        `${environment.apiUrl}${API_ENDPOINTS.CARBON.BY_ID(id)}`
+      )
+      .pipe(
+
+        map(response =>
+          this.mapResponseToActivity(response)
+        )
+
+      );
+
+  }
+
+
+  // ============================================
+  // ADD ACTIVITY
+  // POST /api/v1/carbon
+  // ============================================
+
+  addActivity(
+    activity: Omit<Activity, 'id'>
+  ): Observable<Activity> {
+
+    const request: CarbonEntryRequest = {
+
+      category:
+        this.normalizeCategory(
+          activity.category
+        ),
+
+      activity:
+        activity.title.trim(),
+
+      quantity:
+        Number(activity.quantity),
+
+      unit:
+        activity.unit.trim()
+
+    };
+
+
+    console.log(
+      'POST /api/v1/carbon REQUEST:',
+      request
+    );
+
+
+    return this.http
+      .post<CarbonEntryResponse>(
+        `${environment.apiUrl}${API_ENDPOINTS.CARBON.BASE}`,
+        request
+      )
+      .pipe(
+
+        tap(response => {
+
+          console.log(
+            'POST /api/v1/carbon RESPONSE:',
+            response
+          );
+
+
+          const newActivity =
+            this.mapResponseToActivity(
+              response
+            );
+
+
+          this.activitiesSubject.next([
+
+            newActivity,
+
+            ...this.activitiesSubject.value
+
+          ]);
+
+        }),
+
+
+        map(response =>
+          this.mapResponseToActivity(
+            response
+          )
+        )
+
+      );
+
+  }
+
+
+  // ============================================
+  // UPDATE ACTIVITY
+  // PUT /api/v1/carbon/{id}
+  // ============================================
+
+  updateActivity(
+    updated: Activity
+  ): Observable<Activity> {
+
+    const request: CarbonEntryRequest = {
+
+      category:
+        this.normalizeCategory(
+          updated.category
+        ),
+
+      activity:
+        updated.title.trim(),
+
+      quantity:
+        Number(updated.quantity),
+
+      unit:
+        updated.unit.trim()
+
+    };
+
+
+    return this.http
+      .put<CarbonEntryResponse>(
+        `${environment.apiUrl}${API_ENDPOINTS.CARBON.BY_ID(updated.id)}`,
+        request
+      )
+      .pipe(
+
+        tap(response => {
+
+          const updatedActivity =
+            this.mapResponseToActivity(
+              response
+            );
+
+
+          const list =
+            this.activitiesSubject.value.map(
+              item =>
+                item.id === updatedActivity.id
+                  ? updatedActivity
+                  : item
+            );
+
+
+          this.activitiesSubject.next(
+            list
+          );
+
+        }),
+
+
+        map(response =>
+          this.mapResponseToActivity(
+            response
+          )
+        )
+
+      );
+
+  }
+
+
+  // ============================================
+  // DELETE ACTIVITY
+  // DELETE /api/v1/carbon/{id}
+  // ============================================
+
+  deleteActivity(
+    id: number
+  ): Observable<void> {
+
+    return this.http
+      .delete<void>(
+        `${environment.apiUrl}${API_ENDPOINTS.CARBON.BY_ID(id)}`
+      )
+      .pipe(
+
+        tap(() => {
+
+          this.activitiesSubject.next(
+
+            this.activitiesSubject.value.filter(
+              activity =>
+                activity.id !== id
+            )
+
+          );
+
+        })
+
+      );
+
+  }
+
+
+  // ============================================
+  // CLEAR LOCAL VIEW
+  // ============================================
 
   clearAllActivities(): void {
 
     this.activitiesSubject.next([]);
 
-    this.persist();
-
   }
 
-  // ============================
-  // Dashboard Helpers
-  // ============================
+
+  // ============================================
+  // DASHBOARD HELPERS
+  // ============================================
 
   getCarbonSaved(): number {
 
     return this.activitiesSubject.value.reduce(
 
-      (sum, item) => sum + item.carbon,
+      (sum, item) =>
+        sum + item.carbon,
 
       0
 
@@ -187,64 +553,91 @@ export class ActivityService {
 
   }
 
+
   getActivityCount(): number {
 
     return this.activitiesSubject.value.length;
 
   }
 
+
   getSustainabilityScore(): number {
 
     let score = 0;
 
-    this.activitiesSubject.value.forEach(item => {
 
-      switch (item.category.toLowerCase()) {
+    this.activitiesSubject.value.forEach(
+      item => {
 
-        case 'walking':
-          score += 5;
-          break;
+        switch (
+          item.category.toLowerCase()
+        ) {
 
-        case 'cycling':
-          score += 8;
-          break;
+          case 'walking':
+            score += 5;
+            break;
 
-        case 'recycling':
-          score += 4;
-          break;
+          case 'cycling':
+            score += 8;
+            break;
 
-        case 'transport':
-          score += 6;
-          break;
+          case 'recycling':
+            score += 4;
+            break;
 
-        case 'food':
-          score += 3;
-          break;
+          case 'transport':
+          case 'transportation':
+            score += 6;
+            break;
 
-        case 'electricity':
-          score += 5;
-          break;
+          case 'food':
+            score += 3;
+            break;
 
-        case 'water':
-          score += 4;
-          break;
+          case 'electricity':
+            score += 5;
+            break;
 
-        default:
-          score += 2;
+          case 'water':
+            score += 4;
+            break;
+
+          default:
+            score += 2;
+
+        }
 
       }
+    );
 
-    });
 
-    return Math.min(score, 100);
+    return Math.min(
+      score,
+      100
+    );
 
   }
 
-  getGoalProgress(goal = 100): number {
+
+  getGoalProgress(
+    goal = 100
+  ): number {
+
+    if (goal <= 0) {
+
+      return 0;
+
+    }
+
 
     return Math.min(
 
-      Math.round((this.getCarbonSaved() / goal) * 100),
+      Math.round(
+        (
+          this.getCarbonSaved() /
+          goal
+        ) * 100
+      ),
 
       100
 

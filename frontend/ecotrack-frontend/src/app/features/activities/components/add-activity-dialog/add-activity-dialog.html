@@ -1,126 +1,153 @@
-<h2 mat-dialog-title>Add New Activity</h2>
+<h2 mat-dialog-title>
+  Add Activity
+</h2>
+
 
 <mat-dialog-content>
 
-  <!-- Activity Title -->
 
-  <mat-form-field appearance="outline" class="full-width">
-    <mat-label>Activity Title</mat-label>
+  <mat-form-field
+    appearance="outline"
+    class="full-width">
 
-    <input
-      matInput
-      maxlength="60"
-      [(ngModel)]="activity.title"
-      placeholder="e.g. Walked 5 km">
+    <mat-label>
+      Category
+    </mat-label>
 
-    <mat-hint align="end">
-      {{activity.title.length}} / 60
-    </mat-hint>
+    <mat-select
+      [(ngModel)]="category">
 
-  </mat-form-field>
+      @for (
+        item of categories;
+        track item
+      ) {
 
-  <!-- Category -->
+        <mat-option
+          [value]="item">
 
-  <mat-form-field appearance="outline" class="full-width">
+          {{ item }}
 
-    <mat-label>Category</mat-label>
+        </mat-option>
 
-    <mat-select [(ngModel)]="activity.category">
-
-      <mat-option
-        *ngFor="let item of categories"
-        [value]="item">
-
-        {{item}}
-
-      </mat-option>
+      }
 
     </mat-select>
 
   </mat-form-field>
 
-  <!-- Carbon -->
 
-  <mat-form-field appearance="outline" class="full-width">
+  <mat-form-field
+    appearance="outline"
+    class="full-width">
 
-    <mat-label>Carbon Saved (kg)</mat-label>
+    <mat-label>
+      Activity
+    </mat-label>
+
+    <input
+      matInput
+      [(ngModel)]="activity"
+      placeholder="Example: Car Travel">
+
+  </mat-form-field>
+
+
+  <mat-form-field
+    appearance="outline"
+    class="full-width">
+
+    <mat-label>
+      Quantity
+    </mat-label>
 
     <input
       matInput
       type="number"
-      min="0"
-      step="0.1"
-      [(ngModel)]="activity.carbon">
+      [(ngModel)]="quantity"
+      min="0">
 
   </mat-form-field>
 
-  <!-- Date -->
 
-  <mat-form-field appearance="outline" class="full-width">
+  <mat-form-field
+    appearance="outline"
+    class="full-width">
 
-    <mat-label>Date</mat-label>
+    <mat-label>
+      Unit
+    </mat-label>
 
-    <input
-      matInput
-      type="date"
-      [(ngModel)]="activity.date">
+    <mat-select
+      [(ngModel)]="unit">
 
-  </mat-form-field>
+      @for (
+        item of units;
+        track item
+      ) {
 
-  <!-- Notes -->
+        <mat-option
+          [value]="item">
 
-  <mat-form-field appearance="outline" class="full-width">
+          {{ item }}
 
-    <mat-label>Notes</mat-label>
+        </mat-option>
 
-    <textarea
-      matInput
-      rows="4"
-      maxlength="250"
-      [(ngModel)]="activity.notes">
+      }
 
-    </textarea>
-
-    <mat-hint align="end">
-      {{activity.notes.length}} / 250
-    </mat-hint>
+    </mat-select>
 
   </mat-form-field>
+
+
+  @if (errorMessage) {
+
+    <div class="error-message">
+
+      {{ errorMessage }}
+
+    </div>
+
+  }
+
 
 </mat-dialog-content>
 
-<mat-dialog-actions align="end">
 
-  <button
-    mat-stroked-button
-    color="warn"
-    (click)="resetForm()">
+<mat-dialog-actions
+  align="end">
 
-    Reset
-
-  </button>
 
   <button
     mat-button
-    (click)="cancel()">
+    type="button"
+    (click)="cancel()"
+    [disabled]="saving">
 
     Cancel
 
   </button>
 
+
   <button
     mat-raised-button
     color="primary"
-    [disabled]="
-      !activity.title ||
-      !activity.category ||
-      activity.carbon <= 0 ||
-      !activity.date
-    "
-    (click)="save()">
+    type="button"
+    (click)="save()"
+    [disabled]="saving">
 
-    Save Activity
+    @if (saving) {
+
+      Saving...
+
+    }
+
+    @else {
+
+      Save Activity
+
+    }
 
   </button>
+
 
 </mat-dialog-actions>
