@@ -89,8 +89,10 @@ public class CarbonEntryServiceImpl implements CarbonEntryService {
     }
 
     @Override
+    @Transactional
     public void deleteCarbonEntry(String email, Long id) {
         CarbonEntry entry = getEntryByIdAndValidateUser(email, id);
+        rewardService.revertRewardForCarbonEntry(entry);
         carbonEntryRepository.delete(entry);
     }
 
