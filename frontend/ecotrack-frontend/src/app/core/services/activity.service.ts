@@ -1,4 +1,6 @@
+
 import { Injectable, inject } from '@angular/core';
+
 import {
   HttpClient,
   HttpErrorResponse
@@ -7,6 +9,7 @@ import {
 import {
   BehaviorSubject,
   Observable,
+  Subject,
   catchError,
   map,
   tap,
@@ -25,18 +28,39 @@ import {
   CarbonEntryResponse
 } from '../models/activity.model';
 
+
 @Injectable({
   providedIn: 'root'
 })
 export class ActivityService {
 
-  private readonly http = inject(HttpClient);
+  private readonly http =
+    inject(HttpClient);
+
+
+  // =========================================================
+  // ACTIVITY STATE
+  // =========================================================
 
   private readonly activitiesSubject =
     new BehaviorSubject<Activity[]>([]);
 
   readonly activities$ =
     this.activitiesSubject.asObservable();
+
+
+  // =========================================================
+  // ACTIVITY CHANGE EVENT
+  //
+  // Used by DashboardHome and other components
+  // to immediately know that backend data changed.
+  // =========================================================
+
+  private readonly activityChangedSubject =
+    new Subject<void>();
+
+  readonly activityChanged$ =
+    this.activityChangedSubject.asObservable();
 
 
   // =========================================================
@@ -48,25 +72,36 @@ export class ActivityService {
   ): Activity {
 
     return {
+
       id: response.id,
 
       title: response.activity,
+
       activity: response.activity,
 
       category: response.category,
 
       quantity: response.quantity,
+
       unit: response.unit,
 
       carbon: response.carbonEmission,
-      carbonEmission: response.carbonEmission,
+
+      carbonEmission:
+        response.carbonEmission,
 
       date: response.createdAt,
+
       notes: '',
 
-      createdAt: response.createdAt,
-      updatedAt: response.updatedAt
+      createdAt:
+        response.createdAt,
+
+      updatedAt:
+        response.updatedAt
+
     };
+
   }
 
 
@@ -78,27 +113,38 @@ export class ActivityService {
   loadActivities(): void {
 
     this.http
+
       .get<CarbonEntryResponse[]>(
         `${environment.apiUrl}${API_ENDPOINTS.CARBON.BASE}`
       )
+
       .pipe(
+
         map(responses =>
           responses.map(response =>
             this.mapResponseToActivity(response)
           )
         ),
 
-        catchError((error: HttpErrorResponse) => {
+        catchError(
+          (error: HttpErrorResponse) => {
 
-          console.error(
-            'Failed to load activities:',
-            error
-          );
+            console.error(
+              'Failed to load activities:',
+              error
+            );
 
-          return throwError(() => error);
-        })
+            return throwError(
+              () => error
+            );
+
+          }
+        )
+
       )
+
       .subscribe({
+
         next: activities => {
 
           this.activitiesSubject.next(
@@ -115,8 +161,11 @@ export class ActivityService {
           );
 
           this.activitiesSubject.next([]);
+
         }
+
       });
+
   }
 
 
@@ -127,12 +176,14 @@ export class ActivityService {
   getActivities(): Activity[] {
 
     return this.activitiesSubject.value;
+
   }
 
 
   getActivities$(): Observable<Activity[]> {
 
     return this.activities$;
+
   }
 
 
@@ -146,14 +197,21 @@ export class ActivityService {
   ): Observable<Activity> {
 
     return this.http
+
       .get<CarbonEntryResponse>(
         `${environment.apiUrl}${API_ENDPOINTS.CARBON.BY_ID(id)}`
       )
+
       .pipe(
+
         map(response =>
-          this.mapResponseToActivity(response)
+          this.mapResponseToActivity(
+            response
+          )
         )
+
       );
+
   }
 
 
@@ -168,15 +226,19 @@ export class ActivityService {
 
     const request: CarbonEntryRequest = {
 
-      category: activity.category,
+      category:
+        activity.category,
 
       activity:
         activity.activity ||
         activity.title,
 
-      quantity: activity.quantity,
+      quantity:
+        activity.quantity,
 
-      unit: activity.unit
+      unit:
+        activity.unit
+
     };
 
 
@@ -187,10 +249,12 @@ export class ActivityService {
 
 
     return this.http
+
       .post<CarbonEntryResponse>(
         `${environment.apiUrl}${API_ENDPOINTS.CARBON.BASE}`,
         request
       )
+
       .pipe(
 
         tap(response => {
@@ -200,8 +264,12 @@ export class ActivityService {
             response
           );
 
+
           const newActivity =
-            this.mapResponseToActivity(response);
+            this.mapResponseToActivity(
+              response
+            );
+
 
           this.activitiesSubject.next([
 
@@ -211,22 +279,39 @@ export class ActivityService {
 
           ]);
 
+
+          // IMPORTANT:
+          // Tell DashboardHome that backend data changed.
+
+          this.activityChangedSubject.next();
+
         }),
 
+
         map(response =>
-          this.mapResponseToActivity(response)
+          this.mapResponseToActivity(
+            response
+          )
         ),
 
-        catchError((error: HttpErrorResponse) => {
 
-          console.error(
-            'Activity save failed:',
-            error
-          );
+        catchError(
+          (error: HttpErrorResponse) => {
 
-          return throwError(() => error);
-        })
+            console.error(
+              'Activity save failed:',
+              error
+            );
+
+            return throwError(
+              () => error
+            );
+
+          }
+        )
+
       );
+
   }
 
 
@@ -241,15 +326,19 @@ export class ActivityService {
 
     const request: CarbonEntryRequest = {
 
-      category: updated.category,
+      category:
+        updated.category,
 
       activity:
         updated.activity ||
         updated.title,
 
-      quantity: updated.quantity,
+      quantity:
+        updated.quantity,
 
-      unit: updated.unit
+      unit:
+        updated.unit
+
     };
 
 
@@ -260,44 +349,71 @@ export class ActivityService {
 
 
     return this.http
+
       .put<CarbonEntryResponse>(
         `${environment.apiUrl}${API_ENDPOINTS.CARBON.BY_ID(updated.id)}`,
         request
       )
+
       .pipe(
 
         map(response => {
 
           const updatedActivity =
-            this.mapResponseToActivity(response);
+            this.mapResponseToActivity(
+              response
+            );
+
 
           const current =
             this.activitiesSubject.value;
 
+
           const updatedList =
             current.map(item =>
-              item.id === updatedActivity.id
+
+              item.id ===
+              updatedActivity.id
+
                 ? updatedActivity
+
                 : item
+
             );
+
 
           this.activitiesSubject.next(
             updatedList
           );
 
+
+          // Notify dashboard.
+
+          this.activityChangedSubject.next();
+
+
           return updatedActivity;
+
         }),
 
-        catchError((error: HttpErrorResponse) => {
 
-          console.error(
-            'Activity update failed:',
-            error
-          );
+        catchError(
+          (error: HttpErrorResponse) => {
 
-          return throwError(() => error);
-        })
+            console.error(
+              'Activity update failed:',
+              error
+            );
+
+            return throwError(
+              () => error
+            );
+
+          }
+        )
+
       );
+
   }
 
 
@@ -316,9 +432,11 @@ export class ActivityService {
 
 
     return this.http
+
       .delete<void>(
         `${environment.apiUrl}${API_ENDPOINTS.CARBON.BY_ID(id)}`
       )
+
       .pipe(
 
         tap(() => {
@@ -329,22 +447,36 @@ export class ActivityService {
                 activity.id !== id
             );
 
+
           this.activitiesSubject.next(
             updated
           );
 
+
+          // Notify dashboard.
+
+          this.activityChangedSubject.next();
+
         }),
 
-        catchError((error: HttpErrorResponse) => {
 
-          console.error(
-            'Activity delete failed:',
-            error
-          );
+        catchError(
+          (error: HttpErrorResponse) => {
 
-          return throwError(() => error);
-        })
+            console.error(
+              'Activity delete failed:',
+              error
+            );
+
+            return throwError(
+              () => error
+            );
+
+          }
+        )
+
       );
+
   }
 
 
@@ -355,6 +487,7 @@ export class ActivityService {
   clearAllActivities(): void {
 
     this.activitiesSubject.next([]);
+
   }
 
 
@@ -367,22 +500,27 @@ export class ActivityService {
     return this.activitiesSubject.value.reduce(
 
       (sum, item) =>
-        sum + (item.carbonEmission || 0),
+        sum +
+        (item.carbonEmission || 0),
 
       0
+
     );
+
   }
 
 
   getActivityCount(): number {
 
     return this.activitiesSubject.value.length;
+
   }
 
 
   getSustainabilityScore(): number {
 
     let score = 0;
+
 
     this.activitiesSubject.value.forEach(
       item => {
@@ -417,11 +555,18 @@ export class ActivityService {
 
           default:
             score += 2;
+
         }
+
       }
     );
 
-    return Math.min(score, 100);
+
+    return Math.min(
+      score,
+      100
+    );
+
   }
 
 
@@ -430,16 +575,31 @@ export class ActivityService {
   ): number {
 
     if (goal <= 0) {
+
       return 0;
+
     }
+
 
     return Math.min(
 
       Math.round(
-        (this.getCarbonSaved() / goal) * 100
+
+        (
+          this.getCarbonSaved()
+          /
+          goal
+        )
+        *
+        100
+
       ),
 
       100
+
     );
+
   }
+
 }
+

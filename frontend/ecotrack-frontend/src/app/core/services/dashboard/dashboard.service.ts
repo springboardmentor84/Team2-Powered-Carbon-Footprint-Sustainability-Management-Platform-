@@ -1,8 +1,9 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import { environment } from '../../../../environments/environment';
+import { API_ENDPOINTS } from '../../constants/api.constants';
 
 export interface DashboardSummary {
   totalEntries: number;
@@ -33,74 +34,45 @@ export class DashboardService {
 
   private http = inject(HttpClient);
 
-  private apiUrl = `${environment.apiUrl}/dashboard`;
-
-  private getHeaders(): HttpHeaders {
-
-    const token = localStorage.getItem('token');
-
-    return new HttpHeaders({
-      Authorization: `Bearer ${token}`
-    });
-  }
-
+  // Summary
   getSummary(): Observable<DashboardSummary> {
-
     return this.http.get<DashboardSummary>(
-      `${this.apiUrl}/summary`,
-      {
-        headers: this.getHeaders()
-      }
+      `${environment.apiUrl}${API_ENDPOINTS.DASHBOARD.SUMMARY}`
     );
   }
 
+  // Category chart
   getCategory(): Observable<CategoryEmission[]> {
-
     return this.http.get<CategoryEmission[]>(
-      `${this.apiUrl}/category`,
-      {
-        headers: this.getHeaders()
-      }
+      `${environment.apiUrl}${API_ENDPOINTS.DASHBOARD.CATEGORY}`
     );
   }
 
+  // Daily value
   getDaily(): Observable<number> {
-
     return this.http.get<number>(
-      `${this.apiUrl}/daily`,
-      {
-        headers: this.getHeaders()
-      }
+      `${environment.apiUrl}${API_ENDPOINTS.DASHBOARD.DAILY}`
     );
   }
 
+  // Weekly value
   getWeekly(): Observable<number> {
-
     return this.http.get<number>(
-      `${this.apiUrl}/weekly`,
-      {
-        headers: this.getHeaders()
-      }
+      `${environment.apiUrl}${API_ENDPOINTS.DASHBOARD.WEEKLY}`
     );
   }
 
+  // Monthly value
   getMonthly(): Observable<number> {
-
     return this.http.get<number>(
-      `${this.apiUrl}/monthly`,
-      {
-        headers: this.getHeaders()
-      }
+      `${environment.apiUrl}${API_ENDPOINTS.DASHBOARD.MONTHLY}`
     );
   }
 
+  // Recent activities
   getRecent(): Observable<RecentCarbonEntry[]> {
-
     return this.http.get<RecentCarbonEntry[]>(
-      `${this.apiUrl}/recent`,
-      {
-        headers: this.getHeaders()
-      }
+      `${environment.apiUrl}${API_ENDPOINTS.DASHBOARD.RECENT}`
     );
   }
 }
