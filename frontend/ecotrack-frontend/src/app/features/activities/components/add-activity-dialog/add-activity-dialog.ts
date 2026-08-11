@@ -1,36 +1,30 @@
 import {
   Component,
+  Inject,
   inject
 } from '@angular/core';
 
 import { CommonModule } from '@angular/common';
-
 import { FormsModule } from '@angular/forms';
 
 import {
+  MAT_DIALOG_DATA,
   MatDialogModule,
   MatDialogRef
 } from '@angular/material/dialog';
 
-import {
-  MatFormFieldModule
-} from '@angular/material/form-field';
-
-import {
-  MatInputModule
-} from '@angular/material/input';
-
-import {
-  MatButtonModule
-} from '@angular/material/button';
-
-import {
-  MatSelectModule
-} from '@angular/material/select';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatSelectModule } from '@angular/material/select';
 
 import {
   ActivityService
 } from '../../../../core/services/activity.service';
+
+import {
+  Activity
+} from '../../../../core/models/activity.model';
 
 
 @Component({
@@ -39,21 +33,14 @@ import {
   standalone: true,
 
   imports: [
-
     CommonModule,
-
     FormsModule,
 
     MatDialogModule,
-
     MatFormFieldModule,
-
     MatInputModule,
-
     MatButtonModule,
-
     MatSelectModule
-
   ],
 
   templateUrl:
@@ -61,7 +48,6 @@ import {
 
   styleUrl:
     './add-activity-dialog.css'
-
 })
 export class AddActivityDialog {
 
@@ -87,54 +73,95 @@ export class AddActivityDialog {
   errorMessage = '';
 
 
+  isEditMode = false;
+
+  editingActivity?: Activity;
+
+
   categories = [
-
-    'Transportation',
-
-    'Electricity',
-
-    'Food',
-
-    'Waste',
-
-    'Water',
-
-    'Shopping',
-
-    'Others'
-
+    {
+      label: 'Transportation',
+      value: 'TRANSPORT'
+    },
+    {
+      label: 'Electricity',
+      value: 'ELECTRICITY'
+    },
+    {
+      label: 'Food',
+      value: 'FOOD'
+    },
+    {
+      label: 'Waste',
+      value: 'WASTE'
+    },
+    {
+      label: 'Water',
+      value: 'WATER'
+    },
+    {
+      label: 'Shopping',
+      value: 'SHOPPING'
+    },
+    {
+      label: 'Other',
+      value: 'OTHER'
+    }
   ];
 
 
   units = [
-
     'km',
-
     'kWh',
-
     'kg',
-
     'litre',
-
     'minutes',
-
     'hours',
-
     'units'
-
   ];
+
+
+  constructor(
+    @Inject(MAT_DIALOG_DATA)
+    public data: {
+      mode?: string;
+      activity?: Activity;
+    }
+  ) {
+
+    if (
+      data?.mode === 'edit' &&
+      data.activity
+    ) {
+
+      this.isEditMode = true;
+
+      this.editingActivity =
+        data.activity;
+
+      this.category =
+        data.activity.category;
+
+      this.activity =
+        data.activity.title;
+
+      this.quantity =
+        data.activity.quantity;
+
+      this.unit =
+        data.activity.unit;
+    }
+  }
 
 
   save(): void {
 
-
-    console.log(
-      'SAVE BUTTON CLICKED'
-    );
-
-
     this.errorMessage = '';
 
+
+    // -----------------------------
+    // VALIDATION
+    // -----------------------------
 
     if (!this.category) {
 
@@ -142,7 +169,6 @@ export class AddActivityDialog {
         'Please select a category.';
 
       return;
-
     }
 
 
@@ -152,7 +178,6 @@ export class AddActivityDialog {
         'Please enter an activity.';
 
       return;
-
     }
 
 
@@ -165,7 +190,6 @@ export class AddActivityDialog {
         'Please enter a quantity greater than 0.';
 
       return;
-
     }
 
 
@@ -175,145 +199,207 @@ export class AddActivityDialog {
         'Please select a unit.';
 
       return;
-
     }
 
 
     this.saving = true;
 
 
-    const request = {
+    // ============================================
+    // EDIT EXISTING ACTIVITY
+    // ============================================
 
-      category: this.category,
+    if (
+      this.isEditMode &&
+      this.editingActivity?.id
+    ) {
+
+      const updatedActivity: Activity = {
+
+        ...this.editingActivity,
+
+        title:
+          this.activity.trim(),
+
+        activity:
+          this.activity.trim(),
+
+        category:
+          this.category,
+
+        quantity:
+          this.quantity,
+
+        unit:
+          this.unit
+      };
+
+
+      this.activityService
+        .updateActivity(updatedActivity)
+        .subscribe({
+
+          next: response => {
+
+            console.log(
+              'ACTIVITY UPDATED SUCCESSFULLY:',
+              response
+            );
+
+            this.saving = false;
+
+            this.dialogRef.close(
+              response
+            );
+          },
+
+
+          error: error => {
+
+            console.error(
+              'ACTIVITY UPDATE FAILED:',
+              error
+            );
+
+            this.saving = false;
+
+            this.handleError(error);
+          }
+
+        });
+
+
+      return;
+    }
+
+
+    // ============================================
+    // CREATE NEW ACTIVITY
+    // ============================================
+
+    const newActivity:
+      Omit<Activity, 'id'> = {
+
+      title:
+        this.activity.trim(),
 
       activity:
         this.activity.trim(),
 
+      category:
+        this.category,
+
+      carbon:
+        0,
+
+      carbonEmission:
+        0,
+
+      date:
+        new Date().toISOString(),
+
+      createdAt:
+        new Date().toISOString(),
+
+      updatedAt:
+        new Date().toISOString(),
+
+      notes:
+        '',
+
       quantity:
-        Number(this.quantity),
+        this.quantity,
 
       unit:
         this.unit
-
     };
 
 
-    console.log(
-      'SENDING ACTIVITY:',
-      request
-    );
-
-
     this.activityService
-      .addActivity({
-
-        title:
-          request.activity,
-
-        activity:
-          request.activity,
-
-        category:
-          request.category,
-
-        quantity:
-          request.quantity,
-
-        unit:
-          request.unit,
-
-        carbon: 0,
-
-        date:
-          new Date().toISOString(),
-
-        notes: ''
-
-      })
-
+      .addActivity(newActivity)
       .subscribe({
 
-        next: (response) => {
-
+        next: response => {
 
           console.log(
-            'ACTIVITY SAVED SUCCESSFULLY:',
+            'ACTIVITY CREATED SUCCESSFULLY:',
             response
           );
 
-
           this.saving = false;
-
 
           this.dialogRef.close(
             response
           );
-
         },
 
 
-        error: (error) => {
-
+        error: error => {
 
           console.error(
-            'ACTIVITY SAVE FAILED:',
+            'ACTIVITY CREATE FAILED:',
             error
           );
 
-
           this.saving = false;
 
-
-          if (error.status === 400) {
-
-            this.errorMessage =
-              error.error?.message ||
-              error.error?.error ||
-              'Invalid activity data. Check category, quantity and unit.';
-
-          }
-
-          else if (error.status === 401) {
-
-            this.errorMessage =
-              'Session expired. Please login again.';
-
-          }
-
-          else if (error.status === 403) {
-
-            this.errorMessage =
-              'You are not authorized to save activities.';
-
-          }
-
-          else if (error.status === 0) {
-
-            this.errorMessage =
-              'Backend is not reachable. Start Spring Boot.';
-
-          }
-
-          else {
-
-            this.errorMessage =
-              error.error?.message ||
-              error.error?.error ||
-              'Failed to save activity.';
-
-          }
-
+          this.handleError(error);
         }
 
       });
+  }
 
+
+  private handleError(error: any): void {
+
+    if (error?.status === 400) {
+
+      this.errorMessage =
+        error.error?.message ||
+        error.error?.error ||
+        'Invalid activity data.';
+
+    }
+
+    else if (error?.status === 401) {
+
+      this.errorMessage =
+        'Session expired. Please login again.';
+
+    }
+
+    else if (error?.status === 403) {
+
+      this.errorMessage =
+        'You are not authorized for this operation.';
+
+    }
+
+    else if (error?.status === 404) {
+
+      this.errorMessage =
+        'Activity was not found.';
+
+    }
+
+    else if (error?.status === 0) {
+
+      this.errorMessage =
+        'Backend is not reachable.';
+
+    }
+
+    else {
+
+      this.errorMessage =
+        error.error?.message ||
+        'Operation failed.';
+    }
   }
 
 
   cancel(): void {
 
     this.dialogRef.close();
-
   }
-
 }

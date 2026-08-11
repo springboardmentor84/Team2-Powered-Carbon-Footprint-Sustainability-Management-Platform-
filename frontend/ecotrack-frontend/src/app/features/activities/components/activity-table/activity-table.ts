@@ -1,38 +1,13 @@
 import {
-  Component,
-  ViewChild,
   AfterViewInit,
+  Component,
+  OnInit,
+  ViewChild,
   inject
 } from '@angular/core';
 
 import { CommonModule } from '@angular/common';
-
 import { FormsModule } from '@angular/forms';
-
-import {
-  MatCardModule
-} from '@angular/material/card';
-
-import {
-  MatTableDataSource,
-  MatTableModule
-} from '@angular/material/table';
-
-import {
-  MatIconModule
-} from '@angular/material/icon';
-
-import {
-  MatButtonModule
-} from '@angular/material/button';
-
-import {
-  MatInputModule
-} from '@angular/material/input';
-
-import {
-  MatFormFieldModule
-} from '@angular/material/form-field';
 
 import {
   MatDialog,
@@ -40,8 +15,9 @@ import {
 } from '@angular/material/dialog';
 
 import {
-  MatSelectModule
-} from '@angular/material/select';
+  MatTableDataSource,
+  MatTableModule
+} from '@angular/material/table';
 
 import {
   MatPaginator,
@@ -54,154 +30,135 @@ import {
 } from '@angular/material/sort';
 
 import {
-  MatSnackBar,
-  MatSnackBarModule
-} from '@angular/material/snack-bar';
+  MatFormFieldModule
+} from '@angular/material/form-field';
 
 import {
-  Activity,
+  MatInputModule
+} from '@angular/material/input';
+
+import {
+  MatSelectModule
+} from '@angular/material/select';
+
+import {
+  MatButtonModule
+} from '@angular/material/button';
+
+import {
+  MatIconModule
+} from '@angular/material/icon';
+
+import { AddActivityDialog } from '../add-activity-dialog/add-activity-dialog';
+
+import {
   ActivityService
 } from '../../../../core/services/activity.service';
 
 import {
-  EditActivityDialog
-} from '../edit-activity-dialog/edit-activity-dialog';
-
-import {
-  DeleteConfirmDialog
-} from '../delete-confirm-dialog/delete-confirm-dialog';
+  Activity
+} from '../../../../core/models/activity.model';
 
 
 @Component({
   selector: 'app-activity-table',
-
   standalone: true,
 
   imports: [
-
     CommonModule,
-
     FormsModule,
 
-    MatCardModule,
-
     MatTableModule,
-
-    MatIconModule,
-
-    MatButtonModule,
-
-    MatInputModule,
-
-    MatFormFieldModule,
-
-    MatDialogModule,
-
-    MatSelectModule,
-
     MatPaginatorModule,
-
     MatSortModule,
 
-    MatSnackBarModule
-
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatButtonModule,
+    MatIconModule,
+    MatDialogModule
   ],
 
-  templateUrl:
-    './activity-table.html',
-
-  styleUrl:
-    './activity-table.css'
-
+  templateUrl: './activity-table.html',
+  styleUrl: './activity-table.css'
 })
-export class ActivityTable
-  implements AfterViewInit {
+export class ActivityTableComponent
+  implements OnInit, AfterViewInit {
 
-
-  private dialog =
-    inject(MatDialog);
-
-
-  private activityService =
+  private readonly activityService =
     inject(ActivityService);
 
+  private readonly dialog =
+    inject(MatDialog);
 
-  private snackBar =
-    inject(MatSnackBar);
-
-
-  search = '';
-
-  selectedCategory = 'All';
-
-  selectedDate = '';
-
-  minCarbon = 0;
-
-
-  categories = [
-
-    'All',
-
-    'Transportation',
-
-    'Electricity',
-
-    'Food',
-
-    'Waste',
-
-    'Water',
-
-    'Shopping',
-
-    'Others'
-
-  ];
-
-
-  displayedColumns = [
-
-    'activity',
-
-    'category',
-
-    'quantity',
-
-    'unit',
-
-    'carbon',
-
-    'date',
-
-    'action'
-
-  ];
-
+  activities: Activity[] = [];
 
   dataSource =
     new MatTableDataSource<Activity>([]);
 
+  /*
+   * IMPORTANT:
+   * These names MUST exactly match matColumnDef
+   * names in activity-table.html.
+   */
+  displayedColumns: string[] = [
+    'activity',
+    'category',
+    'quantity',
+    'unit',
+    'carbon',
+    'date',
+    'action'
+  ];
+
+  search = '';
+
+  selectedCategory = '';
+
+  selectedDate = '';
+
+  minCarbon: number | null = null;
+
+  categories: string[] = [
+    'TRANSPORT',
+    'ELECTRICITY',
+    'WATER',
+    'FOOD',
+    'WASTE',
+    'SHOPPING',
+    'OTHER'
+  ];
 
   @ViewChild(MatPaginator)
   paginator!: MatPaginator;
-
 
   @ViewChild(MatSort)
   sort!: MatSort;
 
 
-  constructor() {
+  ngOnInit(): void {
 
-
+    /*
+     * ActivityService is the single source of truth.
+     *
+     * When an activity is:
+     * - loaded
+     * - created
+     * - updated
+     * - deleted
+     *
+     * this subscription automatically refreshes the table.
+     */
     this.activityService
-      .activities$
-      .subscribe(() => {
+      .getActivities$()
+      .subscribe((activities: Activity[]) => {
+
+        this.activities = activities;
 
         this.loadData();
 
       });
-
   }
 
 
@@ -213,296 +170,355 @@ export class ActivityTable
     this.dataSource.sort =
       this.sort;
 
+    this.dataSource.sortingDataAccessor =
+      (item: Activity, property: string): string | number => {
+
+        switch (property) {
+
+          case 'activity':
+            return item.title?.toLowerCase() ?? '';
+
+          case 'category':
+            return item.category?.toLowerCase() ?? '';
+
+          case 'quantity':
+            return Number(item.quantity) || 0;
+
+          case 'unit':
+            return item.unit?.toLowerCase() ?? '';
+
+          case 'carbon':
+            return Number(item.carbonEmission ?? item.carbon) || 0;
+
+          case 'date':
+            return item.date
+              ? new Date(item.date).getTime()
+              : 0;
+
+          default:
+            return '';
+        }
+      };
   }
 
 
   loadData(): void {
 
-
-    let list =
-      this.activityService
-        .getActivities();
+    let result =
+      [...this.activities];
 
 
-    if (
-      this.selectedCategory !==
-      'All'
-    ) {
+    /*
+     * SEARCH
+     */
+    const search =
+      this.search
+        .trim()
+        .toLowerCase();
 
-      list =
-        list.filter(
-          item =>
-            item.category ===
-            this.selectedCategory
-        );
+    if (search) {
 
-    }
-
-
-    if (this.selectedDate) {
-
-      list =
-        list.filter(item => {
-
-          const date =
-            new Date(item.date);
-
-          const year =
-            date.getFullYear();
-
-          const month =
-            String(
-              date.getMonth() + 1
-            ).padStart(2, '0');
-
-          const day =
-            String(
-              date.getDate()
-            ).padStart(2, '0');
-
-          const localDate =
-            `${year}-${month}-${day}`;
-
+      result =
+        result.filter((activity: Activity) => {
 
           return (
-            localDate ===
-            this.selectedDate
+
+            activity.title
+              ?.toLowerCase()
+              .includes(search)
+
+            ||
+
+            activity.category
+              ?.toLowerCase()
+              .includes(search)
+
+            ||
+
+            activity.unit
+              ?.toLowerCase()
+              .includes(search)
+
+            ||
+
+            String(activity.quantity)
+              .includes(search)
+
+            ||
+
+            String(
+              activity.carbonEmission ??
+              activity.carbon ??
+              ''
+            ).includes(search)
+
+          );
+        });
+    }
+
+
+    /*
+     * CATEGORY
+     */
+    if (this.selectedCategory) {
+
+      result =
+        result.filter(
+          (activity: Activity) =>
+            activity.category ===
+            this.selectedCategory
+        );
+    }
+
+
+    /*
+     * DATE
+     */
+    if (this.selectedDate) {
+
+      result =
+        result.filter((activity: Activity) => {
+
+          if (!activity.date) {
+            return false;
+          }
+
+          const activityDate =
+            new Date(activity.date)
+              .toISOString()
+              .substring(0, 10);
+
+          return activityDate ===
+            this.selectedDate;
+        });
+    }
+
+
+    /*
+     * MINIMUM CARBON
+     */
+    if (
+      this.minCarbon !== null &&
+      this.minCarbon >= 0
+    ) {
+
+      result =
+        result.filter((activity: Activity) => {
+
+          const carbon =
+            Number(
+              activity.carbonEmission ??
+              activity.carbon ??
+              0
+            );
+
+          return carbon >=
+            Number(this.minCarbon);
+        });
+    }
+
+
+    /*
+     * Update table.
+     */
+    this.dataSource.data =
+      result;
+
+
+    /*
+     * Reset pagination after filtering.
+     */
+    if (this.paginator) {
+      this.paginator.firstPage();
+    }
+  }
+
+
+  /*
+   * DELETE
+   */
+  delete(activity: Activity): void {
+
+    if (!activity.id) {
+
+      console.error(
+        'Cannot delete activity without an ID.'
+      );
+
+      return;
+    }
+
+    const confirmed =
+      window.confirm(
+        `Are you sure you want to delete "${activity.title}"?`
+      );
+
+    if (!confirmed) {
+      return;
+    }
+
+
+    this.activityService
+      .deleteActivity(activity.id)
+      .subscribe({
+
+        next: () => {
+
+          console.log(
+            'ACTIVITY DELETED SUCCESSFULLY:',
+            activity.id
           );
 
-        });
+          /*
+           * ActivityService updates its BehaviorSubject.
+           * The table subscription automatically refreshes.
+           */
+        },
 
-    }
+        error: (error) => {
 
+          console.error(
+            'ACTIVITY DELETE FAILED:',
+            error
+          );
 
-    if (this.minCarbon > 0) {
+          if (error.status === 401) {
 
-      list =
-        list.filter(
-          item =>
-            item.carbon >=
-            this.minCarbon
-        );
+            alert(
+              'Session expired. Please login again.'
+            );
 
-    }
+          } else if (error.status === 403) {
 
+            alert(
+              'You are not authorized to delete this activity.'
+            );
 
-    if (this.search.trim()) {
+          } else if (error.status === 404) {
 
+            alert(
+              'Activity was not found.'
+            );
 
-      const search =
-        this.search
-          .trim()
-          .toLowerCase();
+          } else if (error.status === 0) {
 
+            alert(
+              'Backend is not reachable.'
+            );
 
-      list =
-        list.filter(item =>
+          } else {
 
-          item.title
-            .toLowerCase()
-            .includes(search)
-
-          ||
-
-          item.category
-            .toLowerCase()
-            .includes(search)
-
-          ||
-
-          item.unit
-            .toLowerCase()
-            .includes(search)
-
-        );
-
-    }
-
-
-    this.dataSource.data =
-      list;
-
-  }
-
-
-  resetFilters(): void {
-
-    this.search = '';
-
-    this.selectedCategory =
-      'All';
-
-    this.selectedDate = '';
-
-    this.minCarbon = 0;
-
-    this.loadData();
-
-  }
-
-
-  edit(
-    activity: Activity
-  ): void {
-
-
-    this.dialog
-      .open(
-        EditActivityDialog,
-        {
-          width: '550px',
-          data: {
-            ...activity
+            alert(
+              error.error?.message ||
+              'Failed to delete activity.'
+            );
           }
         }
-      )
-      .afterClosed()
-      .subscribe(result => {
-
-        if (result) {
-
-          this.loadData();
-
-        }
-
       });
-
   }
 
 
-  delete(
-    activity: Activity
-  ): void {
+  /*
+   * EDIT
+   */
+  edit(activity: Activity): void {
 
-
-    this.dialog
-      .open(
-        DeleteConfirmDialog,
+    const dialogRef =
+      this.dialog.open(
+        AddActivityDialog,
         {
-          width: '420px',
-          data: activity.title
-        }
-      )
-      .afterClosed()
-      .subscribe(result => {
+          width: '500px',
 
+          data: {
+            mode: 'edit',
+            activity: activity
+          }
+        }
+      );
+
+
+    dialogRef
+      .afterClosed()
+      .subscribe((result: Activity | undefined) => {
 
         if (!result) {
-
           return;
-
         }
 
-
-        this.activityService
-          .deleteActivity(
-            activity.id
-          )
-          .subscribe({
-
-            next: () => {
-
-              this.loadData();
-
-
-              this.snackBar.open(
-                'Activity Deleted Successfully',
-                'Close',
-                {
-                  duration: 3000,
-
-                  horizontalPosition:
-                    'right',
-
-                  verticalPosition:
-                    'top'
-
-                }
-              );
-
-            },
-
-
-            error: (error) => {
-
-              console.error(
-                'Delete failed:',
-                error
-              );
-
-
-              this.snackBar.open(
-                'Failed to delete activity.',
-                'Close',
-                {
-                  duration: 3000,
-
-                  horizontalPosition:
-                    'right',
-
-                  verticalPosition:
-                    'top'
-
-                }
-              );
-
-            }
-
-          });
+        console.log(
+          'ACTIVITY UPDATED:',
+          result
+        );
 
       });
-
   }
 
 
+  /*
+   * EXPORT CSV
+   */
   exportCSV(): void {
 
-
     const rows =
-      this.dataSource.data;
+      this.dataSource.filteredData;
+
+    if (!rows.length) {
+
+      alert(
+        'No activities available to export.'
+      );
+
+      return;
+    }
 
 
-    const escapeCSV =
-      (value: unknown): string => {
-
-        const text =
-          String(
-            value ?? ''
-          );
-
-
-        return `"${text.replace(
-          /"/g,
-          '""'
-        )}"`;
-
-      };
+    const headers = [
+      'Activity',
+      'Category',
+      'Quantity',
+      'Unit',
+      'Carbon Emission',
+      'Date'
+    ];
 
 
-    let csv =
-      'Activity,Category,Quantity,Unit,Carbon Emission,Date\n';
+    const csvRows =
+      rows.map((activity: Activity) => [
+
+        activity.title,
+
+        activity.category,
+
+        activity.quantity,
+
+        activity.unit,
+
+        activity.carbonEmission ??
+        activity.carbon ??
+        0,
+
+        activity.date
+          ? new Date(activity.date)
+              .toISOString()
+          : ''
+      ]);
 
 
-    rows.forEach(row => {
+    const csv = [
 
+      headers.join(','),
 
-      csv += [
+      ...csvRows.map(row =>
 
-        escapeCSV(row.title),
+        row
+          .map(value =>
+            `"${String(value ?? '')
+              .replace(/"/g, '""')}"`
+          )
+          .join(',')
+      )
 
-        escapeCSV(row.category),
-
-        escapeCSV(row.quantity),
-
-        escapeCSV(row.unit),
-
-        escapeCSV(row.carbon),
-
-        escapeCSV(row.date)
-
-      ].join(',') + '\n';
-
-    });
+    ].join('\n');
 
 
     const blob =
@@ -516,44 +532,24 @@ export class ActivityTable
 
 
     const url =
-      window.URL.createObjectURL(
-        blob
-      );
+      URL.createObjectURL(blob);
 
 
-    const anchor =
+    const link =
       document.createElement('a');
 
+    link.href = url;
 
-    anchor.href = url;
+    link.download =
+      'ecotrack-activities.csv';
 
-    anchor.download =
-      'activities.csv';
+    document.body.appendChild(link);
 
+    link.click();
 
-    anchor.click();
+    document.body.removeChild(link);
 
-
-    window.URL.revokeObjectURL(
-      url
-    );
-
-
-    this.snackBar.open(
-      'CSV Exported Successfully',
-      'Close',
-      {
-        duration: 3000,
-
-        horizontalPosition:
-          'right',
-
-        verticalPosition:
-          'top'
-
-      }
-    );
-
+    URL.revokeObjectURL(url);
   }
-
 }
+

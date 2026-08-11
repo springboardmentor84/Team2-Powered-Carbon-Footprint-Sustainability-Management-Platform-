@@ -7,245 +7,73 @@ import {
 import {
   BehaviorSubject,
   Observable,
+  catchError,
+  map,
+  tap,
   throwError
 } from 'rxjs';
 
-import {
-  catchError,
-  map,
-  tap
-} from 'rxjs/operators';
-
 import { environment } from '../../../environments/environment';
 
-const API_ENDPOINTS = {
+import {
+  API_ENDPOINTS
+} from '../constants/api.constants';
 
-  CARBON: {
-
-    BASE: '/api/v1/carbon',
-
-    BY_ID: (id: number) => `/api/v1/carbon/${id}`
-
-  }
-
-};
-
-
-// ============================================
-// FRONTEND ACTIVITY MODEL
-// ============================================
-
-export interface Activity {
-
-  id: number;
-
-  title: string;
-
-  activity?: string;
-
-  category: string;
-
-  quantity: number;
-
-  unit: string;
-
-  carbon: number;
-
-  carbonEmission?: number;
-
-  date: string;
-
-  notes: string;
-
-  createdAt?: string;
-
-  updatedAt?: string;
-}
-
-
-// ============================================
-// BACKEND REQUEST
-// ============================================
-
-export interface CarbonEntryRequest {
-
-  category: string;
-
-  activity: string;
-
-  quantity: number;
-
-  unit: string;
-}
-
-
-// ============================================
-// BACKEND RESPONSE
-// ============================================
-
-export interface CarbonEntryResponse {
-
-  id: number;
-
-  category: string;
-
-  activity: string;
-
-  quantity: number;
-
-  unit: string;
-
-  carbonEmission: number;
-
-  createdAt: string;
-
-  updatedAt: string;
-}
-
+import {
+  Activity,
+  CarbonEntryRequest,
+  CarbonEntryResponse
+} from '../models/activity.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ActivityService {
 
-  private http = inject(HttpClient);
-
+  private readonly http = inject(HttpClient);
 
   private readonly activitiesSubject =
     new BehaviorSubject<Activity[]>([]);
-
 
   readonly activities$ =
     this.activitiesSubject.asObservable();
 
 
-  constructor() {
-
-    this.loadActivities();
-
-  }
-
-
-  // ============================================
-  // FRONTEND CATEGORY → BACKEND ENUM
-  // ============================================
-
-  private normalizeCategory(
-    category: string
-  ): string {
-
-    const value =
-      category
-        .trim()
-        .toUpperCase();
-
-
-    const mapping: Record<string, string> = {
-
-      'TRANSPORTATION': 'TRANSPORT',
-
-      'TRANSPORT': 'TRANSPORT',
-
-      'ELECTRICITY': 'ELECTRICITY',
-
-      'WATER': 'WATER',
-
-      'FOOD': 'FOOD',
-
-      'WASTE': 'WASTE',
-
-      'SHOPPING': 'SHOPPING',
-
-      'OTHERS': 'OTHER',
-
-      'OTHER': 'OTHER'
-
-    };
-
-
-    return mapping[value] || value;
-
-  }
-
-
-  // ============================================
-  // BACKEND → FRONTEND MAPPING
-  // ============================================
+  // =========================================================
+  // BACKEND RESPONSE → FRONTEND ACTIVITY
+  // =========================================================
 
   private mapResponseToActivity(
     response: CarbonEntryResponse
   ): Activity {
 
     return {
-
       id: response.id,
 
       title: response.activity,
-
       activity: response.activity,
 
-      category: this.displayCategory(
-        response.category
-      ),
+      category: response.category,
 
       quantity: response.quantity,
-
       unit: response.unit,
 
       carbon: response.carbonEmission,
-
-      carbonEmission:
-        response.carbonEmission,
+      carbonEmission: response.carbonEmission,
 
       date: response.createdAt,
-
       notes: '',
 
       createdAt: response.createdAt,
-
       updatedAt: response.updatedAt
-
     };
-
   }
 
 
-  // ============================================
-  // BACKEND ENUM → DISPLAY NAME
-  // ============================================
-
-  private displayCategory(
-    category: string
-  ): string {
-
-    const mapping: Record<string, string> = {
-
-      'TRANSPORT': 'Transportation',
-
-      'ELECTRICITY': 'Electricity',
-
-      'WATER': 'Water',
-
-      'FOOD': 'Food',
-
-      'WASTE': 'Waste',
-
-      'SHOPPING': 'Shopping',
-
-      'OTHER': 'Others'
-
-    };
-
-
-    return mapping[category] || category;
-
-  }
-
-
-  // ============================================
-  // GET ALL ACTIVITIES
+  // =========================================================
+  // LOAD ALL ACTIVITIES
   // GET /api/v1/carbon
-  // ============================================
+  // =========================================================
 
   loadActivities(): void {
 
@@ -254,30 +82,24 @@ export class ActivityService {
         `${environment.apiUrl}${API_ENDPOINTS.CARBON.BASE}`
       )
       .pipe(
+        map(responses =>
+          responses.map(response =>
+            this.mapResponseToActivity(response)
+          )
+        ),
 
         catchError((error: HttpErrorResponse) => {
 
           console.error(
-            'Failed to load carbon entries:',
+            'Failed to load activities:',
             error
           );
 
-          return throwError(
-            () => error
-          );
-
+          return throwError(() => error);
         })
-
       )
       .subscribe({
-
-        next: (responses) => {
-
-          const activities =
-            responses.map(response =>
-              this.mapResponseToActivity(response)
-            );
-
+        next: activities => {
 
           this.activitiesSubject.next(
             activities
@@ -285,8 +107,7 @@ export class ActivityService {
 
         },
 
-
-        error: (error) => {
+        error: error => {
 
           console.error(
             'Activity loading failed:',
@@ -294,37 +115,31 @@ export class ActivityService {
           );
 
           this.activitiesSubject.next([]);
-
         }
-
       });
-
   }
 
 
-  // ============================================
-  // GET ACTIVITIES
-  // ============================================
+  // =========================================================
+  // GET CURRENT ACTIVITIES
+  // =========================================================
 
   getActivities(): Activity[] {
 
     return this.activitiesSubject.value;
-
   }
 
 
-  getActivities$():
-    Observable<Activity[]> {
+  getActivities$(): Observable<Activity[]> {
 
     return this.activities$;
-
   }
 
 
-  // ============================================
-  // GET SINGLE ACTIVITY
+  // =========================================================
+  // GET ONE ACTIVITY
   // GET /api/v1/carbon/{id}
-  // ============================================
+  // =========================================================
 
   getActivityById(
     id: number
@@ -335,20 +150,17 @@ export class ActivityService {
         `${environment.apiUrl}${API_ENDPOINTS.CARBON.BY_ID(id)}`
       )
       .pipe(
-
         map(response =>
           this.mapResponseToActivity(response)
         )
-
       );
-
   }
 
 
-  // ============================================
+  // =========================================================
   // ADD ACTIVITY
   // POST /api/v1/carbon
-  // ============================================
+  // =========================================================
 
   addActivity(
     activity: Omit<Activity, 'id'>
@@ -356,25 +168,20 @@ export class ActivityService {
 
     const request: CarbonEntryRequest = {
 
-      category:
-        this.normalizeCategory(
-          activity.category
-        ),
+      category: activity.category,
 
       activity:
-        activity.title.trim(),
+        activity.activity ||
+        activity.title,
 
-      quantity:
-        Number(activity.quantity),
+      quantity: activity.quantity,
 
-      unit:
-        activity.unit.trim()
-
+      unit: activity.unit
     };
 
 
     console.log(
-      'POST /api/v1/carbon REQUEST:',
+      'POST /api/v1/carbon:',
       request
     );
 
@@ -389,16 +196,12 @@ export class ActivityService {
         tap(response => {
 
           console.log(
-            'POST /api/v1/carbon RESPONSE:',
+            'Activity saved successfully:',
             response
           );
 
-
           const newActivity =
-            this.mapResponseToActivity(
-              response
-            );
-
+            this.mapResponseToActivity(response);
 
           this.activitiesSubject.next([
 
@@ -410,22 +213,27 @@ export class ActivityService {
 
         }),
 
-
         map(response =>
-          this.mapResponseToActivity(
-            response
-          )
-        )
+          this.mapResponseToActivity(response)
+        ),
 
+        catchError((error: HttpErrorResponse) => {
+
+          console.error(
+            'Activity save failed:',
+            error
+          );
+
+          return throwError(() => error);
+        })
       );
-
   }
 
 
-  // ============================================
+  // =========================================================
   // UPDATE ACTIVITY
   // PUT /api/v1/carbon/{id}
-  // ============================================
+  // =========================================================
 
   updateActivity(
     updated: Activity
@@ -433,21 +241,22 @@ export class ActivityService {
 
     const request: CarbonEntryRequest = {
 
-      category:
-        this.normalizeCategory(
-          updated.category
-        ),
+      category: updated.category,
 
       activity:
-        updated.title.trim(),
+        updated.activity ||
+        updated.title,
 
-      quantity:
-        Number(updated.quantity),
+      quantity: updated.quantity,
 
-      unit:
-        updated.unit.trim()
-
+      unit: updated.unit
     };
+
+
+    console.log(
+      'PUT /api/v1/carbon/' + updated.id,
+      request
+    );
 
 
     return this.http
@@ -457,49 +266,54 @@ export class ActivityService {
       )
       .pipe(
 
-        tap(response => {
+        map(response => {
 
           const updatedActivity =
-            this.mapResponseToActivity(
-              response
+            this.mapResponseToActivity(response);
+
+          const current =
+            this.activitiesSubject.value;
+
+          const updatedList =
+            current.map(item =>
+              item.id === updatedActivity.id
+                ? updatedActivity
+                : item
             );
-
-
-          const list =
-            this.activitiesSubject.value.map(
-              item =>
-                item.id === updatedActivity.id
-                  ? updatedActivity
-                  : item
-            );
-
 
           this.activitiesSubject.next(
-            list
+            updatedList
           );
 
+          return updatedActivity;
         }),
 
+        catchError((error: HttpErrorResponse) => {
 
-        map(response =>
-          this.mapResponseToActivity(
-            response
-          )
-        )
+          console.error(
+            'Activity update failed:',
+            error
+          );
 
+          return throwError(() => error);
+        })
       );
-
   }
 
 
-  // ============================================
+  // =========================================================
   // DELETE ACTIVITY
   // DELETE /api/v1/carbon/{id}
-  // ============================================
+  // =========================================================
 
   deleteActivity(
     id: number
   ): Observable<void> {
+
+    console.log(
+      'DELETE /api/v1/carbon/' + id
+    );
+
 
     return this.http
       .delete<void>(
@@ -509,62 +323,66 @@ export class ActivityService {
 
         tap(() => {
 
-          this.activitiesSubject.next(
-
+          const updated =
             this.activitiesSubject.value.filter(
               activity =>
                 activity.id !== id
-            )
+            );
 
+          this.activitiesSubject.next(
+            updated
           );
 
+        }),
+
+        catchError((error: HttpErrorResponse) => {
+
+          console.error(
+            'Activity delete failed:',
+            error
+          );
+
+          return throwError(() => error);
         })
-
       );
-
   }
 
 
-  // ============================================
-  // CLEAR LOCAL VIEW
-  // ============================================
+  // =========================================================
+  // CLEAR FRONTEND VIEW ONLY
+  // =========================================================
 
   clearAllActivities(): void {
 
     this.activitiesSubject.next([]);
-
   }
 
 
-  // ============================================
+  // =========================================================
   // DASHBOARD HELPERS
-  // ============================================
+  // =========================================================
 
   getCarbonSaved(): number {
 
     return this.activitiesSubject.value.reduce(
 
       (sum, item) =>
-        sum + item.carbon,
+        sum + (item.carbonEmission || 0),
 
       0
-
     );
-
   }
 
 
   getActivityCount(): number {
 
     return this.activitiesSubject.value.length;
-
   }
 
 
   getSustainabilityScore(): number {
 
     let score = 0;
-
 
     this.activitiesSubject.value.forEach(
       item => {
@@ -573,20 +391,7 @@ export class ActivityService {
           item.category.toLowerCase()
         ) {
 
-          case 'walking':
-            score += 5;
-            break;
-
-          case 'cycling':
-            score += 8;
-            break;
-
-          case 'recycling':
-            score += 4;
-            break;
-
           case 'transport':
-          case 'transportation':
             score += 6;
             break;
 
@@ -602,20 +407,21 @@ export class ActivityService {
             score += 4;
             break;
 
+          case 'waste':
+            score += 4;
+            break;
+
+          case 'shopping':
+            score += 3;
+            break;
+
           default:
             score += 2;
-
         }
-
       }
     );
 
-
-    return Math.min(
-      score,
-      100
-    );
-
+    return Math.min(score, 100);
   }
 
 
@@ -624,25 +430,16 @@ export class ActivityService {
   ): number {
 
     if (goal <= 0) {
-
       return 0;
-
     }
-
 
     return Math.min(
 
       Math.round(
-        (
-          this.getCarbonSaved() /
-          goal
-        ) * 100
+        (this.getCarbonSaved() / goal) * 100
       ),
 
       100
-
     );
-
   }
-
 }

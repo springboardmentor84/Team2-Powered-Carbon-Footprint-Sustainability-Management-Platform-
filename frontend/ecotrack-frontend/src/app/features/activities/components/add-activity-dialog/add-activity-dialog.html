@@ -1,10 +1,14 @@
 <h2 mat-dialog-title>
-  Add Activity
+
+  {{ isEditMode ? 'Edit Activity' : 'Add Activity' }}
+
 </h2>
 
 
 <mat-dialog-content>
 
+
+  <!-- CATEGORY -->
 
   <mat-form-field
     appearance="outline"
@@ -19,13 +23,13 @@
 
       @for (
         item of categories;
-        track item
+        track item.value
       ) {
 
         <mat-option
-          [value]="item">
+          [value]="item.value">
 
-          {{ item }}
+          {{ item.label }}
 
         </mat-option>
 
@@ -35,6 +39,9 @@
 
   </mat-form-field>
 
+
+
+  <!-- ACTIVITY -->
 
   <mat-form-field
     appearance="outline"
@@ -52,6 +59,9 @@
   </mat-form-field>
 
 
+
+  <!-- QUANTITY -->
+
   <mat-form-field
     appearance="outline"
     class="full-width">
@@ -63,11 +73,15 @@
     <input
       matInput
       type="number"
-      [(ngModel)]="quantity"
-      min="0">
+      min="0"
+      step="0.01"
+      [(ngModel)]="quantity">
 
   </mat-form-field>
 
+
+
+  <!-- UNIT -->
 
   <mat-form-field
     appearance="outline"
@@ -99,6 +113,9 @@
   </mat-form-field>
 
 
+
+  <!-- ERROR -->
+
   @if (errorMessage) {
 
     <div class="error-message">
@@ -113,8 +130,8 @@
 </mat-dialog-content>
 
 
-<mat-dialog-actions
-  align="end">
+
+<mat-dialog-actions align="end">
 
 
   <button
@@ -143,7 +160,7 @@
 
     @else {
 
-      Save Activity
+      {{ isEditMode ? 'Update Activity' : 'Save Activity' }}
 
     }
 

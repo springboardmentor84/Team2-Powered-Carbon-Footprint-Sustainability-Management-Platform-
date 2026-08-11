@@ -13,13 +13,19 @@ import { RouterModule } from '@angular/router';
 import { Subscription } from 'rxjs';
 
 import { MatCardModule } from '@angular/material/card';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import {
+  MatDialog,
+  MatDialogModule
+} from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 
 import { Chart } from 'chart.js/auto';
 
 import { ActivityService } from '../../../../core/services/activity.service';
-import { AddActivityDialog } from '../../../activities/components/add-activity-dialog/add-activity-dialog';
+
+import {
+  AddActivityDialog
+} from '../../../activities/components/add-activity-dialog/add-activity-dialog';
 
 import { MonthlyChart } from '../../../../shared/components/monthly-chart/monthly-chart';
 import { GoalProgress } from '../../../../shared/components/goal-progress/goal-progress';
@@ -34,12 +40,16 @@ import { AchievementCard } from '../../../../shared/components/achievement-card/
 import { StreakCard } from '../../../../shared/components/streak-card/streak-card';
 import { WeatherCard } from '../../../../shared/components/weather-card/weather-card';
 
+
 @Component({
   selector: 'app-dashboard-home',
+
   standalone: true,
+
   imports: [
     CommonModule,
     RouterModule,
+
     MatCardModule,
     MatIconModule,
     MatDialogModule,
@@ -57,22 +67,35 @@ import { WeatherCard } from '../../../../shared/components/weather-card/weather-
     WeatherCard,
     ProfileWidget
   ],
+
   templateUrl: './dashboard-home.html',
+
   styleUrl: './dashboard-home.css'
 })
-export class DashboardHome implements OnInit, AfterViewInit, OnDestroy {
+export class DashboardHome
+  implements OnInit, AfterViewInit, OnDestroy {
 
-  private dialog = inject(MatDialog);
-  private activityService = inject(ActivityService);
 
-  private subscription!: Subscription;
+  private activityService =
+    inject(ActivityService);
+
+
+  private dialog =
+    inject(MatDialog);
+
+
+  private subscription?: Subscription;
+
 
   @ViewChild('carbonChart')
-  carbonChart!: ElementRef<HTMLCanvasElement>;
+  carbonChart?: ElementRef<HTMLCanvasElement>;
 
-  chart!: Chart;
+
+  chart?: Chart;
+
 
   stats = [
+
     {
       icon: 'eco',
       title: 'Carbon Saved',
@@ -80,6 +103,7 @@ export class DashboardHome implements OnInit, AfterViewInit, OnDestroy {
       subtitle: 'CO₂ Reduced',
       color: '#2E7D32'
     },
+
     {
       icon: 'directions_walk',
       title: 'Activities',
@@ -87,6 +111,7 @@ export class DashboardHome implements OnInit, AfterViewInit, OnDestroy {
       subtitle: 'Activities Logged',
       color: '#1565C0'
     },
+
     {
       icon: 'emoji_events',
       title: 'Sustainability Score',
@@ -94,6 +119,7 @@ export class DashboardHome implements OnInit, AfterViewInit, OnDestroy {
       subtitle: 'Out of 100',
       color: '#FB8C00'
     },
+
     {
       icon: 'flag',
       title: 'Goals',
@@ -101,200 +127,502 @@ export class DashboardHome implements OnInit, AfterViewInit, OnDestroy {
       subtitle: 'Progress',
       color: '#8E24AA'
     }
+
   ];
+
 
   ngOnInit(): void {
 
-    this.subscription = this.activityService.activities$.subscribe(() => {
+    /*
+     * IMPORTANT:
+     *
+     * ActivityService.activities$ is the single
+     * source of truth for dashboard activity data.
+     *
+     * Whenever an activity is added, edited or deleted,
+     * ActivityService emits a new array.
+     *
+     * This subscription therefore updates the dashboard
+     * automatically without reloading the page.
+     */
 
-      this.refreshDashboard();
+    this.subscription =
+      this.activityService.activities$
+        .subscribe(activities => {
 
-    });
+          console.log(
+            'DASHBOARD RECEIVED UPDATED ACTIVITIES:',
+            activities
+          );
 
-    this.refreshDashboard();
+          this.refreshDashboard(activities);
+
+        });
+
+
+    /*
+     * Load current backend data once when dashboard starts.
+     */
+
+    this.activityService.loadActivities();
 
   }
+
 
   ngAfterViewInit(): void {
 
-    this.createChart();
+    /*
+     * Chart canvas may not exist until after the view
+     * has been initialized.
+     */
+
+    setTimeout(() => {
+
+      this.createChart();
+
+    });
 
   }
+
 
   ngOnDestroy(): void {
 
-    if (this.subscription) {
+    this.subscription?.unsubscribe();
 
-      this.subscription.unsubscribe();
+    this.chart?.destroy();
 
-    }
+  }
+
+
+  // ============================================================
+  // DASHBOARD REFRESH
+  // ============================================================
+
+  private refreshDashboard(
+    activities = this.activityService.getActivities()
+  ): void {
+
+
+    /*
+     * Calculate everything directly from the same
+     * ActivityService data.
+     */
+
+    const carbon =
+      activities.reduce(
+        (sum, activity) =>
+          sum + (Number(activity.carbon) || 0),
+        0
+      );
+
+
+    const activityCount =
+      activities.length;
+
+
+    const score =
+      this.calculateSustainabilityScore(activities);
+
+
+    const goal =
+      this.calculateGoalProgress(carbon);
+
+
+    /*
+     * Update cards.
+     */
+
+    this.stats[0].value =
+      `${carbon.toFixed(1)} kg`;
+
+
+    this.stats[1].value =
+      activityCount.toString();
+
+
+    this.stats[2].value =
+      score.toString();
+
+
+    this.stats[3].value =
+      `${goal}%`;
+
+
+    /*
+     * Force Angular to detect the new array.
+     */
+
+    this.stats =
+      [...this.stats];
+
+
+    /*
+     * Update chart immediately.
+     */
 
     if (this.chart) {
 
-      this.chart.destroy();
+      this.updateChart(activities);
 
     }
 
   }
 
-  refreshDashboard(): void {
 
-    const carbon = this.activityService.getCarbonSaved();
+  // ============================================================
+  // SUSTAINABILITY SCORE
+  // ============================================================
 
-    const activities = this.activityService.getActivities().length;
+  private calculateSustainabilityScore(
+    activities: any[]
+  ): number {
 
-    const score = this.activityService.getSustainabilityScore();
 
-    const goal = this.activityService.getGoalProgress();
+    let score = 0;
 
-    this.stats[0].value = `${carbon.toFixed(1)} kg`;
-    this.stats[1].value = activities.toString();
-    this.stats[2].value = score.toString();
-    this.stats[3].value = `${goal}%`;
 
-    this.stats = [...this.stats];
+    activities.forEach(activity => {
 
-    if (this.chart) {
+      const category =
+        String(activity.category || '')
+          .toLowerCase();
 
-      this.updateChart();
 
-    }
+      switch (category) {
+
+        case 'transport':
+          score += 6;
+          break;
+
+        case 'electricity':
+          score += 5;
+          break;
+
+        case 'water':
+          score += 4;
+          break;
+
+        case 'food':
+          score += 3;
+          break;
+
+        case 'waste':
+          score += 4;
+          break;
+
+        case 'shopping':
+          score += 2;
+          break;
+
+        default:
+          score += 2;
+
+      }
+
+    });
+
+
+    return Math.min(score, 100);
 
   }
 
-  createChart(): void {
 
-    this.chart = new Chart(this.carbonChart.nativeElement, {
+  // ============================================================
+  // GOAL PROGRESS
+  // ============================================================
 
-      type: 'line',
+  private calculateGoalProgress(
+    carbonSaved: number
+  ): number {
 
-      data: {
 
-        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+    const goal = 100;
 
-        datasets: [
 
-          {
+    if (goal <= 0) {
 
-            label: 'Carbon Saved',
+      return 0;
 
-            data: [0, 0, 0, 0, 0, 0, 0],
+    }
 
-            borderColor: '#2E7D32',
 
-            backgroundColor: 'rgba(76,175,80,.20)',
+    return Math.min(
 
-            borderWidth: 4,
+      Math.round(
+        (carbonSaved / goal) * 100
+      ),
 
-            fill: true,
+      100
 
-            tension: .45,
+    );
 
-            pointRadius: 6,
+  }
 
-            pointHoverRadius: 8,
 
-            pointBackgroundColor: '#2E7D32',
+  // ============================================================
+  // CREATE CHART
+  // ============================================================
 
-            pointBorderColor: '#ffffff',
+  private createChart(): void {
 
-            pointBorderWidth: 2
 
-          }
+    if (!this.carbonChart) {
 
-        ]
+      return;
 
-      },
+    }
 
-      options: {
 
-        responsive: true,
+    /*
+     * Destroy previous chart if one exists.
+     */
 
-        maintainAspectRatio: false,
+    this.chart?.destroy();
 
-        plugins: {
 
-          legend: {
+    this.chart =
+      new Chart(
+        this.carbonChart.nativeElement,
+        {
 
-            display: false
+          type: 'line',
 
-          }
+          data: {
 
-        },
+            labels: [
+              'Mon',
+              'Tue',
+              'Wed',
+              'Thu',
+              'Fri',
+              'Sat',
+              'Sun'
+            ],
 
-        scales: {
+            datasets: [
 
-          x: {
+              {
 
-            grid: {
+                label: 'Carbon Saved',
 
-              display: false
+                data: [
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0,
+                  0
+                ],
 
-            }
+                borderColor: '#2E7D32',
+
+                backgroundColor:
+                  'rgba(76,175,80,.20)',
+
+                borderWidth: 4,
+
+                fill: true,
+
+                tension: 0.45,
+
+                pointRadius: 6,
+
+                pointHoverRadius: 8,
+
+                pointBackgroundColor:
+                  '#2E7D32',
+
+                pointBorderColor:
+                  '#ffffff',
+
+                pointBorderWidth: 2
+
+              }
+
+            ]
 
           },
 
-          y: {
+          options: {
 
-            beginAtZero: true,
+            responsive: true,
 
-            ticks: {
+            maintainAspectRatio: false,
 
-              precision: 0
+            animation: false,
+
+            plugins: {
+
+              legend: {
+
+                display: false
+
+              }
+
+            },
+
+            scales: {
+
+              x: {
+
+                grid: {
+
+                  display: false
+
+                }
+
+              },
+
+              y: {
+
+                beginAtZero: true,
+
+                ticks: {
+
+                  precision: 0
+
+                }
+
+              }
 
             }
 
           }
 
         }
+      );
 
-      }
 
-    });
+    /*
+     * Populate chart using current data.
+     */
 
-    this.updateChart();
+    this.updateChart(
+      this.activityService.getActivities()
+    );
 
   }
 
-  updateChart(): void {
 
-    if (!this.chart) return;
+  // ============================================================
+  // UPDATE CHART
+  // ============================================================
 
-    const totals = [0, 0, 0, 0, 0, 0, 0];
+  private updateChart(
+    activities: any[]
+  ): void {
 
-    this.activityService.getActivities().forEach(activity => {
 
-      const date = new Date(activity.date);
+    if (!this.chart) {
 
-      let day = date.getDay();
+      return;
 
-      day = day === 0 ? 6 : day - 1;
+    }
 
-      totals[day] += activity.carbon;
+
+    const totals =
+      [0, 0, 0, 0, 0, 0, 0];
+
+
+    activities.forEach(activity => {
+
+
+      if (!activity.date) {
+
+        return;
+
+      }
+
+
+      const date =
+        new Date(activity.date);
+
+
+      let day =
+        date.getDay();
+
+
+      /*
+       * JavaScript:
+       *
+       * Sunday = 0
+       * Monday = 1
+       *
+       * We want:
+       *
+       * Monday = 0
+       * Sunday = 6
+       */
+
+      day =
+        day === 0
+          ? 6
+          : day - 1;
+
+
+      totals[day] +=
+        Number(activity.carbon) || 0;
 
     });
 
-    this.chart.data.datasets[0].data = totals;
+
+    this.chart.data.datasets[0].data =
+      totals;
+
 
     this.chart.update();
 
   }
 
+
+  // ============================================================
+  // ADD ACTIVITY
+  // ============================================================
+
   openDialog(): void {
 
-    this.dialog.open(AddActivityDialog, {
 
-      width: '500px'
+    const dialogRef =
+      this.dialog.open(
+        AddActivityDialog,
+        {
+          width: '500px'
+        }
+      );
 
-    }).afterClosed().subscribe(result => {
 
-      if (result) {
+    dialogRef
+      .afterClosed()
+      .subscribe(result => {
 
-        this.refreshDashboard();
 
-      }
+        if (!result) {
 
-    });
+          return;
+
+        }
+
+
+        /*
+         * DO NOT manually reload the page.
+         *
+         * ActivityService.addActivity()
+         * already updates activitiesSubject.
+         *
+         * activities$ emits automatically.
+         *
+         * ngOnInit subscription above receives it.
+         *
+         * refreshDashboard() runs automatically.
+         */
+
+        console.log(
+          'DASHBOARD ACTIVITY ADDED:',
+          result
+        );
+
+      });
 
   }
 
