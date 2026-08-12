@@ -55,24 +55,30 @@ export class ProfileCard implements OnInit {
 
   ngOnInit(): void {
     this.profileService.getProfile().subscribe({
-      next: (profile: UserProfile) => {
+      next: (profile: any) => {
         if (profile) {
           // Merge fetched profile data with existing fallback
           this.user = {
             ...this.user,
-            ...profile,
-            carbon: profile.carbon !== undefined ? `${profile.carbon} kg` : this.user.carbon,
-            streak: profile.streak !== undefined ? `${profile.streak} Days` : this.user.streak,
-            score: profile.score !== undefined ? `${profile.score}%` : this.user.score,
+            fullName: profile.fullName || 'N/A',
+            email: profile.email || 'N/A',
+            score: profile.ecoPoints !== undefined ? `${profile.ecoPoints}` : this.user.score,
+            level: profile.role || this.user.level
           };
           
-          if (!profile.profileImage && profile.fullName) {
+          if (profile.profileImage) {
+            this.user.profileImage = profile.profileImage;
+          } else if (profile.fullName) {
              const nameQuery = profile.fullName.replace(/\s+/g, '+');
              this.user.profileImage = `https://ui-avatars.com/api/?name=${nameQuery}&background=2E7D32&color=fff&size=256`;
           }
         }
       },
-      error: (err) => console.error('Failed to load profile card data', err)
+      error: (err) => {
+        console.error('Failed to load profile card data', err);
+        this.user.fullName = 'Error loading';
+        this.user.email = 'Error loading';
+      }
     });
   }
 
@@ -105,26 +111,10 @@ export class ProfileCard implements OnInit {
     };
     reader.readAsDataURL(file);
 
-    // Upload to backend (Cloudinary)
-    const token = localStorage.getItem(TOKEN_KEY);
-    if (!token) {
-      this.snackBar.open('Please login first', 'Close', { duration: 3000 });
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append('image', file);
-
-    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
-
     this.isUploading = true;
 
-    this.http.post<any>(
-      `${environment.apiUrl}/user/profile/image`,
-      formData,
-      { headers }
-    ).subscribe({
-      next: (response) => {
+    this.profileService.uploadProfileImage(file).subscribe({
+      next: (response: any) => {
         this.isUploading = false;
         if (response?.profileImage) {
           this.user.profileImage = response.profileImage;

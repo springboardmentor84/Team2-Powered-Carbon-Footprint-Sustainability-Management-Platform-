@@ -31,10 +31,10 @@ export class ProfileWidget implements OnInit {
 
   ngOnInit(): void {
     this.profileService.getProfile().subscribe({
-      next: (profile: UserProfile) => {
+      next: (profile: any) => {
         if (profile) {
-          this.user.name = profile.fullName || this.user.name;
-          this.user.email = profile.email || this.user.email;
+          this.user.name = profile.fullName || 'N/A';
+          this.user.email = profile.email || 'N/A';
           if (profile.profileImage) {
             this.user.avatar = profile.profileImage;
           }
@@ -45,10 +45,17 @@ export class ProfileWidget implements OnInit {
             } catch (e) {
               this.user.memberSince = profile.joined;
             }
+          } else {
+            this.user.memberSince = 'N/A';
           }
         }
       },
-      error: (err) => console.error('Failed to load profile', err)
+      error: (err) => {
+        console.error('Failed to load profile', err);
+        this.user.name = 'Error loading';
+        this.user.email = 'Error loading';
+        this.user.memberSince = 'Error loading';
+      }
     });
   }
 
