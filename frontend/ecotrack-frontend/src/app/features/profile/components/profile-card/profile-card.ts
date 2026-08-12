@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
@@ -28,6 +28,7 @@ export class ProfileCard implements OnInit {
   private snackBar = inject(MatSnackBar);
   private http = inject(HttpClient);
   private profileService = inject(ProfileService);
+  private cdr = inject(ChangeDetectorRef);
 
   isUploading = false;
 
@@ -46,7 +47,7 @@ export class ProfileCard implements OnInit {
     level: 'N/A',
     carbon: '0 kg',
     streak: '0 Days',
-    score: '0%',
+    score: '0',
     joined: 'N/A',
     username: 'N/A',
     accountStatus: 'N/A',
@@ -72,12 +73,14 @@ export class ProfileCard implements OnInit {
              const nameQuery = profile.fullName.replace(/\s+/g, '+');
              this.user.profileImage = `https://ui-avatars.com/api/?name=${nameQuery}&background=2E7D32&color=fff&size=256`;
           }
+          this.cdr.detectChanges();
         }
       },
       error: (err) => {
         console.error('Failed to load profile card data', err);
         this.user.fullName = 'Error loading';
         this.user.email = 'Error loading';
+        this.cdr.detectChanges();
       }
     });
   }

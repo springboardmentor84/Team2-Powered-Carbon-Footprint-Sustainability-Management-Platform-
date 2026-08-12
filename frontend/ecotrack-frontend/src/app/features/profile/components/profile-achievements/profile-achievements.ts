@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
+import { BadgeService, BadgeResponse } from '../../../../core/services/badge.service';
 
 @Component({
   selector: 'app-profile-achievements',
@@ -12,38 +13,28 @@ import { MatCardModule } from '@angular/material/card';
   templateUrl: './profile-achievements.html',
   styleUrl: './profile-achievements.css'
 })
-export class ProfileAchievements {
+export class ProfileAchievements implements OnInit {
+  private badgeService = inject(BadgeService);
 
-  achievements = [
+  achievements: any[] = [];
+  isLoading = true;
 
-    {
-      icon:'🌱',
-      title:'Green Beginner',
-      description:'Completed your first eco activity.',
-      unlocked:true
-    },
-
-    {
-      icon:'🔥',
-      title:'15 Day Streak',
-      description:'Stayed consistent for 15 days.',
-      unlocked:true
-    },
-
-    {
-      icon:'♻️',
-      title:'Recycling Hero',
-      description:'Logged 20 recycling activities.',
-      unlocked:true
-    },
-
-    {
-      icon:'🏆',
-      title:'Eco Champion',
-      description:'Reach Sustainability Score 95%.',
-      unlocked:false
-    }
-
-  ];
-
+  ngOnInit(): void {
+    this.badgeService.getBadges().subscribe({
+      next: (badges: BadgeResponse[]) => {
+        if (badges) {
+          this.achievements = badges.map(b => ({
+            icon: b.icon || '🏆',
+            title: b.name || 'Unnamed Badge',
+            description: b.description || (b.pointsRequired ? `Requires ${b.pointsRequired} points.` : 'No description'),
+            unlocked: b.unlocked
+          }));
+        }
+        this.isLoading = false;
+      },
+      error: () => {
+        this.isLoading = false;
+      }
+    });
+  }
 }

@@ -25,6 +25,14 @@ export const API_ENDPOINTS = {
     PROFILE: '/api/v1/user/profile',
     PREFERENCES: '/api/v1/user/preferences',
     PROFILE_IMAGE: '/api/v1/user/profile/image'
+  },
+
+  LEADERBOARD: {
+    ME: '/api/v1/leaderboard/me'
+  },
+
+  BADGES: {
+    BASE: '/api/v1/badges'
   }
 
 };

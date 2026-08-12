@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
@@ -21,6 +21,7 @@ export class ProfileWidget implements OnInit {
 
   private activityService = inject(ActivityService);
   private profileService = inject(ProfileService);
+  private cdr = inject(ChangeDetectorRef);
 
   user: any = {
     name: 'Loading...',
@@ -48,6 +49,7 @@ export class ProfileWidget implements OnInit {
           } else {
             this.user.memberSince = 'N/A';
           }
+          this.cdr.detectChanges();
         }
       },
       error: (err) => {
@@ -55,6 +57,7 @@ export class ProfileWidget implements OnInit {
         this.user.name = 'Error loading';
         this.user.email = 'Error loading';
         this.user.memberSince = 'Error loading';
+        this.cdr.detectChanges();
       }
     });
   }

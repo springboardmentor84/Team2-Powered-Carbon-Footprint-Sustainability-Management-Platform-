@@ -12,12 +12,14 @@
 
     </p>
 
-    <div class="grid">
+    <p *ngIf="isLoading">Loading achievements...</p>
+
+    <div class="grid" *ngIf="!isLoading">
 
         <div
             class="badge"
             *ngFor="let item of achievements"
-            [class.locked]="!item.unlocked">
+            [class.locked]="item.unlocked === false">
 
             <div class="icon">
 
@@ -37,7 +39,7 @@
 
             </p>
 
-            <span>
+            <span *ngIf="item.unlocked !== undefined">
 
                 {{item.unlocked ? 'Unlocked' : 'Locked'}}
 
