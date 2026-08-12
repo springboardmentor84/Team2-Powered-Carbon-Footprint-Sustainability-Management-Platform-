@@ -18,13 +18,13 @@ import { SustainabilityScore as SustainabilityScoreModel } from '../../../core/m
 })
 export class SustainabilityScore {
 
-  scoreData: SustainabilityScoreModel = {
+  scoreData: any = {
 
-    score: 86,
+    score: 'N/A',
 
-    level: 'Excellent',
+    level: 'Unavailable',
 
-    progress: 86
+    progress: 0
 
   };
 

@@ -33,6 +33,9 @@ import {
   Chart
 } from 'chart.js/auto';
 
+import { DashboardService } from '../../../../core/services/dashboard/dashboard.service';
+import { GoalService } from '../../../../core/services/goal';
+
 import {
   ActivityService
 } from '../../../../core/services/activity.service';
@@ -148,6 +151,7 @@ export class DashboardHome
 
 
   // =========================================================
+  // =========================================================
   // SERVICES
   // =========================================================
 
@@ -157,6 +161,11 @@ export class DashboardHome
   private readonly activityService =
     inject(ActivityService);
 
+  private readonly dashboardService =
+    inject(DashboardService);
+
+  private readonly goalService =
+    inject(GoalService);
 
   // =========================================================
   // SUBSCRIPTION
@@ -184,11 +193,11 @@ export class DashboardHome
     {
       icon: 'eco',
 
-      title: 'Carbon Saved',
+      title: 'Total Carbon Emission',
 
       value: '0 kg',
 
-      subtitle: 'CO₂ Reduced',
+      subtitle: 'CO₂ Emitted',
 
       color: '#2E7D32'
     },
@@ -310,48 +319,25 @@ export class DashboardHome
 
   refreshDashboard(): void {
 
-    /*
-     * Read latest values directly from ActivityService.
-     */
+    // 1. Fetch Dashboard Summary
+    this.dashboardService.getSummary().subscribe({
+      next: (summary) => {
+        this.stats[0].value = `${summary.totalCarbonEmission.toFixed(1)} kg`;
+        this.stats[1].value = summary.totalEntries.toString();
+        this.stats = [...this.stats];
+      },
+      error: (err) => {
+        console.error('Failed to load dashboard summary', err);
+      }
+    });
 
-    const carbon =
-      this.activityService.getCarbonSaved();
+    // 2. Score is unavailable from backend
+    this.stats[2].value = 'N/A';
+    this.stats = [...this.stats];
 
-    const activities =
-      this.activityService.getActivityCount();
-
-    const score =
-      this.activityService.getSustainabilityScore();
-
-    const goal =
-      this.activityService.getGoalProgress();
-
-
-    /*
-     * Update cards.
-     */
-
-    this.stats[0].value =
-      `${carbon.toFixed(1)} kg`;
-
-    this.stats[1].value =
-      activities.toString();
-
-    this.stats[2].value =
-      score.toString();
-
-    this.stats[3].value =
-      `${goal}%`;
-
-
-    /*
-     * Create a new array reference so Angular
-     * immediately detects the change.
-     */
-
-    this.stats = [
-      ...this.stats
-    ];
+    // 3. We will fetch Goal progress in a separate call or keep N/A if goal progress card handles it
+    this.stats[3].value = 'N/A';
+    this.stats = [...this.stats];
 
 
     /*

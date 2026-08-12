@@ -1,8 +1,9 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 
-import { ActivityService } from '../../../core/services/activity.service';
+import { BadgeService, BadgeResponse } from '../../../core/services/badge.service';
+import { ProfileService } from '../../../core/services/profile';
 
 @Component({
   selector: 'app-achievement-card',
@@ -14,63 +15,51 @@ import { ActivityService } from '../../../core/services/activity.service';
   templateUrl: './achievement-card.html',
   styleUrl: './achievement-card.css'
 })
-export class AchievementCard {
+export class AchievementCard implements OnInit {
 
-  private activityService = inject(ActivityService);
+  private badgeService = inject(BadgeService);
+  private profileService = inject(ProfileService);
 
-  get badges(){
+  badgeList: any[] = [];
+  userPoints = 0;
 
-    const carbon = this.activityService.getCarbonSaved();
-
-    const score = this.activityService.getSustainabilityScore();
-
-    const activities = this.activityService.getActivities().length;
-
-    return [
-
-      {
-        icon:'🌱',
-        title:'First Step',
-        desc:'Complete first activity',
-        unlocked:activities>=1
+  ngOnInit(): void {
+    // 1. Get User Profile for points
+    this.profileService.getProfile().subscribe({
+      next: (profile: any) => {
+        this.userPoints = profile?.ecoPoints || 0;
+        this.loadBadges();
       },
-
-      {
-        icon:'🚶',
-        title:'Walker',
-        desc:'Log 5 activities',
-        unlocked:activities>=5
-      },
-
-      {
-        icon:'♻️',
-        title:'Eco Saver',
-        desc:'Save 20 kg CO₂',
-        unlocked:carbon>=20
-      },
-
-      {
-        icon:'🔥',
-        title:'Green Hero',
-        desc:'Reach score 60',
-        unlocked:score>=60
-      },
-
-      {
-        icon:'👑',
-        title:'Eco Champion',
-        desc:'Reach score 90',
-        unlocked:score>=90
+      error: () => {
+        this.loadBadges(); // still load badges
       }
-
-    ];
-
+    });
   }
 
-  get unlockedCount(){
-
-    return this.badges.filter(x=>x.unlocked).length;
-
+  loadBadges(): void {
+    this.badgeService.getBadges().subscribe({
+      next: (badges: BadgeResponse[]) => {
+        this.badgeList = badges.map(b => {
+          let isUnlocked = b.unlocked;
+          if (isUnlocked === undefined || isUnlocked === null) {
+             isUnlocked = this.userPoints >= (b.pointsRequired || 0);
+          }
+          return {
+            icon: b.icon || '🏆',
+            title: b.name,
+            desc: b.description || `Requires ${b.pointsRequired} pts`,
+            unlocked: isUnlocked
+          };
+        });
+      }
+    });
   }
 
+  get badges() {
+    return this.badgeList;
+  }
+
+  get unlockedCount() {
+    return this.badgeList.filter(x => x.unlocked).length;
+  }
 }

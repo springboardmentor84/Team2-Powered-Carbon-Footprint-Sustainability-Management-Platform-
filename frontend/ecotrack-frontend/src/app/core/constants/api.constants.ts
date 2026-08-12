@@ -33,6 +33,18 @@ export const API_ENDPOINTS = {
 
   BADGES: {
     BASE: '/api/v1/badges'
+  },
+
+  GOALS: {
+    BASE: '/api/v1/goals'
+  },
+
+  NOTIFICATIONS: {
+    BASE: '/api/v1/notifications'
+  },
+
+  RECOMMENDATIONS: {
+    BASE: '/api/v1/recommendations'
   }
 
 };

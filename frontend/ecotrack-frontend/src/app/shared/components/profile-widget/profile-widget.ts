@@ -5,6 +5,7 @@ import { MatCardModule } from '@angular/material/card';
 
 import { ActivityService } from '../../../core/services/activity.service';
 import { ProfileService, UserProfile } from '../../../core/services/profile';
+import { DashboardService } from '../../../core/services/dashboard/dashboard.service';
 
 @Component({
   selector: 'app-profile-widget',
@@ -21,6 +22,7 @@ export class ProfileWidget implements OnInit {
 
   private activityService = inject(ActivityService);
   private profileService = inject(ProfileService);
+  private dashboardService = inject(DashboardService);
   private cdr = inject(ChangeDetectorRef);
 
   user: any = {
@@ -60,30 +62,31 @@ export class ProfileWidget implements OnInit {
         this.cdr.detectChanges();
       }
     });
+
+    this.dashboardService.getSummary().subscribe({
+      next: (summary) => {
+        this.summaryData = summary;
+      },
+      error: (err) => console.error('Failed to load dashboard summary', err)
+    });
   }
 
+  summaryData: any = null;
+
   get carbon() {
-    return this.activityService.getCarbonSaved();
+    return this.summaryData ? this.summaryData.totalCarbonEmission.toFixed(1) : 0;
   }
 
   get score() {
-    return this.activityService.getSustainabilityScore();
+    return 'N/A';
   }
 
   get activities() {
-    return this.activityService.getActivities().length;
+    return this.summaryData ? this.summaryData.totalEntries : 0;
   }
 
   get ecoLevel() {
-
-    if (this.score >= 90) return 'Eco Champion';
-
-    if (this.score >= 70) return 'Green Hero';
-
-    if (this.score >= 50) return 'Eco Explorer';
-
-    return 'Beginner';
-
+    return 'Unavailable';
   }
 
 }

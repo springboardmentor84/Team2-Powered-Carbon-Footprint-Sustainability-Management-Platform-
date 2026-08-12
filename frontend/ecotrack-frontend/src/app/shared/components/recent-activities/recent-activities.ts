@@ -4,6 +4,7 @@ import { MatCardModule } from '@angular/material/card';
 
 import { ActivityService } from '../../../core/services/activity.service';
 import { Activity } from '../../../core/models/activity.model';
+import { DashboardService } from '../../../core/services/dashboard/dashboard.service';
 
 @Component({
   selector: 'app-recent-activities',
@@ -17,23 +18,21 @@ import { Activity } from '../../../core/models/activity.model';
 })
 export class RecentActivities {
 
-  private activityService = inject(ActivityService);
+  private dashboardService = inject(DashboardService);
 
-  activities: Activity[] = [];
+  activities: any[] = []; // Using any to match both Activity and RecentCarbonEntry formats in the HTML template for now.
 
   constructor() {
-
     this.loadActivities();
-
   }
 
   private loadActivities(): void {
-
-    this.activities = this.activityService
-      .getActivities()
-      .sort((a, b) => b.id - a.id)
-      .slice(0, 5);
-
+    this.dashboardService.getRecent().subscribe({
+      next: (recent) => {
+        this.activities = recent;
+      },
+      error: (err) => console.error('Failed to load recent activities', err)
+    });
   }
 
   getIcon(category: string): string {

@@ -1,9 +1,9 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 
-import { ActivityService } from '../../../core/services/activity.service';
+import { GoalService } from '../../../core/services/goal';
 
 @Component({
   selector: 'app-goal-progress',
@@ -16,34 +16,44 @@ import { ActivityService } from '../../../core/services/activity.service';
   templateUrl: './goal-progress.html',
   styleUrl: './goal-progress.css'
 })
-export class GoalProgress {
+export class GoalProgress implements OnInit {
 
-  private activityService = inject(ActivityService);
+  private goalService = inject(GoalService);
 
-  goal = 100;
+  activeGoal: any = null;
+
+  ngOnInit(): void {
+    this.goalService.getMyGoals().subscribe({
+      next: (goals) => {
+        const active = goals.find(g => g.status === 'ACTIVE');
+        if (active) {
+          this.activeGoal = active;
+        } else if (goals.length > 0) {
+          this.activeGoal = goals[0]; // fallback to first completed goal if no active
+        }
+      },
+      error: (err) => console.error('Failed to load goals', err)
+    });
+  }
 
   get carbonSaved(): number {
-
-    return this.activityService.getCarbonSaved();
-
+    return this.activeGoal ? this.activeGoal.currentCarbon : 0;
   }
 
   get progress(): number {
-
+    if (!this.activeGoal || this.activeGoal.targetCarbon === 0) return 0;
     return Math.min(
-      (this.carbonSaved / this.goal) * 100,
+      (this.activeGoal.currentCarbon / this.activeGoal.targetCarbon) * 100,
       100
     );
-
   }
 
   get remaining(): number {
-
+    if (!this.activeGoal) return 0;
     return Math.max(
-      this.goal - this.carbonSaved,
+      this.activeGoal.targetCarbon - this.activeGoal.currentCarbon,
       0
     );
-
   }
 
 }
