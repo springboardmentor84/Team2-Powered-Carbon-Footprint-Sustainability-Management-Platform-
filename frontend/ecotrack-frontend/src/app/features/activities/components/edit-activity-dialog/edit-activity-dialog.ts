@@ -15,10 +15,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
-import {
-  Activity,
-  ActivityService
-} from '../../../../core/services/activity.service';
+import { ActivityService } from '../../../../core/services/activity.service';
+import { Activity } from '../../../../core/models/activity.model';
 
 @Component({
   selector: 'app-edit-activity-dialog',

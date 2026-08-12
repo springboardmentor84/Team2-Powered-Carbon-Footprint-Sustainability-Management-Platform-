@@ -2,7 +2,8 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 
-import { ActivityService, Activity } from '../../../core/services/activity.service';
+import { ActivityService } from '../../../core/services/activity.service';
+import { Activity } from '../../../core/models/activity.model';
 
 @Component({
   selector: 'app-recent-activities',
