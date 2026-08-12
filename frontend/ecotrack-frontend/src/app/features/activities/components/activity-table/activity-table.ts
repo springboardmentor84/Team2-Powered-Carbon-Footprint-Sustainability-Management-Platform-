@@ -139,6 +139,9 @@ export class ActivityTableComponent
 
   ngOnInit(): void {
 
+    // Fetch activities from backend on load
+    this.activityService.loadActivities();
+
     /*
      * ActivityService is the single source of truth.
      *
