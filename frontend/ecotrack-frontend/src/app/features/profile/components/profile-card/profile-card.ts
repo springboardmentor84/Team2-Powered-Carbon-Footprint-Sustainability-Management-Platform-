@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
@@ -8,6 +8,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { EditProfileDialog } from '../edit-profile-dialog/edit-profile-dialog';
 import { environment } from '../../../../../environments/environment';
 import { TOKEN_KEY } from '../../../../core/constants/app.constants';
+import { ProfileService, UserProfile } from '../../../../core/services/profile';
 
 @Component({
   selector: 'app-profile-card',
@@ -21,35 +22,59 @@ import { TOKEN_KEY } from '../../../../core/constants/app.constants';
   templateUrl: './profile-card.html',
   styleUrl: './profile-card.css'
 })
-export class ProfileCard {
+export class ProfileCard implements OnInit {
 
   private dialog = inject(MatDialog);
   private snackBar = inject(MatSnackBar);
   private http = inject(HttpClient);
+  private profileService = inject(ProfileService);
 
   isUploading = false;
 
-  user = {
-    profileImage: 'https://ui-avatars.com/api/?name=Harshit+Rai&background=2E7D32&color=fff&size=256',
-    fullName: 'Harshit Rai',
-    email: 'harshit23btaml34@gmail.com',
-    phone: '+91 9876543210',
-    gender: 'Male',
-    dob: '15 March 2004',
-    location: 'Odisha, India',
-    university: 'Sambalpur University Institute of Information Technology',
-    department: 'Computer Science & Engineering',
-    rollNumber: '23BTAML34',
-    year: '3rd Year',
-    level: 'Eco Champion',
-    carbon: '128 kg',
-    streak: '15 Days',
-    score: '86%',
-    joined: 'July 2026',
-    username: 'harshitrai1602',
-    accountStatus: 'Active',
-    lastLogin: 'Today'
+  user: any = {
+    profileImage: 'https://ui-avatars.com/api/?name=User&background=2E7D32&color=fff&size=256',
+    fullName: 'Loading...',
+    email: 'Loading...',
+    phone: 'N/A',
+    gender: 'N/A',
+    dob: 'N/A',
+    location: 'N/A',
+    university: 'N/A',
+    department: 'N/A',
+    rollNumber: 'N/A',
+    year: 'N/A',
+    level: 'N/A',
+    carbon: '0 kg',
+    streak: '0 Days',
+    score: '0%',
+    joined: 'N/A',
+    username: 'N/A',
+    accountStatus: 'N/A',
+    lastLogin: 'N/A'
   };
+
+  ngOnInit(): void {
+    this.profileService.getProfile().subscribe({
+      next: (profile: UserProfile) => {
+        if (profile) {
+          // Merge fetched profile data with existing fallback
+          this.user = {
+            ...this.user,
+            ...profile,
+            carbon: profile.carbon !== undefined ? `${profile.carbon} kg` : this.user.carbon,
+            streak: profile.streak !== undefined ? `${profile.streak} Days` : this.user.streak,
+            score: profile.score !== undefined ? `${profile.score}%` : this.user.score,
+          };
+          
+          if (!profile.profileImage && profile.fullName) {
+             const nameQuery = profile.fullName.replace(/\s+/g, '+');
+             this.user.profileImage = `https://ui-avatars.com/api/?name=${nameQuery}&background=2E7D32&color=fff&size=256`;
+          }
+        }
+      },
+      error: (err) => console.error('Failed to load profile card data', err)
+    });
+  }
 
   editProfile(): void {
     this.dialog.open(EditProfileDialog, {

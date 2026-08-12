@@ -1,9 +1,10 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 
 import { ActivityService } from '../../../core/services/activity.service';
+import { ProfileService, UserProfile } from '../../../core/services/profile';
 
 @Component({
   selector: 'app-profile-widget',
@@ -16,16 +17,40 @@ import { ActivityService } from '../../../core/services/activity.service';
   templateUrl: './profile-widget.html',
   styleUrl: './profile-widget.css'
 })
-export class ProfileWidget {
+export class ProfileWidget implements OnInit {
 
   private activityService = inject(ActivityService);
+  private profileService = inject(ProfileService);
 
-  user = {
-    name: 'Harshit Rai',
-    email: 'harshit23btaml34@gmail.com',
+  user: any = {
+    name: 'Loading...',
+    email: 'Loading...',
     avatar: 'assets/images/avatar.png',
-    memberSince: '2026'
+    memberSince: 'Loading...'
   };
+
+  ngOnInit(): void {
+    this.profileService.getProfile().subscribe({
+      next: (profile: UserProfile) => {
+        if (profile) {
+          this.user.name = profile.fullName || this.user.name;
+          this.user.email = profile.email || this.user.email;
+          if (profile.profileImage) {
+            this.user.avatar = profile.profileImage;
+          }
+          if (profile.joined) {
+            try {
+              const joinedDate = new Date(profile.joined);
+              this.user.memberSince = joinedDate.getFullYear().toString();
+            } catch (e) {
+              this.user.memberSince = profile.joined;
+            }
+          }
+        }
+      },
+      error: (err) => console.error('Failed to load profile', err)
+    });
+  }
 
   get carbon() {
     return this.activityService.getCarbonSaved();
