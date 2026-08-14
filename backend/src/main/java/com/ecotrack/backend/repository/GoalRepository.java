@@ -10,7 +10,12 @@ import java.util.Optional;
 
 @Repository
 public interface GoalRepository extends JpaRepository<Goal, Long> {
+
     List<Goal> findAllByUser(User user);
+
+    List<Goal> findAllByUserId(Long userId);
+
     Optional<Goal> findByIdAndUser(Long id, User user);
+
     void deleteByIdAndUser(Long id, User user);
 }

@@ -1,111 +1,393 @@
-.card{
-  padding:24px;
-  border-radius:20px;
-  background:#ffffff;
-  box-shadow:0 10px 25px rgba(0,0,0,.08);
-  display:flex;
-  flex-direction:column;
-  gap:20px;
+:host {
+  display: block;
+
+  width: 100%;
+  min-width: 0;
 }
 
-.header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
+
+.ai-recommendation {
+  width: 100%;
+  min-width: 0;
+
+  padding: 2px;
+
+  box-sizing: border-box;
 }
 
-.header h2{
-  margin:0;
-  font-size:22px;
-  font-weight:700;
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  gap: 15px;
+
+  margin-bottom: 18px;
 }
 
-.refresh{
-  width:40px;
-  height:40px;
-  border:none;
-  border-radius:50%;
-  background:#2E7D32;
-  color:#fff;
-  cursor:pointer;
-  font-size:20px;
-  transition:.35s;
+
+.ai-label {
+  display: block;
+
+  margin-bottom: 5px;
+
+  color: #32834d;
+
+  font-size: 9px;
+  font-weight: 900;
+
+  letter-spacing: 0.9px;
 }
 
-.refresh:hover{
-  transform:rotate(180deg);
+
+.header h2 {
+  margin: 0;
+
+  color: #172033;
+
+  font-size: 20px;
+  font-weight: 800;
 }
 
-.content{
-  display:flex;
-  gap:20px;
-  align-items:flex-start;
+
+/* =========================================================
+   REFRESH
+   ========================================================= */
+
+.refresh {
+  width: 36px;
+  height: 36px;
+
+  flex: 0 0 36px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: none;
+  border-radius: 10px;
+
+  background: #edf8f0;
+
+  color: #2e7d32;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.25s ease,
+    background 0.2s ease;
 }
 
-.emoji{
-  font-size:60px;
-  line-height:1;
+
+.refresh mat-icon {
+  width: 19px;
+  height: 19px;
+
+  font-size: 19px;
 }
 
-.details{
-  flex:1;
+
+.refresh:hover:not(:disabled) {
+  transform: rotate(180deg);
+
+  background: #dff1e3;
 }
 
-.details h3{
-  margin:0;
-  font-size:20px;
-  color:#2E7D32;
-  font-weight:700;
+
+.refresh:disabled {
+  cursor: wait;
+
+  opacity: 0.55;
 }
 
-.details p{
-  margin:10px 0 16px;
-  color:#666;
-  line-height:1.6;
+
+/* =========================================================
+   STATE
+   ========================================================= */
+
+.ai-state {
+  min-height: 190px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  gap: 8px;
+
+  padding: 20px;
+
+  text-align: center;
+
+  color: #94a3b8;
 }
 
-.saving{
-  display:inline-block;
-  padding:10px 16px;
-  background:#E8F5E9;
-  border-radius:18px;
-  color:#2E7D32;
-  font-weight:700;
+
+.ai-state mat-icon {
+  width: 30px;
+  height: 30px;
+
+  font-size: 30px;
+
+  color: #65a875;
 }
 
-.meta{
-  margin-top:18px;
-  display:flex;
-  gap:12px;
-  flex-wrap:wrap;
+
+.ai-state span {
+  font-size: 11px;
 }
 
-.priority{
-  background:#FFF3E0;
-  color:#EF6C00;
-  padding:8px 14px;
-  border-radius:20px;
-  font-weight:600;
+
+.ai-state h3 {
+  margin: 3px 0 0;
+
+  color: #475569;
+
+  font-size: 15px;
 }
 
-.confidence{
-  background:#E3F2FD;
-  color:#1565C0;
-  padding:8px 14px;
-  border-radius:20px;
-  font-weight:600;
+
+.ai-state p {
+  margin: 0;
+
+  color: #94a3b8;
+
+  font-size: 11px;
 }
 
-@media(max-width:768px){
 
-  .content{
-    flex-direction:column;
-    align-items:center;
-    text-align:center;
+.ai-state.error mat-icon {
+  color: #e57373;
+}
+
+
+.retry {
+  margin-top: 7px;
+
+  padding: 8px 13px;
+
+  border: none;
+  border-radius: 9px;
+
+  background: #2e7d32;
+
+  color: white;
+
+  font-size: 11px;
+  font-weight: 800;
+
+  cursor: pointer;
+}
+
+
+/* =========================================================
+   CONTENT
+   ========================================================= */
+
+.content {
+  width: 100%;
+
+  display: flex;
+  align-items: flex-start;
+
+  gap: 17px;
+
+  box-sizing: border-box;
+}
+
+
+.emoji {
+  width: 55px;
+  height: 55px;
+
+  flex: 0 0 55px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 15px;
+
+  background: #edf8f0;
+
+  font-size: 30px;
+}
+
+
+.details {
+  min-width: 0;
+  flex: 1;
+}
+
+
+.category {
+  display: inline-flex;
+
+  margin-bottom: 5px;
+
+  padding: 4px 8px;
+
+  border-radius: 20px;
+
+  background: #e8f5e9;
+
+  color: #2e7d32;
+
+  font-size: 8px;
+  font-weight: 900;
+
+  letter-spacing: 0.5px;
+}
+
+
+.details h3 {
+  margin: 0;
+
+  color: #253047;
+
+  font-size: 16px;
+  font-weight: 800;
+
+  line-height: 1.35;
+}
+
+
+.details p {
+  margin: 8px 0 12px;
+
+  color: #64748b;
+
+  font-size: 11px;
+
+  line-height: 1.6;
+}
+
+
+.reason {
+  padding: 9px 11px;
+
+  border-radius: 10px;
+
+  background: #f8fafc;
+
+  border-left: 3px solid #65a875;
+
+  color: #64748b;
+
+  font-size: 10px;
+
+  line-height: 1.5;
+}
+
+
+/* =========================================================
+   META
+   ========================================================= */
+
+.meta {
+  display: flex;
+  align-items: center;
+
+  flex-wrap: wrap;
+
+  gap: 8px;
+
+  margin-top: 12px;
+}
+
+
+.priority {
+  padding: 5px 9px;
+
+  border-radius: 20px;
+
+  font-size: 9px;
+  font-weight: 800;
+}
+
+
+.priority.high {
+  background: #ffebee;
+
+  color: #c62828;
+}
+
+
+.priority.medium {
+  background: #fff3e0;
+
+  color: #ef6c00;
+}
+
+
+.priority.low {
+  background: #e8f5e9;
+
+  color: #2e7d32;
+}
+
+
+.live {
+  display: inline-flex;
+  align-items: center;
+
+  gap: 5px;
+
+  color: #65a875;
+
+  font-size: 9px;
+  font-weight: 700;
+}
+
+
+.live-dot {
+  width: 6px;
+  height: 6px;
+
+  border-radius: 50%;
+
+  background: #43a047;
+
+  animation: aiPulse 1.8s infinite;
+}
+
+
+@keyframes aiPulse {
+
+  0%,
+  100% {
+    opacity: 1;
   }
 
-  .meta{
-    justify-content:center;
+  50% {
+    opacity: 0.4;
+  }
+
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+  .content {
+    flex-direction: column;
+  }
+
+  .emoji {
+    width: 48px;
+    height: 48px;
+
+    flex-basis: 48px;
+
+    font-size: 25px;
   }
 
 }

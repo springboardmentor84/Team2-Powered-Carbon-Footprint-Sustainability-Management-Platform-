@@ -1,96 +1,76 @@
 import {
-  Component,
   AfterViewInit,
+  Component,
   ElementRef,
-  ViewChild,
-  inject,
+  OnDestroy,
   OnInit,
-  OnDestroy
+  ViewChild,
+  inject
 } from '@angular/core';
 
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { Subscription, forkJoin } from 'rxjs';
 
-import {
-  Subscription,
-  merge
-} from 'rxjs';
-
-import {
-  MatCardModule
-} from '@angular/material/card';
-
+import { MatCardModule } from '@angular/material/card';
 import {
   MatDialog,
   MatDialogModule
 } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
+
+import { Chart } from 'chart.js/auto';
+
+import { ActivityService }
+  from '../../../../core/services/activity.service';
+
+import { DashboardService }
+  from '../../../../core/services/dashboard/dashboard.service';
 
 import {
-  MatIconModule
-} from '@angular/material/icon';
+  GoalService,
+  GoalResponse,
+  GoalProgressResponse
+} from '../../../../core/services/goal';
 
-import {
-  Chart
-} from 'chart.js/auto';
+import { AddActivityDialog }
+  from '../../../activities/components/add-activity-dialog/add-activity-dialog';
 
-import { DashboardService } from '../../../../core/services/dashboard/dashboard.service';
-import { GoalService } from '../../../../core/services/goal';
+import { MonthlyChart }
+  from '../../../../shared/components/monthly-chart/monthly-chart';
 
-import {
-  ActivityService
-} from '../../../../core/services/activity.service';
+import { GoalProgress }
+  from '../../../../shared/components/goal-progress/goal-progress';
 
-import {
-  AddActivityDialog
-} from '../../../activities/components/add-activity-dialog/add-activity-dialog';
+import { SustainabilityScore }
+  from '../../../../shared/components/sustainability-score/sustainability-score';
 
-import {
-  MonthlyChart
-} from '../../../../shared/components/monthly-chart/monthly-chart';
+import { RecentActivities }
+  from '../../../../shared/components/recent-activities/recent-activities';
 
-import {
-  GoalProgress
-} from '../../../../shared/components/goal-progress/goal-progress';
+import { NotificationCard }
+  from '../../../../shared/components/notification-card/notification-card';
 
-import {
-  SustainabilityScore
-} from '../../../../shared/components/sustainability-score/sustainability-score';
+import { CalendarCard }
+  from '../../../../shared/components/calendar-card/calendar-card';
 
-import {
-  RecentActivities
-} from '../../../../shared/components/recent-activities/recent-activities';
+import { AiRecommendation }
+  from '../../../../shared/components/ai-recommendation/ai-recommendation';
 
-import {
-  NotificationCard
-} from '../../../../shared/components/notification-card/notification-card';
+import { QuickActions }
+  from '../../../../shared/components/quick-actions/quick-actions';
 
-import {
-  CalendarCard
-} from '../../../../shared/components/calendar-card/calendar-card';
+import { ProfileWidget }
+  from '../../../../shared/components/profile-widget/profile-widget';
 
-import {
-  AiRecommendation
-} from '../../../../shared/components/ai-recommendation/ai-recommendation';
+import { AchievementCard }
+  from '../../../../shared/components/achievement-card/achievement-card';
 
-import {
-  QuickActions
-} from '../../../../shared/components/quick-actions/quick-actions';
+import { StreakCard }
+  from '../../../../shared/components/streak-card/streak-card';
 
-import {
-  ProfileWidget
-} from '../../../../shared/components/profile-widget/profile-widget';
-
-import {
-  AchievementCard
-} from '../../../../shared/components/achievement-card/achievement-card';
-
-import {
-  StreakCard
-} from '../../../../shared/components/streak-card/streak-card';
-
-import {
-  WeatherCard
-} from '../../../../shared/components/weather-card/weather-card';
+import { WeatherCard }
+  from '../../../../shared/components/weather-card/weather-card';
 
 
 @Component({
@@ -99,66 +79,40 @@ import {
   standalone: true,
 
   imports: [
-
     CommonModule,
-
     RouterModule,
 
     MatCardModule,
-
     MatIconModule,
-
     MatDialogModule,
 
     MonthlyChart,
-
     GoalProgress,
-
     SustainabilityScore,
-
     RecentActivities,
-
     NotificationCard,
-
     CalendarCard,
-
     AiRecommendation,
-
     QuickActions,
-
     AchievementCard,
-
     StreakCard,
-
     WeatherCard,
-
     ProfileWidget
-
   ],
 
-  templateUrl:
-    './dashboard-home.html',
+  templateUrl: './dashboard-home.html',
 
-  styleUrl:
-    './dashboard-home.css'
-
+  styleUrl: './dashboard-home.css'
 })
 export class DashboardHome
-  implements
-    OnInit,
-    AfterViewInit,
-    OnDestroy {
+  implements OnInit, AfterViewInit, OnDestroy {
 
 
-  // =========================================================
   // =========================================================
   // SERVICES
   // =========================================================
 
-  private readonly dialog =
-    inject(MatDialog);
-
-  private readonly activityService =
+  readonly activityService =
     inject(ActivityService);
 
   private readonly dashboardService =
@@ -167,11 +121,19 @@ export class DashboardHome
   private readonly goalService =
     inject(GoalService);
 
+  private readonly dialog =
+    inject(MatDialog);
+
+
   // =========================================================
-  // SUBSCRIPTION
+  // SUBSCRIPTIONS
   // =========================================================
 
-  private subscription?: Subscription;
+  private activitySubscription?: Subscription;
+
+  private dashboardSubscription?: Subscription;
+
+  private goalSubscription?: Subscription;
 
 
   // =========================================================
@@ -185,56 +147,63 @@ export class DashboardHome
 
 
   // =========================================================
-  // DASHBOARD STATS
+  // STATE
+  // =========================================================
+
+  loading = true;
+
+  dashboardError = false;
+
+  errorMessage = '';
+
+
+  // =========================================================
+  // GOAL STATE
+  // =========================================================
+
+  goals: GoalResponse[] = [];
+
+  goalProgressMap:
+    Record<number, GoalProgressResponse> = {};
+
+  goalProgress = 0;
+
+
+  // =========================================================
+  // DASHBOARD CARDS
   // =========================================================
 
   stats = [
 
     {
       icon: 'eco',
-
-      title: 'Total Carbon Emission',
-
+      title: 'Carbon Saved',
       value: '0 kg',
-
-      subtitle: 'CO₂ Emitted',
-
+      subtitle: 'CO₂ Reduced',
       color: '#2E7D32'
     },
 
     {
       icon: 'directions_walk',
-
       title: 'Activities',
-
       value: '0',
-
       subtitle: 'Activities Logged',
-
       color: '#1565C0'
     },
 
     {
       icon: 'emoji_events',
-
       title: 'Sustainability Score',
-
       value: '0',
-
       subtitle: 'Out of 100',
-
       color: '#FB8C00'
     },
 
     {
       icon: 'flag',
-
       title: 'Goals',
-
       value: '0%',
-
       subtitle: 'Progress',
-
       color: '#8E24AA'
     }
 
@@ -247,49 +216,54 @@ export class DashboardHome
 
   ngOnInit(): void {
 
-    /*
-     * Listen to BOTH streams.
-     *
-     * activities$:
-     *   Updates whenever the local activity list changes.
-     *
-     * activityChanged$:
-     *   Explicit notification after successful
-     *   backend POST / PUT / DELETE.
-     */
+    // -----------------------------------------
+    // LOAD ACTIVITIES
+    // -----------------------------------------
 
-    this.subscription = merge(
-
-      this.activityService.activities$,
-
-      this.activityService.activityChanged$
-
-    ).subscribe(() => {
-
-      this.refreshDashboard();
-
-    });
+    this.activityService.loadActivities();
 
 
-    /*
-     * Initial dashboard calculation.
-     */
+    // -----------------------------------------
+    // LISTEN FOR ACTIVITY CHANGES
+    // -----------------------------------------
 
-    this.refreshDashboard();
+    this.activitySubscription =
+      this.activityService.activities$
+        .subscribe(() => {
+
+          this.updateDashboardCards();
+
+          this.updateChart();
+
+          /*
+           * Activity changes can affect goal progress.
+           */
+          this.loadGoals();
+
+        });
+
+
+    // -----------------------------------------
+    // INITIAL GOAL LOAD
+    // -----------------------------------------
+
+    this.loadGoals();
+
+
+    // -----------------------------------------
+    // DASHBOARD SUMMARY
+    // -----------------------------------------
+
+    this.loadDashboardSummary();
 
   }
 
 
   // =========================================================
-  // AFTER VIEW INIT
+  // VIEW INIT
   // =========================================================
 
   ngAfterViewInit(): void {
-
-    /*
-     * Canvas is available only after the view
-     * has been initialized.
-     */
 
     setTimeout(() => {
 
@@ -306,7 +280,11 @@ export class DashboardHome
 
   ngOnDestroy(): void {
 
-    this.subscription?.unsubscribe();
+    this.activitySubscription?.unsubscribe();
+
+    this.dashboardSubscription?.unsubscribe();
+
+    this.goalSubscription?.unsubscribe();
 
     this.chart?.destroy();
 
@@ -314,63 +292,373 @@ export class DashboardHome
 
 
   // =========================================================
-  // REFRESH DASHBOARD
+  // LOAD GOALS
   // =========================================================
 
-  refreshDashboard(): void {
+  private loadGoals(): void {
 
-    // 1. Fetch Dashboard Summary
-    this.dashboardService.getSummary().subscribe({
-      next: (summary) => {
-        this.stats[0].value = `${summary.totalCarbonEmission.toFixed(1)} kg`;
-        this.stats[1].value = summary.totalEntries.toString();
-        this.stats = [...this.stats];
-      },
-      error: (err) => {
-        console.error('Failed to load dashboard summary', err);
-      }
-    });
+    this.goalSubscription?.unsubscribe();
 
-    // 2. Score is unavailable from backend
-    this.stats[2].value = 'N/A';
-    this.stats = [...this.stats];
+    this.goalSubscription =
+      this.goalService
+        .getMyGoals()
+        .subscribe({
 
-    // 3. We will fetch Goal progress in a separate call or keep N/A if goal progress card handles it
-    this.stats[3].value = 'N/A';
-    this.stats = [...this.stats];
+          next: goals => {
 
+            this.goals =
+              Array.isArray(goals)
+                ? goals
+                : [];
 
-    /*
-     * Update chart if it already exists.
-     */
+            this.loadGoalProgress();
 
-    if (this.chart) {
+          },
 
-      this.updateChart();
+          error: error => {
 
-    }
+            console.warn(
+              '[DASHBOARD] Goals unavailable:',
+              error
+            );
+
+            this.goals = [];
+
+            this.goalProgressMap = {};
+
+            this.goalProgress = 0;
+
+            this.updateDashboardGoalCard();
+
+          }
+
+        });
 
   }
 
 
   // =========================================================
-  // CREATE WEEKLY CHART
+  // LOAD LIVE GOAL PROGRESS
   // =========================================================
 
-  createChart(): void {
+  private loadGoalProgress(): void {
 
-    if (!this.carbonChart) {
+    if (!this.goals.length) {
+
+      this.goalProgressMap = {};
+
+      this.goalProgress = 0;
+
+      this.updateDashboardGoalCard();
 
       return;
 
     }
 
 
+    const requests =
+      this.goals.map(
+        goal =>
+          this.goalService
+            .getGoalProgress(goal.id)
+      );
+
+
+    forkJoin(requests)
+      .subscribe({
+
+        next: progressList => {
+
+          const map:
+            Record<number, GoalProgressResponse> = {};
+
+
+          progressList.forEach(
+            progress => {
+
+              map[progress.goalId] =
+                progress;
+
+            }
+          );
+
+
+          this.goalProgressMap =
+            map;
+
+
+          this.calculateOverallGoalProgress();
+
+
+          this.updateDashboardGoalCard();
+
+        },
+
+
+        error: error => {
+
+          console.warn(
+            '[DASHBOARD] Goal progress unavailable:',
+            error
+          );
+
+
+          /*
+           * Fallback to values returned
+           * by /goals.
+           */
+
+          this.calculateFallbackGoalProgress();
+
+          this.updateDashboardGoalCard();
+
+        }
+
+      });
+
+  }
+
+
+  // =========================================================
+  // CALCULATE GOAL PROGRESS
+  // =========================================================
+
+  private calculateOverallGoalProgress(): void {
+
+    if (!this.goals.length) {
+
+      this.goalProgress = 0;
+
+      return;
+
+    }
+
+
+    let totalTarget = 0;
+
+    let totalCurrent = 0;
+
+
+    this.goals.forEach(goal => {
+
+      const progress =
+        this.goalProgressMap[goal.id];
+
+
+      totalTarget +=
+        Number(
+          progress?.targetCarbon ??
+          goal.targetCarbon ??
+          0
+        );
+
+
+      totalCurrent +=
+        Number(
+          progress?.currentCarbon ??
+          goal.currentCarbon ??
+          0
+        );
+
+    });
+
+
+    if (totalTarget <= 0) {
+
+      this.goalProgress = 0;
+
+      return;
+
+    }
+
+
+    this.goalProgress =
+      Math.min(
+        Math.max(
+          Math.round(
+            (totalCurrent / totalTarget) * 100
+          ),
+          0
+        ),
+        100
+      );
+
+  }
+
+
+  // =========================================================
+  // FALLBACK GOAL PROGRESS
+  // =========================================================
+
+  private calculateFallbackGoalProgress(): void {
+
+    let totalTarget = 0;
+
+    let totalCurrent = 0;
+
+
+    this.goals.forEach(goal => {
+
+      totalTarget +=
+        Number(
+          goal.targetCarbon || 0
+        );
+
+
+      totalCurrent +=
+        Number(
+          goal.currentCarbon || 0
+        );
+
+    });
+
+
+    if (totalTarget <= 0) {
+
+      this.goalProgress = 0;
+
+      return;
+
+    }
+
+
+    this.goalProgress =
+      Math.min(
+        Math.max(
+          Math.round(
+            (totalCurrent / totalTarget) * 100
+          ),
+          0
+        ),
+        100
+      );
+
+  }
+
+
+  // =========================================================
+  // UPDATE GOAL CARD
+  // =========================================================
+
+  private updateDashboardGoalCard(): void {
+
+    this.stats[3].value =
+      `${this.goalProgress}%`;
+
+
+    this.stats = [
+      ...this.stats
+    ];
+
+  }
+
+
+  // =========================================================
+  // DASHBOARD CARDS
+  // =========================================================
+
+  private updateDashboardCards(): void {
+
+    const activities =
+      this.activityService.getActivities();
+
+
+    const carbon =
+      this.activityService.getCarbonSaved();
+
+
+    const activityCount =
+      activities.length;
+
+
+    const score =
+      this.activityService
+        .getSustainabilityScore();
+
+
+    this.stats[0].value =
+      `${carbon.toFixed(1)} kg`;
+
+
+    this.stats[1].value =
+      String(activityCount);
+
+
+    this.stats[2].value =
+      String(score);
+
+
     /*
-     * Prevent duplicate Chart.js instances.
+     * Goal card is controlled separately
+     * by GoalService.
      */
 
-    this.chart?.destroy();
+    this.updateDashboardGoalCard();
+
+
+    this.stats = [
+      ...this.stats
+    ];
+
+
+    this.loading = false;
+
+  }
+
+
+  // =========================================================
+  // BACKEND DASHBOARD SUMMARY
+  // =========================================================
+
+  private loadDashboardSummary(): void {
+
+    this.dashboardSubscription?.unsubscribe();
+
+
+    this.dashboardSubscription =
+      this.dashboardService
+        .getSummary()
+        .subscribe({
+
+          next: summary => {
+
+            console.log(
+              'Dashboard summary:',
+              summary
+            );
+
+          },
+
+          error: error => {
+
+            console.warn(
+              'Dashboard summary unavailable:',
+              error
+            );
+
+            this.dashboardError = true;
+
+            this.errorMessage =
+              'Dashboard summary unavailable.';
+
+          }
+
+        });
+
+  }
+
+
+  // =========================================================
+  // CHART
+  // =========================================================
+
+  private createChart(): void {
+
+    if (!this.carbonChart) {
+
+      return;
+
+    }
 
 
     this.chart =
@@ -383,77 +671,45 @@ export class DashboardHome
           data: {
 
             labels: [
-
               'Mon',
-
               'Tue',
-
               'Wed',
-
               'Thu',
-
               'Fri',
-
               'Sat',
-
               'Sun'
-
             ],
 
             datasets: [
 
               {
 
-                label:
-                  'Carbon Saved',
+                label: 'Carbon Emission',
 
                 data: [
-
                   0,
-
                   0,
-
                   0,
-
                   0,
-
                   0,
-
                   0,
-
                   0
-
                 ],
 
-                borderColor:
-                  '#2E7D32',
+                borderColor: '#2E7D32',
 
                 backgroundColor:
-                  'rgba(76,175,80,.20)',
+                  'rgba(76,175,80,.18)',
 
-                borderWidth:
-                  4,
+                borderWidth: 3,
 
-                fill:
-                  true,
+                fill: true,
 
-                tension:
-                  0.45,
+                tension: 0.4,
 
-                pointRadius:
-                  6,
+                pointRadius: 5,
 
-                pointHoverRadius:
-                  8,
-
-                pointBackgroundColor:
-                  '#2E7D32',
-
-                pointBorderColor:
-                  '#ffffff',
-
-                pointBorderWidth:
-                  2
+                pointHoverRadius: 7
 
               }
 
@@ -463,19 +719,14 @@ export class DashboardHome
 
           options: {
 
-            responsive:
-              true,
+            responsive: true,
 
-            maintainAspectRatio:
-              false,
+            maintainAspectRatio: false,
 
             plugins: {
 
               legend: {
-
-                display:
-                  false
-
+                display: false
               }
 
             },
@@ -485,24 +736,17 @@ export class DashboardHome
               x: {
 
                 grid: {
-
-                  display:
-                    false
-
+                  display: false
                 }
 
               },
 
               y: {
 
-                beginAtZero:
-                  true,
+                beginAtZero: true,
 
                 ticks: {
-
-                  precision:
-                    0
-
+                  precision: 1
                 }
 
               }
@@ -522,7 +766,7 @@ export class DashboardHome
 
 
   // =========================================================
-  // UPDATE WEEKLY CHART
+  // UPDATE CHART
   // =========================================================
 
   updateChart(): void {
@@ -535,21 +779,13 @@ export class DashboardHome
 
 
     const totals = [
-
       0,
-
       0,
-
       0,
-
       0,
-
       0,
-
       0,
-
       0
-
     ];
 
 
@@ -568,32 +804,6 @@ export class DashboardHome
           new Date(activity.date);
 
 
-        if (
-          Number.isNaN(
-            date.getTime()
-          )
-        ) {
-
-          return;
-
-        }
-
-
-        /*
-         * JavaScript:
-         *
-         * Sunday = 0
-         * Monday = 1
-         * ...
-         * Saturday = 6
-         *
-         * Convert it to:
-         *
-         * Monday = 0
-         * ...
-         * Sunday = 6
-         */
-
         let day =
           date.getDay();
 
@@ -606,8 +816,8 @@ export class DashboardHome
 
         totals[day] +=
           Number(
-            activity.carbonEmission ??
-            activity.carbon ??
+            activity.carbonEmission ||
+            activity.carbon ||
             0
           );
 
@@ -624,35 +834,38 @@ export class DashboardHome
 
 
   // =========================================================
-  // OPEN ADD ACTIVITY DIALOG
+  // ADD ACTIVITY
   // =========================================================
 
   openDialog(): void {
 
-    this.dialog
-
-      .open(
+    const dialogRef =
+      this.dialog.open(
         AddActivityDialog,
         {
-          width: '500px'
+          width: '500px',
+          maxWidth: '95vw',
+          autoFocus: false
         }
-      )
+      );
 
+
+    dialogRef
       .afterClosed()
-
       .subscribe(result => {
-
-        /*
-         * ActivityService already updates
-         * activitiesSubject and activityChangedSubject
-         * after successful POST.
-         *
-         * Therefore NO page reload is required here.
-         */
 
         if (result) {
 
-          this.refreshDashboard();
+          this.updateDashboardCards();
+
+          this.updateChart();
+
+          /*
+           * Reload goals because the new
+           * activity can change goal progress.
+           */
+
+          this.loadGoals();
 
         }
 
@@ -661,4 +874,3 @@ export class DashboardHome
   }
 
 }
-

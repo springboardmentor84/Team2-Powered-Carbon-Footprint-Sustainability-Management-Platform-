@@ -1,29 +1,58 @@
-import { Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { Router, RouterModule } from '@angular/router';
+import {
+  Component,
+  inject
+} from '@angular/core';
 
-import { MatCardModule } from '@angular/material/card';
-import { MatIconModule } from '@angular/material/icon';
-import { MatDialog } from '@angular/material/dialog';
+import {
+  CommonModule
+} from '@angular/common';
 
-import { AddActivityDialog } from '../../../features/activities/components/add-activity-dialog/add-activity-dialog';
+import {
+  Router
+} from '@angular/router';
+
+import {
+  MatCardModule
+} from '@angular/material/card';
+
+import {
+  MatIconModule
+} from '@angular/material/icon';
+
+import {
+  MatDialog,
+  MatDialogModule
+} from '@angular/material/dialog';
+
+import {
+  AddActivityDialog
+} from '../../../features/activities/components/add-activity-dialog/add-activity-dialog';
 
 @Component({
   selector: 'app-quick-actions',
+
   standalone: true,
+
   imports: [
     CommonModule,
     MatCardModule,
     MatIconModule,
-    RouterModule
+    MatDialogModule
   ],
-  templateUrl: './quick-actions.html',
-  styleUrl: './quick-actions.css'
+
+  templateUrl:
+    './quick-actions.html',
+
+  styleUrl:
+    './quick-actions.css'
 })
 export class QuickActions {
 
-  private router = inject(Router);
-  private dialog = inject(MatDialog);
+  private readonly router =
+    inject(Router);
+
+  private readonly dialog =
+    inject(MatDialog);
 
   actions = [
 
@@ -73,17 +102,27 @@ export class QuickActions {
 
   actionClick(action: any): void {
 
-    if (action.title === 'Add Activity') {
+    if (
+      action.title ===
+      'Add Activity'
+    ) {
 
-      this.dialog.open(AddActivityDialog, {
-        width: '500px'
-      });
+      this.dialog.open(
+        AddActivityDialog,
+        {
+          width: '500px',
+          maxWidth: '95vw',
+          autoFocus: false
+        }
+      );
 
       return;
 
     }
 
-    this.router.navigateByUrl(action.route);
+    this.router.navigateByUrl(
+      action.route
+    );
 
   }
 

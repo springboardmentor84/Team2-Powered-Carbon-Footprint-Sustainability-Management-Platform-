@@ -113,3 +113,18 @@ padding:24px;
 }
 
 }
+:host {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow-x: hidden;
+}
+
+.page-container,
+.profile-page,
+.profile-container {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}

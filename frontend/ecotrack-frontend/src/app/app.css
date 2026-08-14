@@ -1,14 +1,109 @@
-* {
-  margin: 0;
-  padding: 0;
+/* ============================================================
+   ECOTRACK GLOBAL CSS
+   ============================================================ */
+
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
-html,
+html {
+  width: 100%;
+  max-width: 100%;
+  min-width: 320px;
+
+  margin: 0;
+  padding: 0;
+
+  overflow-x: hidden;
+}
+
 body {
   width: 100%;
-  height: 100%;
+  max-width: 100%;
+  min-width: 320px;
+
+  min-height: 100vh;
+
   margin: 0;
+  padding: 0;
+
+  overflow-x: hidden;
+
   background: #f5f7fa;
-  font-family: Arial, Helvetica, sans-serif;
+
+  font-family:
+    Inter,
+    Arial,
+    Helvetica,
+    sans-serif;
+}
+
+app-root {
+  display: block;
+
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+
+  min-height: 100vh;
+
+  margin: 0;
+  padding: 0;
+
+  overflow-x: hidden;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  box-sizing: border-box;
+}
+
+img,
+svg,
+canvas,
+video {
+  max-width: 100%;
+}
+
+table {
+  max-width: 100%;
+}
+
+a {
+  text-decoration: none;
+}
+
+/* ============================================================
+   ANGULAR MATERIAL WIDTH FIX
+   ============================================================ */
+
+mat-sidenav-container {
+  width: 100% !important;
+  max-width: 100% !important;
+
+  min-width: 0 !important;
+
+  box-sizing: border-box !important;
+}
+
+mat-sidenav-content {
+  min-width: 0 !important;
+  box-sizing: border-box !important;
+}
+
+/* ============================================================
+   GLOBAL OVERFLOW PROTECTION
+   ============================================================ */
+
+html,
+body,
+app-root,
+mat-sidenav-container,
+mat-sidenav-content {
+  overflow-x: hidden;
 }

@@ -52,13 +52,18 @@ public class GoalServiceImpl implements GoalService {
         return mapToGoalResponse(savedGoal);
     }
 
-    @Override
-    public List<GoalResponse> getMyGoals(String email) {
-        User user = getUserByEmail(email);
-        return goalRepository.findAllByUser(user).stream()
-                .map(this::mapToGoalResponse)
-                .collect(Collectors.toList());
-    }
+   @Override
+@Transactional(readOnly = true)
+public List<GoalResponse> getMyGoals(String email) {
+
+    User user = getUserByEmail(email);
+
+    return goalRepository
+            .findAllByUserId(user.getId())
+            .stream()
+            .map(this::mapToGoalResponse)
+            .collect(Collectors.toList());
+}
 
     @Override
     public GoalResponse getGoalById(Long id, String email) {

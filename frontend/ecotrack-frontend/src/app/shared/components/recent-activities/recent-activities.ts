@@ -1,85 +1,224 @@
-import { Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { MatCardModule } from '@angular/material/card';
+import {
+  Component,
+  OnDestroy,
+  OnInit,
+  inject
+} from '@angular/core';
 
-import { ActivityService } from '../../../core/services/activity.service';
-import { Activity } from '../../../core/models/activity.model';
-import { DashboardService } from '../../../core/services/dashboard/dashboard.service';
+import { CommonModule } from '@angular/common';
+
+import { RouterModule } from '@angular/router';
+
+import { MatIconModule } from '@angular/material/icon';
+
+import { Subscription } from 'rxjs';
+
+import {
+  ActivityService
+} from '../../../core/services/activity.service';
+
+import {
+  Activity
+} from '../../../core/models/activity.model';
+
 
 @Component({
   selector: 'app-recent-activities',
+
   standalone: true,
+
   imports: [
     CommonModule,
-    MatCardModule
+    RouterModule,
+    MatIconModule
   ],
+
   templateUrl: './recent-activities.html',
+
   styleUrl: './recent-activities.css'
 })
-export class RecentActivities {
+export class RecentActivities
+  implements OnInit, OnDestroy {
 
-  private dashboardService = inject(DashboardService);
+  private readonly activityService =
+    inject(ActivityService);
 
-  activities: any[] = []; // Using any to match both Activity and RecentCarbonEntry formats in the HTML template for now.
+  private subscription?: Subscription;
 
-  constructor() {
-    this.loadActivities();
+  activities: Activity[] = [];
+
+  loading = true;
+
+  error = false;
+
+
+  // =========================================================
+  // INIT
+  // =========================================================
+
+  ngOnInit(): void {
+
+    /*
+     * Subscribe to the shared activity state.
+     *
+     * This means:
+     * - existing database activities appear
+     * - newly added activities appear immediately
+     * - updated activities refresh immediately
+     * - deleted activities disappear immediately
+     */
+
+    this.subscription =
+      this.activityService.activities$
+        .subscribe({
+          next: activities => {
+
+            this.activities =
+              [...(activities || [])]
+                .sort(
+                  (a, b) =>
+                    new Date(
+                      b.createdAt || b.date || ''
+                    ).getTime()
+                    -
+                    new Date(
+                      a.createdAt || a.date || ''
+                    ).getTime()
+                )
+                .slice(0, 5);
+
+            this.loading = false;
+
+            this.error = false;
+
+          },
+
+          error: error => {
+
+            console.error(
+              'Recent activities stream failed:',
+              error
+            );
+
+            this.activities = [];
+
+            this.loading = false;
+
+            this.error = true;
+
+          }
+        });
+
+
+    /*
+     * Explicitly load activities from the backend.
+     *
+     * This is important because activities$ starts empty
+     * when the application is opened.
+     */
+
+    this.activityService.loadActivities();
+
   }
 
-  private loadActivities(): void {
-    this.dashboardService.getRecent().subscribe({
-      next: (recent) => {
-        this.activities = recent;
-      },
-      error: (err) => console.error('Failed to load recent activities', err)
-    });
-  }
 
-  getIcon(category: string): string {
+  // =========================================================
+  // DESTROY
+  // =========================================================
 
-    const icons: Record<string, string> = {
+  ngOnDestroy(): void {
 
-      walking: '🚶',
-      cycling: '🚴',
-      recycling: '♻️',
-      transport: '🚌',
-      food: '🥗',
-      water: '💧',
-      electricity: '⚡',
-      waste: '🗑️'
-
-    };
-
-    return icons[category.toLowerCase()] || '🌱';
+    this.subscription?.unsubscribe();
 
   }
 
-  getBadgeColor(carbon: number): string {
 
-    if (carbon >= 5) return '#2E7D32';
+  // =========================================================
+  // HELPERS
+  // =========================================================
 
-    if (carbon >= 2) return '#F9A825';
+  getActivityTitle(
+    activity: Activity
+  ): string {
 
-    return '#D32F2F';
-
-  }
-
-  getRelativeDate(date: string): string {
-
-    const today = new Date();
-
-    const activityDate = new Date(date);
-
-    const diff = Math.floor(
-      (today.getTime() - activityDate.getTime()) /
-      (1000 * 60 * 60 * 24)
+    return (
+      activity.activity ||
+      activity.title ||
+      activity.category ||
+      'Carbon activity'
     );
 
-    if (diff === 0) return 'Today';
+  }
 
-    if (diff === 1) return 'Yesterday';
 
-    return activityDate.toLocaleDateString();
+  getCarbon(
+    activity: Activity
+  ): number {
+
+    return Number(
+      activity.carbonEmission ??
+      activity.carbon ??
+      0
+    );
+
+  }
+
+
+  getDate(
+    activity: Activity
+  ): string {
+
+    return (
+      activity.createdAt ||
+      activity.date ||
+      ''
+    );
+
+  }
+
+
+  getCategoryIcon(
+    category: string
+  ): string {
+
+    switch (
+      String(category || '')
+        .toUpperCase()
+    ) {
+
+      case 'TRANSPORT':
+        return 'directions_car';
+
+      case 'FOOD':
+        return 'restaurant';
+
+      case 'ELECTRICITY':
+      case 'ENERGY':
+        return 'bolt';
+
+      case 'WATER':
+        return 'water_drop';
+
+      case 'WASTE':
+        return 'delete';
+
+      case 'SHOPPING':
+        return 'shopping_bag';
+
+      default:
+        return 'eco';
+
+    }
+
+  }
+
+
+  trackByActivityId(
+    index: number,
+    activity: Activity
+  ): number {
+
+    return Number(activity.id);
 
   }
 

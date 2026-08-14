@@ -32,47 +32,49 @@ export interface RecentCarbonEntry {
 })
 export class DashboardService {
 
-  private http = inject(HttpClient);
+  private readonly http =
+    inject(HttpClient);
 
-  // Summary
   getSummary(): Observable<DashboardSummary> {
+
     return this.http.get<DashboardSummary>(
       `${environment.apiUrl}${API_ENDPOINTS.DASHBOARD.SUMMARY}`
     );
   }
 
-  // Category chart
   getCategory(): Observable<CategoryEmission[]> {
+
     return this.http.get<CategoryEmission[]>(
       `${environment.apiUrl}${API_ENDPOINTS.DASHBOARD.CATEGORY}`
     );
   }
 
-  // Daily value
   getDaily(): Observable<number> {
+
     return this.http.get<number>(
       `${environment.apiUrl}${API_ENDPOINTS.DASHBOARD.DAILY}`
     );
   }
 
-  // Weekly value
   getWeekly(): Observable<number> {
+
     return this.http.get<number>(
       `${environment.apiUrl}${API_ENDPOINTS.DASHBOARD.WEEKLY}`
     );
   }
 
-  // Monthly value
   getMonthly(): Observable<number> {
+
     return this.http.get<number>(
       `${environment.apiUrl}${API_ENDPOINTS.DASHBOARD.MONTHLY}`
     );
   }
 
-  // Recent activities
-  getRecent(): Observable<RecentCarbonEntry[]> {
-    return this.http.get<RecentCarbonEntry[]>(
-      `${environment.apiUrl}${API_ENDPOINTS.DASHBOARD.RECENT}`
-    );
-  }
+  getRecentEntries(): Observable<RecentCarbonEntry[]> {
+
+  return this.http.get<RecentCarbonEntry[]>(
+    `${environment.apiUrl}/api/v1/dashboard/recent`
+  );
+
+}
 }

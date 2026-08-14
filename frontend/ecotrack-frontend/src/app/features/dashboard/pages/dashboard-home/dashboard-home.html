@@ -1,46 +1,121 @@
 <div class="dashboard">
 
-  <!-- Welcome -->
-  <div class="welcome-card">
+  <!-- =====================================================
+       PAGE HEADER
+       ===================================================== -->
 
-    <div>
-      <h1>Welcome Back 👋</h1>
+  <section class="welcome-card">
+
+    <div class="welcome-content">
+
+      <span class="eyebrow">
+        ECO TRACK
+      </span>
+
+      <h1>
+        Welcome Back 👋
+      </h1>
+
       <p>
-        Monitor your sustainability journey and reduce your carbon footprint.
+        Monitor your sustainability journey,
+        understand your carbon footprint,
+        and build greener habits every day.
       </p>
+
+      <div class="welcome-points">
+
+        <span>
+          <mat-icon>insights</mat-icon>
+          Track your impact
+        </span>
+
+        <span>
+          <mat-icon>eco</mat-icon>
+          Reduce emissions
+        </span>
+
+        <span>
+          <mat-icon>flag</mat-icon>
+          Reach your goals
+        </span>
+
+      </div>
+
     </div>
 
     <button
       class="primary-btn"
+      type="button"
       (click)="openDialog()">
-      + Add Activity
+
+      <mat-icon>add</mat-icon>
+
+      Add Activity
+
     </button>
+
+  </section>
+
+
+  <!-- =====================================================
+       DASHBOARD ERROR
+       ===================================================== -->
+
+  <div
+    class="dashboard-alert"
+    *ngIf="dashboardError">
+
+    <mat-icon>info</mat-icon>
+
+    <span>
+      {{ errorMessage || 'Some dashboard statistics could not be loaded.' }}
+    </span>
 
   </div>
 
-  <!-- Stats -->
+
+  <!-- =====================================================
+       STATISTICS
+       ===================================================== -->
+
   <section class="stats">
 
     <mat-card
       class="stat-card"
       *ngFor="let item of stats; let i = index"
-      [style.animation-delay]="(i * 0.15) + 's'">
+      [style.animation-delay]="(i * 0.1) + 's'">
 
       <div
-        class="icon"
+        class="stat-icon"
         [style.background]="item.color">
 
-        <mat-icon>{{ item.icon }}</mat-icon>
+        <mat-icon>
+          {{ item.icon }}
+        </mat-icon>
 
       </div>
 
-      <div>
+      <div class="stat-content">
 
-        <h2>{{ item.value }}</h2>
+        <div class="stat-heading">
 
-        <p>{{ item.title }}</p>
+          <span>
+            {{ item.title }}
+          </span>
 
-        <small>{{ item.subtitle }}</small>
+          <mat-icon>
+            north_east
+          </mat-icon>
+
+        </div>
+
+        <h2>
+          {{ item.value }}
+        </h2>
+
+        <small>
+          {{ item.subtitle }}
+        </small>
 
       </div>
 
@@ -48,43 +123,562 @@
 
   </section>
 
-  <!-- Dashboard Grid -->
+
+  <!-- =====================================================
+       ANALYTICS GRID
+       ===================================================== -->
+
   <section class="dashboard-grid">
 
-    <!-- Weekly Chart -->
-    <mat-card class="large-card">
 
-      <h2>Weekly Carbon Savings</h2>
+    <!-- ===================================================
+         WEEKLY CARBON CHART
+         =================================================== -->
+
+    <mat-card class="dashboard-card weekly-card">
+
+      <div class="card-header">
+
+        <div>
+
+          <span class="card-label">
+
+            <mat-icon>
+              analytics
+            </mat-icon>
+
+            CARBON ANALYTICS
+
+          </span>
+
+          <h2>
+            Weekly Carbon Savings
+          </h2>
+
+          <p>
+            Your carbon impact across the current week
+          </p>
+
+        </div>
+
+        <div class="card-action-icon">
+
+          <mat-icon>
+            show_chart
+          </mat-icon>
+
+        </div>
+
+      </div>
+
 
       <div class="chart-container">
+
         <canvas #carbonChart></canvas>
+
+      </div>
+
+
+      <!-- IMPORTANT:
+           Do not access activityService from HTML.
+           Use the loading state / chart instead.
+      -->
+
+      <div
+        class="chart-empty"
+        *ngIf="!loading && stats[1].value === '0'">
+
+        <mat-icon>
+          eco
+        </mat-icon>
+
+        <span>
+          Add your first activity to start
+          tracking your weekly carbon impact.
+        </span>
+
       </div>
 
     </mat-card>
 
-    <app-monthly-chart></app-monthly-chart>
 
-    <app-sustainability-score></app-sustainability-score>
+    <!-- ===================================================
+         MONTHLY OVERVIEW
+         =================================================== -->
 
-    <app-goal-progress></app-goal-progress>
+    <mat-card class="dashboard-card monthly-card">
 
-    <app-recent-activities></app-recent-activities>
+      <div class="card-header">
 
-    <app-calendar-card></app-calendar-card>
+        <div>
 
-    <app-notification-card></app-notification-card>
+          <span class="card-label">
 
-    <app-ai-recommendation></app-ai-recommendation>
+            <mat-icon>
+              calendar_month
+            </mat-icon>
 
-    <app-quick-actions></app-quick-actions>
+            MONTHLY OVERVIEW
 
-    <app-profile-widget></app-profile-widget>
+          </span>
 
-    <app-achievement-card></app-achievement-card>
+          <h2>
+            Monthly Emissions
+          </h2>
 
-    <app-streak-card></app-streak-card>
+        </div>
 
-    <app-weather-card></app-weather-card>
+      </div>
+
+
+      <div class="component-wrapper">
+
+        <app-monthly-chart></app-monthly-chart>
+
+      </div>
+
+    </mat-card>
+
+
+    <!-- ===================================================
+         SUSTAINABILITY SCORE
+         =================================================== -->
+
+    <mat-card class="dashboard-card">
+
+      <div class="card-header">
+
+        <div>
+
+          <span class="card-label">
+
+            <mat-icon>
+              verified
+            </mat-icon>
+
+            YOUR IMPACT
+
+          </span>
+
+          <h2>
+            Sustainability Score
+          </h2>
+
+        </div>
+
+      </div>
+
+
+      <div class="component-wrapper score-wrapper">
+
+        <app-sustainability-score></app-sustainability-score>
+
+      </div>
+
+    </mat-card>
+
+
+    <!-- ===================================================
+         SUSTAINABILITY GOAL
+         =================================================== -->
+
+    <mat-card class="dashboard-card">
+
+      <div class="card-header">
+
+        <div>
+
+          <span class="card-label">
+
+            <mat-icon>
+              flag
+            </mat-icon>
+
+            PROGRESS
+
+          </span>
+
+          <h2>
+            Sustainability Goal
+          </h2>
+
+        </div>
+
+      </div>
+
+
+      <div class="component-wrapper goal-wrapper">
+
+        <app-goal-progress></app-goal-progress>
+
+      </div>
+
+    </mat-card>
+
+
+    <!-- ===================================================
+         RECENT ACTIVITIES
+         =================================================== -->
+
+    <mat-card class="dashboard-card wide-card">
+
+      <div class="card-header">
+
+        <div>
+
+          <span class="card-label">
+
+            <mat-icon>
+              history
+            </mat-icon>
+
+            ACTIVITY LOG
+
+          </span>
+
+          <h2>
+            Recent Activities
+          </h2>
+
+          <p>
+            Your latest sustainability actions
+          </p>
+
+        </div>
+
+
+        <!-- FIXED ROUTE -->
+        <a
+          routerLink="/dashboard/activities"
+          class="view-link">
+
+          View all
+
+          <mat-icon>
+            arrow_forward
+          </mat-icon>
+
+        </a>
+
+      </div>
+
+
+      <div class="component-wrapper">
+
+        <app-recent-activities></app-recent-activities>
+
+      </div>
+
+    </mat-card>
+
+
+    <!-- ===================================================
+         CALENDAR
+         =================================================== -->
+
+    <mat-card class="dashboard-card">
+
+      <div class="card-header">
+
+        <div>
+
+          <span class="card-label">
+
+            <mat-icon>
+              event
+            </mat-icon>
+
+            ACTIVITY CALENDAR
+
+          </span>
+
+          <h2>
+            Calendar
+          </h2>
+
+        </div>
+
+      </div>
+
+
+      <div class="component-wrapper">
+
+        <app-calendar-card></app-calendar-card>
+
+      </div>
+
+    </mat-card>
+
+
+    <!-- ===================================================
+         NOTIFICATIONS
+         =================================================== -->
+
+    <mat-card class="dashboard-card">
+
+      <div class="card-header">
+
+        <div>
+
+          <span class="card-label">
+
+            <mat-icon>
+              notifications
+            </mat-icon>
+
+            UPDATES
+
+          </span>
+
+          <h2>
+            Notifications
+          </h2>
+
+        </div>
+
+      </div>
+
+
+      <div class="component-wrapper">
+
+        <app-notification-card></app-notification-card>
+
+      </div>
+
+    </mat-card>
+
+
+    <!-- ===================================================
+         AI RECOMMENDATION
+         =================================================== -->
+
+    <mat-card class="dashboard-card ai-card">
+
+      <div class="card-header">
+
+        <div>
+
+          <span class="card-label">
+
+            <mat-icon>
+              auto_awesome
+            </mat-icon>
+
+            SMART INSIGHTS
+
+          </span>
+
+          <h2>
+            AI Recommendation
+          </h2>
+
+          <p>
+            Personalized sustainability suggestions
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <div class="component-wrapper">
+
+        <app-ai-recommendation></app-ai-recommendation>
+
+      </div>
+
+    </mat-card>
+
+
+    <!-- ===================================================
+         QUICK ACTIONS
+         =================================================== -->
+
+    <mat-card class="dashboard-card">
+
+      <div class="card-header">
+
+        <div>
+
+          <span class="card-label">
+
+            <mat-icon>
+              bolt
+            </mat-icon>
+
+            ACTIONS
+
+          </span>
+
+          <h2>
+            Quick Actions
+          </h2>
+
+        </div>
+
+      </div>
+
+
+      <div class="component-wrapper">
+
+        <app-quick-actions></app-quick-actions>
+
+      </div>
+
+    </mat-card>
+
+
+    <!-- ===================================================
+         PROFILE
+         =================================================== -->
+
+    <mat-card class="dashboard-card">
+
+      <div class="card-header">
+
+        <div>
+
+          <span class="card-label">
+
+            <mat-icon>
+              person
+            </mat-icon>
+
+            PROFILE
+
+          </span>
+
+          <h2>
+            Your Profile
+          </h2>
+
+        </div>
+
+      </div>
+
+
+      <div class="component-wrapper">
+
+        <app-profile-widget></app-profile-widget>
+
+      </div>
+
+    </mat-card>
+
+
+    <!-- ===================================================
+         ACHIEVEMENTS
+         =================================================== -->
+
+    <mat-card class="dashboard-card">
+
+      <div class="card-header">
+
+        <div>
+
+          <span class="card-label">
+
+            <mat-icon>
+              emoji_events
+            </mat-icon>
+
+            ACHIEVEMENTS
+
+          </span>
+
+          <h2>
+            Achievements
+          </h2>
+
+        </div>
+
+      </div>
+
+
+      <div class="component-wrapper">
+
+        <app-achievement-card></app-achievement-card>
+
+      </div>
+
+    </mat-card>
+
+
+    <!-- ===================================================
+         ACTIVITY STREAK
+         =================================================== -->
+
+    <mat-card class="dashboard-card">
+
+      <div class="card-header">
+
+        <div>
+
+          <span class="card-label">
+
+            <mat-icon>
+              local_fire_department
+            </mat-icon>
+
+            CONSISTENCY
+
+          </span>
+
+          <h2>
+            Activity Streak
+          </h2>
+
+        </div>
+
+      </div>
+
+
+      <div class="component-wrapper">
+
+        <app-streak-card></app-streak-card>
+
+      </div>
+
+    </mat-card>
+
+
+    <!-- ===================================================
+         WEATHER
+         =================================================== -->
+
+    <mat-card class="dashboard-card">
+
+      <div class="card-header">
+
+        <div>
+
+          <span class="card-label">
+
+            <mat-icon>
+              cloud
+            </mat-icon>
+
+            ENVIRONMENT
+
+          </span>
+
+          <h2>
+            Weather
+          </h2>
+
+        </div>
+
+      </div>
+
+
+      <div class="component-wrapper">
+
+        <app-weather-card></app-weather-card>
+
+      </div>
+
+    </mat-card>
+
 
   </section>
 
