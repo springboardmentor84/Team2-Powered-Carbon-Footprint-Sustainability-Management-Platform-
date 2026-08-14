@@ -1,10 +1,9 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 
 import { ActivityService } from '../../../core/services/activity.service';
 import { Activity } from '../../../core/models/activity.model';
-import { DashboardService } from '../../../core/services/dashboard/dashboard.service';
 
 @Component({
   selector: 'app-recent-activities',
@@ -16,23 +15,23 @@ import { DashboardService } from '../../../core/services/dashboard/dashboard.ser
   templateUrl: './recent-activities.html',
   styleUrl: './recent-activities.css'
 })
-export class RecentActivities {
+export class RecentActivities implements OnInit, OnDestroy {
 
-  private dashboardService = inject(DashboardService);
+  private activityService = inject(ActivityService);
 
-  activities: any[] = []; // Using any to match both Activity and RecentCarbonEntry formats in the HTML template for now.
+  private subscription?: import('rxjs').Subscription;
+  activities: Activity[] = [];
 
-  constructor() {
-    this.loadActivities();
+  ngOnInit(): void {
+    this.subscription = this.activityService.activities$.subscribe(acts => {
+      this.activities = acts
+        .sort((a, b) => b.id - a.id)
+        .slice(0, 5);
+    });
   }
 
-  private loadActivities(): void {
-    this.dashboardService.getRecent().subscribe({
-      next: (recent) => {
-        this.activities = recent;
-      },
-      error: (err) => console.error('Failed to load recent activities', err)
-    });
+  ngOnDestroy(): void {
+    this.subscription?.unsubscribe();
   }
 
   getIcon(category: string): string {

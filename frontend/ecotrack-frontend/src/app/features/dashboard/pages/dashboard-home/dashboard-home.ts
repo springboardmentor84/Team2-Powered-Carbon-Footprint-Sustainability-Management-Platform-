@@ -1,4 +1,5 @@
 import {
+  ChangeDetectorRef,
   Component,
   AfterViewInit,
   ElementRef,
@@ -8,87 +9,110 @@ import {
   OnDestroy
 } from '@angular/core';
 
-import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import {
+ CommonModule } from '@angular/common';
+import {
+ RouterModule } from '@angular/router';
 
 import {
+
   Subscription,
   merge
 } from 'rxjs';
 
 import {
+
   MatCardModule
 } from '@angular/material/card';
 
 import {
+
   MatDialog,
   MatDialogModule
 } from '@angular/material/dialog';
 
 import {
+
   MatIconModule
 } from '@angular/material/icon';
 
 import {
+
   Chart
 } from 'chart.js/auto';
 
-import { DashboardService } from '../../../../core/services/dashboard/dashboard.service';
-import { GoalService } from '../../../../core/services/goal';
+import {
+ DashboardService } from '../../../../core/services/dashboard/dashboard.service';
+import {
+ GoalService } from '../../../../core/services/goal';
 
 import {
+
   ActivityService
 } from '../../../../core/services/activity.service';
 
 import {
+
   AddActivityDialog
 } from '../../../activities/components/add-activity-dialog/add-activity-dialog';
 
 import {
+
   MonthlyChart
 } from '../../../../shared/components/monthly-chart/monthly-chart';
 
 import {
+
   GoalProgress
 } from '../../../../shared/components/goal-progress/goal-progress';
 
 import {
+
   SustainabilityScore
 } from '../../../../shared/components/sustainability-score/sustainability-score';
 
 import {
+
   RecentActivities
 } from '../../../../shared/components/recent-activities/recent-activities';
 
 import {
+
   NotificationCard
 } from '../../../../shared/components/notification-card/notification-card';
 
 import {
+
   CalendarCard
 } from '../../../../shared/components/calendar-card/calendar-card';
 
 import {
+
   AiRecommendation
 } from '../../../../shared/components/ai-recommendation/ai-recommendation';
 
 import {
+
   QuickActions
 } from '../../../../shared/components/quick-actions/quick-actions';
 
 import {
+
   ProfileWidget
 } from '../../../../shared/components/profile-widget/profile-widget';
 
 import {
+
   AchievementCard
 } from '../../../../shared/components/achievement-card/achievement-card';
 
 import {
+
   StreakCard
 } from '../../../../shared/components/streak-card/streak-card';
 
 import {
+
   WeatherCard
 } from '../../../../shared/components/weather-card/weather-card';
 
@@ -160,6 +184,8 @@ export class DashboardHome
 
   private readonly activityService =
     inject(ActivityService);
+
+  private readonly cdr = inject(ChangeDetectorRef);
 
   private readonly dashboardService =
     inject(DashboardService);
@@ -272,6 +298,11 @@ export class DashboardHome
 
 
     /*
+     * Fetch activities from backend.
+     */
+    this.activityService.loadActivities();
+
+    /*
      * Initial dashboard calculation.
      */
 
@@ -325,6 +356,7 @@ export class DashboardHome
         this.stats[0].value = `${summary.totalCarbonEmission.toFixed(1)} kg`;
         this.stats[1].value = summary.totalEntries.toString();
         this.stats = [...this.stats];
+        this.cdr.detectChanges();
       },
       error: (err) => {
         console.error('Failed to load dashboard summary', err);
@@ -334,10 +366,12 @@ export class DashboardHome
     // 2. Score is unavailable from backend
     this.stats[2].value = 'N/A';
     this.stats = [...this.stats];
+        this.cdr.detectChanges();
 
     // 3. We will fetch Goal progress in a separate call or keep N/A if goal progress card handles it
     this.stats[3].value = 'N/A';
     this.stats = [...this.stats];
+        this.cdr.detectChanges();
 
 
     /*
