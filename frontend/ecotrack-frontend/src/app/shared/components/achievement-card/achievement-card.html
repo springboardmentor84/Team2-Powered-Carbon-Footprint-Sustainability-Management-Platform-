@@ -1,65 +1,17 @@
-<mat-card class="card">
+<div class="achievement-container">
+    <div class="count-header">
+        <div class="progress-info">
+            <span class="label">Unlocked</span>
+            <strong class="count-numbers">{{unlockedCount}} / {{badges.length}}</strong>
+        </div>
+        <mat-progress-bar mode="determinate" [value]="(unlockedCount / badges.length) * 100"></mat-progress-bar>
+    </div>
 
-<h2>
-
-Achievements
-
-</h2>
-
-<div class="count">
-
-Unlocked
-
-<strong>
-
-{{unlockedCount}} / {{badges.length}}
-
-</strong>
-
+    <div class="grid">
+        <div class="badge" *ngFor="let badge of badges.slice(0, 4)" [class.locked]="!badge.unlocked">
+            <div class="icon">{{badge.icon}}</div>
+            <h3>{{badge.title}}</h3>
+            <span class="status-badge" [class.status-unlocked]="badge.unlocked">{{badge.unlocked ? 'Unlocked' : 'Locked'}}</span>
+        </div>
+    </div>
 </div>
-
-<div class="grid">
-
-<div
-
-class="badge"
-
-*ngFor="let badge of badges"
-
-[class.locked]="!badge.unlocked">
-
-<div class="icon">
-
-{{badge.icon}}
-
-</div>
-
-<h3>
-
-{{badge.title}}
-
-</h3>
-
-<p>
-
-{{badge.desc}}
-
-</p>
-
-<span *ngIf="badge.unlocked">
-
-Unlocked
-
-</span>
-
-<span *ngIf="!badge.unlocked">
-
-Locked
-
-</span>
-
-</div>
-
-</div>
-
-</mat-card>

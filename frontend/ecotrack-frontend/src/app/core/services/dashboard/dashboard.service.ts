@@ -9,6 +9,7 @@ export interface DashboardSummary {
   totalEntries: number;
   totalCarbonEmission: number;
   averageEmission: number;
+  currentStreak?: number;
 }
 
 export interface CategoryEmission {

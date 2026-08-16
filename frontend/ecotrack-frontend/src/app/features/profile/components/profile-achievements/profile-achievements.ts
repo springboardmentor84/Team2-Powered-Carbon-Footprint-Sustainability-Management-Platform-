@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { BadgeService, BadgeResponse } from '../../../../core/services/badge.service';
@@ -15,6 +15,7 @@ import { BadgeService, BadgeResponse } from '../../../../core/services/badge.ser
 })
 export class ProfileAchievements implements OnInit {
   private badgeService = inject(BadgeService);
+  private cdr = inject(ChangeDetectorRef);
 
   achievements: any[] = [];
   isLoading = true;
@@ -31,9 +32,11 @@ export class ProfileAchievements implements OnInit {
           }));
         }
         this.isLoading = false;
+        this.cdr.detectChanges();
       },
       error: () => {
         this.isLoading = false;
+        this.cdr.detectChanges();
       }
     });
   }

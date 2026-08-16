@@ -1,36 +1,26 @@
 <div class="sidebar">
 
     <div class="logo">
-
         <mat-icon>eco</mat-icon>
-
-        <span>EcoTrack</span>
-
+        <span *ngIf="!isCollapsed">EcoTrack</span>
     </div>
 
     <mat-nav-list>
-
         @for(item of menu; track item.route){
-
             <a
                 mat-list-item
                 [routerLink]="item.route"
-                routerLinkActive="active">
-
+                routerLinkActive="active"
+                [matTooltip]="isCollapsed ? item.title : ''"
+                matTooltipPosition="right">
+                
                 <mat-icon matListItemIcon>
-
                     {{item.icon}}
-
                 </mat-icon>
-
-                <span>
-
+                <span *ngIf="!isCollapsed">
                     {{item.title}}
-
                 </span>
-
             </a>
-
         }
 
     </mat-nav-list>

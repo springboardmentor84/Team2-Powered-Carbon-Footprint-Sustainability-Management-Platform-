@@ -1,48 +1,46 @@
 <header class="header">
-
-    <div class="logo">
-
-        <span class="logo-icon">🌱</span>
-
-        <span class="logo-text">EcoTrack</span>
-
+    <div class="header-left">
+        <button class="icon-btn toggle-btn" (click)="toggleSidebar()">
+            <mat-icon>menu</mat-icon>
+        </button>
+        <div class="logo">
+            <span class="logo-icon">🌱</span>
+            <span class="logo-text">EcoTrack</span>
+        </div>
     </div>
 
     <div class="search">
-
-        <input
-            type="text"
-            placeholder="Search..."
-        >
-
+        <mat-icon class="search-icon">search</mat-icon>
+        <input type="text" placeholder="Search...">
     </div>
 
     <div class="header-right">
-
-        <button
-            class="icon-btn"
-            routerLink="/dashboard/notifications">
-
-            🔔
-
+        <button class="icon-btn notification-btn" routerLink="/dashboard/notifications">
+            <mat-icon>notifications</mat-icon>
         </button>
 
-        <button
-            class="icon-btn"
-            routerLink="/dashboard/profile">
-
-            👤
-
+        <button class="profile-menu-btn" [matMenuTriggerFor]="profileMenu">
+            <img *ngIf="profileImage; else initialAvatar" [src]="profileImage" alt="Profile" class="avatar-img">
+            <ng-template #initialAvatar>
+                <div class="avatar-initial">{{initials}}</div>
+            </ng-template>
+            <mat-icon class="dropdown-icon">arrow_drop_down</mat-icon>
         </button>
 
-        <button
-            class="logout-btn"
-            routerLink="/">
-
-            Logout
-
-        </button>
-
+        <mat-menu #profileMenu="matMenu" xPosition="before" class="custom-profile-menu">
+            <a mat-menu-item routerLink="/dashboard/profile">
+                <mat-icon>person</mat-icon>
+                <span>Profile</span>
+            </a>
+            <a mat-menu-item routerLink="/dashboard/settings">
+                <mat-icon>settings</mat-icon>
+                <span>Settings</span>
+            </a>
+            <mat-divider></mat-divider>
+            <button mat-menu-item (click)="logout()" class="logout-item">
+                <mat-icon color="warn">logout</mat-icon>
+                <span class="warn-text">Logout</span>
+            </button>
+        </mat-menu>
     </div>
-
 </header>

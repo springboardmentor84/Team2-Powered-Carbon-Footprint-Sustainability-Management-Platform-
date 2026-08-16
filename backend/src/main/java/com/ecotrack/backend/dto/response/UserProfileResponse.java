@@ -16,4 +16,7 @@ public class UserProfileResponse {
     private String preferences;
     private Integer ecoPoints;
     private String role;
+    private String nextLevel;
+    private Integer pointsRemaining;
+    private Integer progressPercentage;
 }

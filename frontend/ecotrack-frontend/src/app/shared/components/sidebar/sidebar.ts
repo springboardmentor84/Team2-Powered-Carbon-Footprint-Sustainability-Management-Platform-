@@ -1,22 +1,46 @@
-import { Component } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { Component, OnInit, OnDestroy, inject, ChangeDetectorRef } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { RouterLink, RouterLinkActive, RouterModule } from '@angular/router';
+import { Subscription } from 'rxjs';
 
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
+
+import { LayoutService } from '../../../core/services/layout/layout.service';
 
 @Component({
   selector: 'app-sidebar',
   standalone: true,
   imports: [
+    CommonModule,
     RouterLink,
     RouterLinkActive,
+    RouterModule,
     MatListModule,
-    MatIconModule
+    MatIconModule,
+    MatTooltipModule
   ],
   templateUrl: './sidebar.html',
   styleUrl: './sidebar.css'
 })
-export class Sidebar {
+export class Sidebar implements OnInit, OnDestroy {
+  private layoutService = inject(LayoutService);
+  private cdr = inject(ChangeDetectorRef);
+  private sub?: Subscription;
+
+  isCollapsed = false;
+
+  ngOnInit() {
+    this.sub = this.layoutService.isSidebarCollapsed$.subscribe(collapsed => {
+      this.isCollapsed = collapsed;
+      this.cdr.markForCheck();
+    });
+  }
+
+  ngOnDestroy() {
+    this.sub?.unsubscribe();
+  }
 
  menu = [
 

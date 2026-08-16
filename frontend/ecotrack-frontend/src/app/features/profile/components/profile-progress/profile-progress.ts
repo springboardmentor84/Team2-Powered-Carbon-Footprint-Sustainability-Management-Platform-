@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
+import { ProfileService, UserProfile } from '../../../../core/services/profile';
 
 @Component({
   selector: 'app-profile-progress',
@@ -12,12 +13,29 @@ import { MatCardModule } from '@angular/material/card';
   templateUrl: './profile-progress.html',
   styleUrl: './profile-progress.css'
 })
-export class ProfileProgress {
+export class ProfileProgress implements OnInit {
 
-  progress = 86;
+  private profileService = inject(ProfileService);
+  private cdr = inject(ChangeDetectorRef);
 
-  nextLevel = 'Eco Master';
+  progress = 0;
+  nextLevel = 'Loading...';
+  remaining = 0;
 
-  remaining = 14;
-
+  ngOnInit(): void {
+    this.profileService.getProfile().subscribe({
+      next: (profile: UserProfile) => {
+        if (profile) {
+          this.progress = profile.progressPercentage || 0;
+          this.nextLevel = profile.nextLevel || 'Max Level Reached';
+          this.remaining = profile.pointsRemaining || 0;
+          this.cdr.detectChanges();
+        }
+      },
+      error: () => {
+        this.nextLevel = 'Error loading progress';
+        this.cdr.detectChanges();
+      }
+    });
+  }
 }

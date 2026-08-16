@@ -15,4 +15,5 @@ public class BadgeResponse {
     private String description;
     private String icon;
     private Integer pointsRequired;
+    private boolean unlocked;
 }

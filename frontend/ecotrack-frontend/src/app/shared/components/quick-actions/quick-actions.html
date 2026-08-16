@@ -1,39 +1,11 @@
-<mat-card class="card">
-
-    <h2>Quick Actions</h2>
-
-    <div class="grid">
-
-        <div
-
-            *ngFor="let action of actions"
-
-            class="action"
-
-            (click)="actionClick(action)">
-
-            <div
-
-                class="icon"
-
-                [style.background]="action.color">
-
-                <mat-icon>
-
-                    {{action.icon}}
-
-                </mat-icon>
-
-            </div>
-
-            <span>
-
-                {{action.title}}
-
-            </span>
-
+<div class="grid">
+    <div
+        *ngFor="let action of actions"
+        class="action"
+        (click)="actionClick(action)">
+        <div class="icon" [style.background]="action.color">
+            <mat-icon>{{action.icon}}</mat-icon>
         </div>
-
+        <span>{{action.title}}</span>
     </div>
-
-</mat-card>
+</div>

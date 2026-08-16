@@ -1,57 +1,22 @@
-<mat-card class="card">
+<div class="streak-container">
+    <div class="fire-icon">
+        <mat-icon>local_fire_department</mat-icon>
+    </div>
+    
+    <div class="streak-content">
+        <div class="big">{{currentStreak}} <span class="days">Days</span></div>
+        <p class="subtitle">Current Activity Streak</p>
+    </div>
 
-<h2>
-
-🔥 Activity Streak
-
-</h2>
-
-<div class="big">
-
-{{currentStreak}}
-
+    <div class="stats">
+        <div class="stat-item">
+            <h3>{{longestStreak}}</h3>
+            <span>Best Streak</span>
+        </div>
+        <div class="divider"></div>
+        <div class="stat-item">
+            <h3>{{activeDays}}</h3>
+            <span>Total Activities</span>
+        </div>
+    </div>
 </div>
-
-<p>
-
-Current Consecutive Days
-
-</p>
-
-<div class="stats">
-
-<div>
-
-<h3>
-
-{{longestStreak}}
-
-</h3>
-
-<span>
-
-Best Streak
-
-</span>
-
-</div>
-
-<div>
-
-<h3>
-
-{{activeDays}}
-
-</h3>
-
-<span>
-
-Activities
-
-</span>
-
-</div>
-
-</div>
-
-</mat-card>

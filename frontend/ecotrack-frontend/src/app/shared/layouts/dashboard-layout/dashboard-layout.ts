@@ -2,7 +2,8 @@ import {
   Component,
   OnDestroy,
   OnInit,
-  inject
+  inject,
+  ChangeDetectorRef
 } from '@angular/core';
 
 import { RouterOutlet } from '@angular/router';
@@ -29,6 +30,8 @@ import { Sidebar }
 import { Footer }
   from '../../components/footer/footer';
 
+import { LayoutService } from '../../../core/services/layout/layout.service';
+
 
 @Component({
   selector: 'app-dashboard-layout',
@@ -54,13 +57,16 @@ export class DashboardLayout
 
   private readonly breakpointObserver =
     inject(BreakpointObserver);
+  private readonly layoutService =
+    inject(LayoutService);
+  private readonly cdr =
+    inject(ChangeDetectorRef);
 
-
-  private breakpointSubscription?:
-    Subscription;
-
+  private breakpointSubscription?: Subscription;
+  private layoutSubscription?: Subscription;
 
   isMobile = false;
+  isSidebarCollapsed = false;
 
 
   ngOnInit(): void {
@@ -75,17 +81,22 @@ export class DashboardLayout
 
           this.isMobile =
             result.matches;
-
+          if (this.isMobile) {
+            this.layoutService.setSidebarCollapsed(true);
+          }
         });
 
+    this.layoutSubscription =
+      this.layoutService.isSidebarCollapsed$
+        .subscribe(collapsed => {
+          this.isSidebarCollapsed = collapsed;
+          this.cdr.detectChanges();
+        });
   }
 
 
   ngOnDestroy(): void {
-
-    this.breakpointSubscription
-      ?.unsubscribe();
-
+    this.breakpointSubscription?.unsubscribe();
+    this.layoutSubscription?.unsubscribe();
   }
-
 }

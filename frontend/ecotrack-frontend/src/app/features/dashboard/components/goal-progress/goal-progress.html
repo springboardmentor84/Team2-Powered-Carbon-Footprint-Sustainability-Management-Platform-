@@ -1,35 +1,60 @@
-<mat-card>
+<div class="goal-container">
 
-    <h2>
-
-        Goal Progress
-
-    </h2>
-
-    <div class="percentage">
-
-        {{percentage | number:'1.0-0'}}%
-
+    <!-- STATE 1: LOADING -->
+    <div *ngIf="loading" class="state-loading">
+        <div class="skeleton-title"></div>
+        <div class="skeleton-bar"></div>
+        <div class="skeleton-text"></div>
     </div>
 
-    <mat-progress-bar
+    <!-- STATE 4: ERROR -->
+    <div *ngIf="!loading && error" class="state-error">
+        <mat-icon>error_outline</mat-icon>
+        <p>Could not load your sustainability goal.</p>
+        <button mat-stroked-button color="warn" (click)="retry()">Retry</button>
+    </div>
 
-        mode="determinate"
+    <!-- STATE 3: NO GOAL -->
+    <div *ngIf="!loading && !error && !activeGoal" class="state-empty">
+        <mat-icon class="empty-icon">flag</mat-icon>
+        <p>No active sustainability goals found.</p>
+        <button mat-flat-button color="primary" routerLink="/dashboard/goals">
+            Create a Goal
+        </button>
+    </div>
 
-        [value]="percentage">
+    <!-- STATE 2: GOAL EXISTS -->
+    <div *ngIf="!loading && !error && activeGoal" class="state-active">
+        <div class="goal-header">
+            <span class="goal-title">{{activeGoal.title}}</span>
+            <span class="goal-days" *ngIf="daysRemaining > 0">
+                <mat-icon>schedule</mat-icon> {{daysRemaining}} days left
+            </span>
+            <span class="goal-days text-warn" *ngIf="daysRemaining === 0">
+                <mat-icon>schedule</mat-icon> Due today
+            </span>
+        </div>
 
-    </mat-progress-bar>
+        <div class="progress-wrapper">
+            <div class="progress-stats">
+                <span class="current-carbon">{{activeGoal.currentCarbon | number:'1.0-1'}} kg</span>
+                <span class="target-carbon">/ {{activeGoal.targetCarbon | number:'1.0-1'}} kg</span>
+            </div>
+            <span class="percentage-badge">{{percentage | number:'1.0-0'}}%</span>
+        </div>
 
-    <p>
+        <mat-progress-bar
+            mode="determinate"
+            [value]="percentage"
+            [color]="percentage > 100 ? 'warn' : 'primary'">
+        </mat-progress-bar>
+        
+        <p class="goal-status" *ngIf="percentage < 100">
+            Keep going! You're on track.
+        </p>
+        <p class="goal-status success" *ngIf="percentage >= 100">
+            Goal limit exceeded!
+        </p>
+    </div>
 
-        {{completedGoals}} of {{totalGoals}} goals completed
-
-    </p>
-
-    <button mat-raised-button color="primary">
-
-        + New Goal
-
-    </button>
-
-</mat-card>
+</div>

@@ -15,6 +15,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Collectors;
 
 @Service
@@ -41,6 +43,7 @@ public class DashboardServiceImpl implements DashboardService {
                 .totalEntries(totalEntries == null ? 0L : totalEntries)
                 .totalCarbonEmission(roundToTwoDecimals(totalCarbonEmission))
                 .averageEmission(roundToTwoDecimals(averageEmission))
+                .currentStreak(calculateStreak(email))
                 .build();
     }
 
@@ -108,5 +111,35 @@ public class DashboardServiceImpl implements DashboardService {
                 .createdAt(entry.getCreatedAt())
                 .updatedAt(entry.getUpdatedAt())
                 .build();
+    }
+
+    private Integer calculateStreak(String email) {
+        List<CarbonEntry> entries = carbonEntryRepository.findByUser_EmailOrderByCreatedAtDesc(email);
+        if (entries.isEmpty()) return 0;
+
+        Set<LocalDate> activeDays = entries.stream()
+                .map(e -> e.getCreatedAt().toLocalDate())
+                .collect(Collectors.toSet());
+
+        LocalDate today = LocalDate.now();
+        int streak = 0;
+
+        if (activeDays.contains(today)) {
+            streak++;
+            LocalDate checkDate = today.minusDays(1);
+            while (activeDays.contains(checkDate)) {
+                streak++;
+                checkDate = checkDate.minusDays(1);
+            }
+        } else if (activeDays.contains(today.minusDays(1))) {
+            streak++; // streak from yesterday
+            LocalDate checkDate = today.minusDays(2);
+            while (activeDays.contains(checkDate)) {
+                streak++;
+                checkDate = checkDate.minusDays(1);
+            }
+        }
+
+        return streak;
     }
 }

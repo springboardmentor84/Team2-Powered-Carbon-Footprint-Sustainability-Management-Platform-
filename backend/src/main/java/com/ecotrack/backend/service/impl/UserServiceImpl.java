@@ -90,6 +90,29 @@ public class UserServiceImpl implements UserService {
     }
     
     private UserProfileResponse mapToUserProfileResponse(User user) {
+        int ecoPoints = user.getEcoPoints() != null ? user.getEcoPoints() : 0;
+        String nextLevel = "Max Level Reached";
+        int pointsRemaining = 0;
+        int progressPercentage = 100;
+
+        if (ecoPoints < 1) {
+            nextLevel = "Eco Beginner";
+            pointsRemaining = 1 - ecoPoints;
+            progressPercentage = (int) (((double) ecoPoints / 1) * 100);
+        } else if (ecoPoints < 100) {
+            nextLevel = "Green Explorer";
+            pointsRemaining = 100 - ecoPoints;
+            progressPercentage = (int) (((double) (ecoPoints - 1) / (100 - 1)) * 100);
+        } else if (ecoPoints < 250) {
+            nextLevel = "Carbon Saver";
+            pointsRemaining = 250 - ecoPoints;
+            progressPercentage = (int) (((double) (ecoPoints - 100) / (250 - 100)) * 100);
+        } else if (ecoPoints < 500) {
+            nextLevel = "Eco Champion";
+            pointsRemaining = 500 - ecoPoints;
+            progressPercentage = (int) (((double) (ecoPoints - 250) / (500 - 250)) * 100);
+        }
+
         return UserProfileResponse.builder()
                 .fullName(user.getFullName())
                 .email(user.getEmail())
@@ -97,6 +120,9 @@ public class UserServiceImpl implements UserService {
                 .preferences(user.getPreferences())
                 .ecoPoints(user.getEcoPoints())
                 .role(user.getRole().name())
+                .nextLevel(nextLevel)
+                .pointsRemaining(pointsRemaining)
+                .progressPercentage(progressPercentage)
                 .build();
     }
 }

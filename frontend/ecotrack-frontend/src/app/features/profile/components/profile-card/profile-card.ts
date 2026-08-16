@@ -66,7 +66,7 @@ export class ProfileCard implements OnInit {
             fullName: profile.fullName || 'N/A',
             email: profile.email || 'N/A',
             score: profile.ecoPoints !== undefined ? `${profile.ecoPoints}` : this.user.score,
-            level: profile.role || this.user.level
+            level: profile.nextLevel || profile.role || this.user.level
           };
           
           if (profile.profileImage) {
@@ -89,7 +89,8 @@ export class ProfileCard implements OnInit {
     this.dashboardService.getSummary().subscribe({
       next: (summary) => {
         if (summary) {
-          this.user.carbon = `${summary.totalCarbonEmission.toFixed(1)} kg`;
+          this.user.carbon = `${summary.totalCarbonEmission || 0} kg`;
+          this.user.streak = `${summary.currentStreak || 0} Days`;
           this.cdr.detectChanges();
         }
       },

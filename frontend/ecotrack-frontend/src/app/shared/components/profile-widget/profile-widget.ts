@@ -36,6 +36,7 @@ export class ProfileWidget implements OnInit {
     this.profileService.getProfile().subscribe({
       next: (profile: any) => {
         if (profile) {
+          this.profileData = profile;
           this.user.name = profile.fullName || 'N/A';
           this.user.email = profile.email || 'N/A';
           if (profile.profileImage) {
@@ -71,6 +72,7 @@ export class ProfileWidget implements OnInit {
     });
   }
 
+  profileData: any = null;
   summaryData: any = null;
 
   get carbon() {
@@ -78,7 +80,7 @@ export class ProfileWidget implements OnInit {
   }
 
   get score() {
-    return 'N/A';
+    return this.profileData ? this.profileData.ecoPoints : 0;
   }
 
   get activities() {
@@ -86,7 +88,7 @@ export class ProfileWidget implements OnInit {
   }
 
   get ecoLevel() {
-    return 'Unavailable';
+    return this.profileData ? this.profileData.role : 'Unavailable';
   }
 
 }

@@ -58,6 +58,12 @@ export interface UserProfile {
 
   score?: number;
 
+  nextLevel?: string;
+
+  pointsRemaining?: number;
+
+  progressPercentage?: number;
+
 }
 
 

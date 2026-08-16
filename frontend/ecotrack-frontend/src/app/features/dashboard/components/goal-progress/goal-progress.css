@@ -1,53 +1,151 @@
-mat-card{
-
-    padding:25px;
-
-    border-radius:16px;
-
-    height:100%;
-
+.goal-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
 }
 
-h2{
-
-    margin-bottom:25px;
-
+/* STATE: LOADING */
+.state-loading {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+}
+.skeleton-title {
+    width: 60%;
+    height: 20px;
+    background: #e2e8f0;
+    border-radius: 4px;
+    animation: pulse 1.5s infinite ease-in-out;
+}
+.skeleton-bar {
+    width: 100%;
+    height: 12px;
+    background: #e2e8f0;
+    border-radius: 6px;
+    animation: pulse 1.5s infinite ease-in-out;
+}
+.skeleton-text {
+    width: 40%;
+    height: 14px;
+    background: #e2e8f0;
+    border-radius: 4px;
+    animation: pulse 1.5s infinite ease-in-out;
 }
 
-.percentage{
-
-    font-size:42px;
-
-    font-weight:700;
-
-    color:#2E7D32;
-
-    text-align:center;
-
-    margin-bottom:25px;
-
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
 }
 
-mat-progress-bar{
-
-    height:12px;
-
-    border-radius:20px;
-
-    margin-bottom:20px;
-
+/* STATE: EMPTY & ERROR */
+.state-empty, .state-error {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 16px;
+}
+.empty-icon {
+    font-size: 32px;
+    width: 32px;
+    height: 32px;
+    color: #94a3b8;
+    margin-bottom: 12px;
+}
+.state-empty p, .state-error p {
+    color: #64748b;
+    font-size: 14px;
+    margin: 0 0 16px;
 }
 
-p{
-
-    color:#666;
-
-    margin-bottom:20px;
-
+/* STATE: ACTIVE GOAL */
+.state-active {
+    display: flex;
+    flex-direction: column;
+}
+.goal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+.goal-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #1e293b;
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.goal-days {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #64748b;
+    background: #f1f5f9;
+    padding: 4px 8px;
+    border-radius: 12px;
+}
+.goal-days.text-warn {
+    color: #e53e3e;
+    background: #fff5f5;
+}
+.goal-days mat-icon {
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
 }
 
-button{
+.progress-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 12px;
+}
+.progress-stats {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+}
+.current-carbon {
+    font-size: 24px;
+    font-weight: 800;
+    color: #176b3a;
+}
+.target-carbon {
+    font-size: 13px;
+    color: #64748b;
+    font-weight: 600;
+}
+.percentage-badge {
+    font-size: 14px;
+    font-weight: 800;
+    color: #176b3a;
+    background: #e6f4ea;
+    padding: 4px 10px;
+    border-radius: 16px;
+}
 
-    width:100%;
+mat-progress-bar {
+    height: 10px;
+    border-radius: 5px;
+    margin-bottom: 12px;
+}
 
+.goal-status {
+    font-size: 12px;
+    color: #64748b;
+    margin: 0;
+}
+.goal-status.success {
+    color: #e53e3e;
+    font-weight: 600;
 }

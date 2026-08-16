@@ -8,6 +8,8 @@ export interface DashboardSummary {
 
   goalProgress: number;
 
+  currentStreak?: number;
+
 }
 
 export interface MonthlyCarbonSummary {

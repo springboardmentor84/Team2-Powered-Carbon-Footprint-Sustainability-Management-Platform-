@@ -1,70 +1,47 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatCardModule } from '@angular/material/card';
-
-import { ActivityService } from '../../../core/services/activity.service';
+import { MatIconModule } from '@angular/material/icon';
+import { DashboardService } from '../../../core/services/dashboard/dashboard.service';
 
 @Component({
   selector: 'app-streak-card',
   standalone: true,
   imports: [
     CommonModule,
-    MatCardModule
+    MatIconModule
   ],
   templateUrl: './streak-card.html',
   styleUrl: './streak-card.css'
 })
-export class StreakCard {
+export class StreakCard implements OnInit {
 
-  private activityService = inject(ActivityService);
+  private dashboardService = inject(DashboardService);
+  
+  loading = true;
+  summary: any = null;
+
+  ngOnInit() {
+    this.dashboardService.getSummary().subscribe({
+      next: (res) => {
+        this.summary = res;
+        this.loading = false;
+      },
+      error: () => {
+        this.loading = false;
+      }
+    });
+  }
 
   get currentStreak(): number {
-
-    const activities = [...this.activityService.getActivities()]
-      .sort((a,b)=>new Date(b.date).getTime()-new Date(a.date).getTime());
-
-    if(!activities.length) return 0;
-
-    let streak = 1;
-
-    for(let i=1;i<activities.length;i++){
-
-      const prev = new Date(activities[i-1].date);
-
-      const curr = new Date(activities[i].date);
-
-      const diff = Math.floor(
-
-        (prev.getTime()-curr.getTime())/
-
-        (1000*60*60*24)
-
-      );
-
-      if(diff===1){
-
-        streak++;
-
-      }else{
-
-        break;
-
-      }
-
-    }
-
-    return streak;
-
+    return this.summary?.currentStreak || 0;
   }
 
-  get longestStreak(){
-    return this.currentStreak;
+  get longestStreak(): number {
+    return this.summary?.currentStreak || 0;
   }
 
-  get activeDays(){
-
-    return this.activityService.getActivities().length;
-
+  get activeDays(): number {
+    return this.summary?.totalEntries || 0;
   }
 
 }

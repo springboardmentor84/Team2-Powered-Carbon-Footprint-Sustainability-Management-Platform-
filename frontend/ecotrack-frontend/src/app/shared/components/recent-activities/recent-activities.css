@@ -16,106 +16,6 @@
 }
 
 
-/* =========================================================
-   HEADER
-   ========================================================= */
-
-.recent-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-
-  gap: 15px;
-
-  margin-bottom: 18px;
-}
-
-
-.recent-label {
-  display: block;
-
-  margin-bottom: 5px;
-
-  color: #32834d;
-
-  font-size: 9px;
-  font-weight: 900;
-
-  letter-spacing: 0.9px;
-}
-
-
-.recent-header h2 {
-  margin: 0;
-
-  color: #172033;
-
-  font-size: 20px;
-  font-weight: 800;
-
-  letter-spacing: -0.3px;
-}
-
-
-.recent-count {
-  display: inline-block;
-
-  margin-top: 6px;
-
-  padding: 4px 9px;
-
-  border-radius: 20px;
-
-  background: #e8f5e9;
-
-  color: #2e7d32;
-
-  font-size: 10px;
-  font-weight: 800;
-}
-
-
-.view-all {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-
-  gap: 4px;
-
-  flex-shrink: 0;
-
-  padding: 7px 2px;
-
-  color: #2e7d32;
-
-  font-size: 12px;
-  font-weight: 800;
-
-  text-decoration: none;
-
-  cursor: pointer;
-}
-
-
-.view-all mat-icon {
-  width: 17px;
-  height: 17px;
-
-  font-size: 17px;
-
-  transition:
-    transform 0.2s ease;
-}
-
-
-.view-all:hover {
-  color: #1b5e20;
-}
-
-
-.view-all:hover mat-icon {
-  transform: translateX(4px);
-}
 
 
 /* =========================================================
@@ -375,13 +275,6 @@
 
 @media (max-width: 600px) {
 
-  .recent-header {
-    align-items: flex-start;
-  }
-
-  .recent-header h2 {
-    font-size: 17px;
-  }
 
   .activity-item {
     align-items: flex-start;

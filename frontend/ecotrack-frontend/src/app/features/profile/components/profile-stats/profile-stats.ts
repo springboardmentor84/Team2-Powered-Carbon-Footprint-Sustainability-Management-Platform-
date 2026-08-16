@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { DashboardService } from '../../../../core/services/dashboard/dashboard.service';
 import { LeaderboardService } from '../../../../core/services/leaderboard.service';
+import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
   selector: 'app-profile-stats',
@@ -17,6 +18,7 @@ import { LeaderboardService } from '../../../../core/services/leaderboard.servic
 export class ProfileStats implements OnInit {
   private dashboardService = inject(DashboardService);
   private leaderboardService = inject(LeaderboardService);
+  private cdr = inject(ChangeDetectorRef);
 
   stats = [
     {
@@ -26,11 +28,11 @@ export class ProfileStats implements OnInit {
     },
     {
       title: 'Trees Saved',
-      value: 21,
+      value: 'N/A',
       color: '#43A047'
     },
     {
-      title: 'CO₂ Saved',
+      title: 'Total Emissions',
       value: 'Loading...',
       color: '#FB8C00'
     },
@@ -47,11 +49,13 @@ export class ProfileStats implements OnInit {
         if (summary) {
           this.stats[0].value = summary.totalEntries?.toString() || '0';
           this.stats[2].value = `${summary.totalCarbonEmission || 0} kg`;
+          this.cdr.detectChanges();
         }
       },
       error: () => {
         this.stats[0].value = 'Error loading';
         this.stats[2].value = 'Error loading';
+        this.cdr.detectChanges();
       }
     });
 
@@ -62,9 +66,11 @@ export class ProfileStats implements OnInit {
           : (rankData?.rank || 'N/A');
         
         this.stats[3].value = rankValue !== 'N/A' ? `#${rankValue}` : 'N/A';
+        this.cdr.detectChanges();
       },
       error: () => {
         this.stats[3].value = 'Error loading';
+        this.cdr.detectChanges();
       }
     });
   }

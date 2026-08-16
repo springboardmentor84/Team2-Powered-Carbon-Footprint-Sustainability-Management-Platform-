@@ -1,131 +1,98 @@
-.card{
-
-padding:24px;
-
-border-radius:20px;
-
-box-shadow:0 10px 25px rgba(0,0,0,.08);
-
+.achievement-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
-h2{
-
-margin:0 0 10px;
-
-font-size:22px;
-
-font-weight:700;
-
+.count-header {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
-.count{
-
-margin-bottom:20px;
-
-color:#666;
-
-font-size:14px;
-
+.progress-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
 }
 
-.grid{
-
-display:grid;
-
-grid-template-columns:repeat(2,1fr);
-
-gap:16px;
-
+.label {
+  font-size: 13px;
+  color: #64748b;
+  font-weight: 600;
 }
 
-.badge{
-
-padding:18px;
-
-border-radius:16px;
-
-background:#E8F5E9;
-
-text-align:center;
-
-transition:.3s;
-
+.count-numbers {
+  font-size: 16px;
+  font-weight: 800;
+  color: #176b3a;
 }
 
-.badge:hover{
-
-transform:translateY(-4px);
-
+mat-progress-bar {
+  height: 8px;
+  border-radius: 4px;
 }
 
-.icon{
-
-font-size:42px;
-
-margin-bottom:12px;
-
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
 }
 
-.badge h3{
-
-margin:0;
-
-font-size:18px;
-
-font-weight:700;
-
+.badge {
+  background: #f8fafc;
+  padding: 16px;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  border: 1px solid transparent;
+  transition: transform 0.2s, background 0.2s;
 }
 
-.badge p{
-
-margin:10px 0;
-
-font-size:13px;
-
-color:#666;
-
-min-height:34px;
-
+.badge:hover {
+  background: #fff;
+  border-color: #e2e8f0;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
 }
 
-.badge span{
-
-display:inline-block;
-
-padding:6px 14px;
-
-border-radius:20px;
-
-background:#2E7D32;
-
-color:white;
-
-font-size:12px;
-
-font-weight:700;
-
+.badge.locked {
+  opacity: 0.6;
+  filter: grayscale(1);
 }
 
-.locked{
-
-opacity:.45;
-
-background:#EEEEEE;
-
+.icon {
+  font-size: 32px;
+  margin-bottom: 8px;
 }
 
-.locked span{
-
-background:#9E9E9E;
-
+h3 {
+  margin: 0 0 12px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #1e293b;
 }
 
-@media(max-width:768px){
-
-.grid{
-
-grid-template-columns:1fr;
-
+.status-badge {
+  font-size: 10px;
+  font-weight: 800;
+  padding: 4px 8px;
+  border-radius: 12px;
+  background: #f1f5f9;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
+.status-unlocked {
+  background: #e6f4ea;
+  color: #176b3a;
+}
+
+@media(max-width: 600px){
+  .grid {
+    grid-template-columns: 1fr;
+  }
 }

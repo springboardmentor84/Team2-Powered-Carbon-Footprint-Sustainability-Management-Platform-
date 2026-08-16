@@ -13,4 +13,5 @@ public class DashboardSummaryResponse {
     private Long totalEntries;
     private Double totalCarbonEmission;
     private Double averageEmission;
+    private Integer currentStreak;
 }

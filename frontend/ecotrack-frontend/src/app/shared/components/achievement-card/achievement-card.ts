@@ -1,6 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 import { BadgeService, BadgeResponse } from '../../../core/services/badge.service';
 import { ProfileService } from '../../../core/services/profile';
@@ -10,7 +11,8 @@ import { ProfileService } from '../../../core/services/profile';
   standalone: true,
   imports: [
     CommonModule,
-    MatCardModule
+    MatCardModule,
+    MatProgressBarModule
   ],
   templateUrl: './achievement-card.html',
   styleUrl: './achievement-card.css'

@@ -33,13 +33,19 @@ public class BadgeServiceImpl implements BadgeService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-        return user.getBadges().stream()
+        List<Badge> allBadges = badgeRepository.findAll();
+        List<Long> unlockedBadgeIds = user.getBadges().stream()
+                .map(Badge::getId)
+                .collect(Collectors.toList());
+
+        return allBadges.stream()
                 .map(badge -> BadgeResponse.builder()
                         .id(badge.getId())
                         .name(badge.getName())
                         .description(badge.getDescription())
                         .icon(badge.getIcon())
                         .pointsRequired(badge.getPointsRequired())
+                        .unlocked(unlockedBadgeIds.contains(badge.getId()))
                         .build())
                 .collect(Collectors.toList());
     }
