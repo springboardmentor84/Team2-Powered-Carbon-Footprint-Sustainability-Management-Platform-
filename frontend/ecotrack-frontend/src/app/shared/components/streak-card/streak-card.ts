@@ -58,9 +58,7 @@ export class StreakCard {
   }
 
   get longestStreak(){
-
-    return Math.max(this.currentStreak,7);
-
+    return this.currentStreak;
   }
 
   get activeDays(){

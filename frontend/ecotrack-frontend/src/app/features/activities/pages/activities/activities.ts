@@ -4,7 +4,7 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 
 import { ActivitySummary } from '../../components/activity-summary/activity-summary';
 import { ActivityAnalytics } from '../../components/activity-analytics/activity-analytics';
-import { ActivityFilter } from '../../components/activity-filter/activity-filter';
+
 import { ActivityTableComponent } from '../../components/activity-table/activity-table';
 
 import { AddActivityDialog } from '../../components/add-activity-dialog/add-activity-dialog';
@@ -17,7 +17,6 @@ import { AddActivityDialog } from '../../components/add-activity-dialog/add-acti
     MatDialogModule,
     ActivitySummary,
     ActivityAnalytics,
-    ActivityFilter,
     ActivityTableComponent
   ],
   templateUrl: './activities.html',

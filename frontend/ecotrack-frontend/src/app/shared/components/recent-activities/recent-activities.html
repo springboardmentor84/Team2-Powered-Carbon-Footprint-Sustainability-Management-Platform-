@@ -1,79 +1,232 @@
-<mat-card class="card">
+<div class="recent-activities">
 
-    <div class="header">
+  <!-- =====================================================
+       HEADER
+       ===================================================== -->
 
-        <h2>Recent Activities</h2>
+  <div class="recent-header">
 
-        <span class="count">
+    <div>
 
-            {{activities.length}} Activities
+      <span class="recent-label">
+        ACTIVITY LOG
+      </span>
 
+      <h2>
+        Recent Activities
+      </h2>
+
+      <span class="recent-count">
+        {{ activities.length }} recent
+      </span>
+
+    </div>
+
+
+    <a
+      class="view-all"
+      routerLink="/activities">
+
+      View All
+
+      <mat-icon>
+        arrow_forward
+      </mat-icon>
+
+    </a>
+
+  </div>
+
+
+  <!-- =====================================================
+       LOADING
+       ===================================================== -->
+
+  <div
+    class="recent-state"
+    *ngIf="loading">
+
+    <mat-icon>
+      sync
+    </mat-icon>
+
+    <span>
+      Loading recent activities...
+    </span>
+
+  </div>
+
+
+  <!-- =====================================================
+       ERROR
+       ===================================================== -->
+
+  <div
+    class="recent-state error"
+    *ngIf="
+      !loading &&
+      error
+    ">
+
+    <mat-icon>
+      info
+    </mat-icon>
+
+    <span>
+      Unable to load recent activities.
+    </span>
+
+  </div>
+
+
+  <!-- =====================================================
+       EMPTY
+       ===================================================== -->
+
+  <div
+    class="recent-state empty"
+    *ngIf="
+      !loading &&
+      !error &&
+      activities.length === 0
+    ">
+
+    <mat-icon>
+      eco
+    </mat-icon>
+
+    <h3>
+      No recent activities
+    </h3>
+
+    <p>
+      Add a carbon activity to see it here.
+    </p>
+
+    <a
+      routerLink="/activities"
+      class="add-activity-link">
+
+      Add Activity
+
+      <mat-icon>
+        arrow_forward
+      </mat-icon>
+
+    </a>
+
+  </div>
+
+
+  <!-- =====================================================
+       ACTIVITY LIST
+       ===================================================== -->
+
+  <div
+    class="activity-list"
+    *ngIf="
+      !loading &&
+      !error &&
+      activities.length > 0
+    ">
+
+    <div
+      class="activity-item"
+      *ngFor="
+        let activity of activities;
+        trackBy: trackByActivityId
+      ">
+
+
+      <!-- ICON -->
+
+      <div class="activity-icon">
+
+        <mat-icon>
+
+          {{
+            getCategoryIcon(
+              activity.category
+            )
+          }}
+
+        </mat-icon>
+
+      </div>
+
+
+      <!-- CONTENT -->
+
+      <div class="activity-content">
+
+        <h3>
+          {{
+            getActivityTitle(
+              activity
+            )
+          }}
+        </h3>
+
+
+        <div class="activity-meta">
+
+          <span>
+            {{
+              activity.category
+                | titlecase
+            }}
+          </span>
+
+          <span class="separator">
+            •
+          </span>
+
+          <span>
+            {{
+              activity.quantity
+            }}
+            {{
+              activity.unit
+            }}
+          </span>
+
+        </div>
+
+
+        <small>
+
+          {{
+            getDate(activity)
+              | date:'dd MMM yyyy, h:mm a'
+          }}
+
+        </small>
+
+      </div>
+
+
+      <!-- CARBON -->
+
+      <div class="activity-carbon">
+
+        <strong>
+
+          {{
+            getCarbon(activity)
+              | number:'1.0-2'
+          }}
+          kg
+
+        </strong>
+
+        <span>
+          CO₂
         </span>
 
-    </div>
-
-    <div
-        class="empty"
-        *ngIf="activities.length==0">
-
-        <h3>No Activities Yet</h3>
-
-        <p>
-
-            Start adding eco-friendly activities.
-
-        </p>
+      </div>
 
     </div>
 
-    <div
-        class="activity"
-        *ngFor="let activity of activities">
+  </div>
 
-        <div class="left">
-
-            <div class="emoji">
-
-                {{getIcon(activity.category)}}
-
-            </div>
-
-            <div>
-
-                <h4>
-
-                    {{activity.title}}
-
-                </h4>
-
-                <small>
-
-                    {{activity.category}}
-
-                </small>
-
-            </div>
-
-        </div>
-
-        <div class="right">
-
-            <span
-                class="badge"
-                [style.background]="getBadgeColor(activity.carbon)">
-
-                +{{activity.carbon}} kg
-
-            </span>
-
-            <small>
-
-                {{getRelativeDate(activity.date)}}
-
-            </small>
-
-        </div>
-
-    </div>
-
-</mat-card>
+</div>

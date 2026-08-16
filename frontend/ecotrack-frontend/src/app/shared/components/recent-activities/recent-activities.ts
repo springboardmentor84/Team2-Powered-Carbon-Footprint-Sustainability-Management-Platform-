@@ -1,84 +1,224 @@
-import { Component, inject, OnInit, OnDestroy } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { MatCardModule } from '@angular/material/card';
+import {
+  Component,
+  OnDestroy,
+  OnInit,
+  inject
+} from '@angular/core';
 
-import { ActivityService } from '../../../core/services/activity.service';
-import { Activity } from '../../../core/models/activity.model';
+import { CommonModule } from '@angular/common';
+
+import { RouterModule } from '@angular/router';
+
+import { MatIconModule } from '@angular/material/icon';
+
+import { Subscription } from 'rxjs';
+
+import {
+  ActivityService
+} from '../../../core/services/activity.service';
+
+import {
+  Activity
+} from '../../../core/models/activity.model';
+
 
 @Component({
   selector: 'app-recent-activities',
+
   standalone: true,
+
   imports: [
     CommonModule,
-    MatCardModule
+    RouterModule,
+    MatIconModule
   ],
+
   templateUrl: './recent-activities.html',
+
   styleUrl: './recent-activities.css'
 })
-export class RecentActivities implements OnInit, OnDestroy {
+export class RecentActivities
+  implements OnInit, OnDestroy {
 
-  private activityService = inject(ActivityService);
+  private readonly activityService =
+    inject(ActivityService);
 
-  private subscription?: import('rxjs').Subscription;
+  private subscription?: Subscription;
+
   activities: Activity[] = [];
 
+  loading = true;
+
+  error = false;
+
+
+  // =========================================================
+  // INIT
+  // =========================================================
+
   ngOnInit(): void {
-    this.subscription = this.activityService.activities$.subscribe(acts => {
-      this.activities = acts
-        .sort((a, b) => b.id - a.id)
-        .slice(0, 5);
-    });
+
+    /*
+     * Subscribe to the shared activity state.
+     *
+     * This means:
+     * - existing database activities appear
+     * - newly added activities appear immediately
+     * - updated activities refresh immediately
+     * - deleted activities disappear immediately
+     */
+
+    this.subscription =
+      this.activityService.activities$
+        .subscribe({
+          next: activities => {
+
+            this.activities =
+              [...(activities || [])]
+                .sort(
+                  (a, b) =>
+                    new Date(
+                      b.createdAt || b.date || ''
+                    ).getTime()
+                    -
+                    new Date(
+                      a.createdAt || a.date || ''
+                    ).getTime()
+                )
+                .slice(0, 5);
+
+            this.loading = false;
+
+            this.error = false;
+
+          },
+
+          error: error => {
+
+            console.error(
+              'Recent activities stream failed:',
+              error
+            );
+
+            this.activities = [];
+
+            this.loading = false;
+
+            this.error = true;
+
+          }
+        });
+
+
+    /*
+     * Explicitly load activities from the backend.
+     *
+     * This is important because activities$ starts empty
+     * when the application is opened.
+     */
+
+    this.activityService.loadActivities();
+
   }
+
+
+  // =========================================================
+  // DESTROY
+  // =========================================================
 
   ngOnDestroy(): void {
+
     this.subscription?.unsubscribe();
-  }
-
-  getIcon(category: string): string {
-
-    const icons: Record<string, string> = {
-
-      walking: '🚶',
-      cycling: '🚴',
-      recycling: '♻️',
-      transport: '🚌',
-      food: '🥗',
-      water: '💧',
-      electricity: '⚡',
-      waste: '🗑️'
-
-    };
-
-    return icons[category.toLowerCase()] || '🌱';
 
   }
 
-  getBadgeColor(carbon: number): string {
 
-    if (carbon >= 5) return '#2E7D32';
+  // =========================================================
+  // HELPERS
+  // =========================================================
 
-    if (carbon >= 2) return '#F9A825';
+  getActivityTitle(
+    activity: Activity
+  ): string {
 
-    return '#D32F2F';
-
-  }
-
-  getRelativeDate(date: string): string {
-
-    const today = new Date();
-
-    const activityDate = new Date(date);
-
-    const diff = Math.floor(
-      (today.getTime() - activityDate.getTime()) /
-      (1000 * 60 * 60 * 24)
+    return (
+      activity.activity ||
+      activity.title ||
+      activity.category ||
+      'Carbon activity'
     );
 
-    if (diff === 0) return 'Today';
+  }
 
-    if (diff === 1) return 'Yesterday';
 
-    return activityDate.toLocaleDateString();
+  getCarbon(
+    activity: Activity
+  ): number {
+
+    return Number(
+      activity.carbonEmission ??
+      activity.carbon ??
+      0
+    );
+
+  }
+
+
+  getDate(
+    activity: Activity
+  ): string {
+
+    return (
+      activity.createdAt ||
+      activity.date ||
+      ''
+    );
+
+  }
+
+
+  getCategoryIcon(
+    category: string
+  ): string {
+
+    switch (
+      String(category || '')
+        .toUpperCase()
+    ) {
+
+      case 'TRANSPORT':
+        return 'directions_car';
+
+      case 'FOOD':
+        return 'restaurant';
+
+      case 'ELECTRICITY':
+      case 'ENERGY':
+        return 'bolt';
+
+      case 'WATER':
+        return 'water_drop';
+
+      case 'WASTE':
+        return 'delete';
+
+      case 'SHOPPING':
+        return 'shopping_bag';
+
+      default:
+        return 'eco';
+
+    }
+
+  }
+
+
+  trackByActivityId(
+    index: number,
+    activity: Activity
+  ): number {
+
+    return Number(activity.id);
 
   }
 

@@ -1,17 +1,39 @@
-<mat-sidenav-container class="layout-container">
+<mat-sidenav-container
+  class="layout-container">
+
+
+  <!-- =====================================================
+       SIDEBAR
+       ===================================================== -->
 
   <mat-sidenav
-    mode="side"
-    opened
-    class="sidebar">
+    #sidenav
+    class="sidebar"
+    [mode]="isMobile ? 'over' : 'side'"
+    [opened]="!isMobile"
+    [fixedInViewport]="true"
+    fixedTopGap="0"
+    fixedBottomGap="0">
 
     <app-sidebar></app-sidebar>
 
   </mat-sidenav>
 
-  <mat-sidenav-content>
+
+  <!-- =====================================================
+       MAIN AREA
+       ===================================================== -->
+
+  <mat-sidenav-content
+    class="main-content">
+
+
+    <!-- HEADER -->
 
     <app-header></app-header>
+
+
+    <!-- ROUTED PAGE -->
 
     <main class="content">
 
@@ -19,8 +41,13 @@
 
     </main>
 
+
+    <!-- FOOTER -->
+
     <app-footer></app-footer>
 
+
   </mat-sidenav-content>
+
 
 </mat-sidenav-container>

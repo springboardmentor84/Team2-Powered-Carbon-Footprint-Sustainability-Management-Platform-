@@ -34,7 +34,7 @@ export class ChartCard implements AfterViewInit {
 
         datasets:[{
 
-          label:'Carbon Saved',
+          label:'Total Emissions',
 
           data:[4,6,5,9,10,12,15],
 

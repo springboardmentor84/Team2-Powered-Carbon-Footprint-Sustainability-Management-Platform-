@@ -35,9 +35,10 @@ export const API_ENDPOINTS = {
     BASE: '/api/v1/badges'
   },
 
-  GOALS: {
-    BASE: '/api/v1/goals'
-  },
+ GOALS: {
+  BASE: '...',
+  BY_ID: (id: number) => `.../${id}`
+},
 
   NOTIFICATIONS: {
     BASE: '/api/v1/notifications'

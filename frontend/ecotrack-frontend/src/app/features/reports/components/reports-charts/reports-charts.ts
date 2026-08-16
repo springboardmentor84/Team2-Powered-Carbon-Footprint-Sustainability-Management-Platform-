@@ -31,7 +31,7 @@ export class ReportsCharts implements AfterViewInit {
         labels: ['Jan','Feb','Mar','Apr','May','Jun'],
         datasets: [
           {
-            label: 'Carbon Saved (kg)',
+            label: 'Total Emissions (kg)',
             data: [18,25,31,28,42,55]
           }
         ]

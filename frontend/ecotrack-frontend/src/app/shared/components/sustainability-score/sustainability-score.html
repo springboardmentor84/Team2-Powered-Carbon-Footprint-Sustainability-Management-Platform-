@@ -1,62 +1,83 @@
 <mat-card class="card">
 
-    <h2>
+  <div class="header">
 
-        Sustainability Score
+    <div>
 
-    </h2>
+      <h2>Sustainability Score</h2>
 
-    <div class="score-circle">
-
-        <svg>
-
-            <circle
-                class="bg"
-                cx="70"
-                cy="70"
-                r="60">
-            </circle>
-
-            <circle
-                class="progress"
-                cx="70"
-                cy="70"
-                r="60"
-                [style.stroke-dashoffset]="377-(377*scoreData.progress/100)">
-            </circle>
-
-        </svg>
-
-        <div class="center">
-
-            <h1>
-
-                {{scoreData.score}}
-
-            </h1>
-
-            <small>
-
-                /100
-
-            </small>
-
-        </div>
+      <p>
+        Based on your logged activities
+      </p>
 
     </div>
 
-    <mat-progress-bar
+    <div class="score-circle">
 
-        mode="determinate"
+      <span>
+        {{ score }}
+      </span>
 
-        [value]="scoreData.progress">
+      <small>/100</small>
 
-    </mat-progress-bar>
+    </div>
 
-    <p class="level">
+  </div>
 
-        {{scoreData.level}}
 
-    </p>
+  <div class="progress-area">
+
+    <div class="progress-track">
+
+      <div
+        class="progress-fill"
+        [style.width.%]="score">
+      </div>
+
+    </div>
+
+    <div class="progress-labels">
+
+      <span>
+        Current Score
+      </span>
+
+      <strong>
+        {{ score }}%
+      </strong>
+
+    </div>
+
+  </div>
+
+
+  <div
+    class="status"
+    [class.good]="score >= 70"
+    [class.medium]="score >= 40 && score < 70"
+    [class.low]="score < 40">
+
+    <span
+      *ngIf="score >= 70">
+
+      Excellent sustainability performance 🌱
+
+    </span>
+
+    <span
+      *ngIf="score >= 40 && score < 70">
+
+      Good progress — keep improving 🌿
+
+    </span>
+
+    <span
+      *ngIf="score < 40">
+
+      Start logging sustainable activities 🌱
+
+    </span>
+
+  </div>
 
 </mat-card>

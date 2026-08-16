@@ -1,58 +1,227 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { MatCardModule } from '@angular/material/card';
+import {
+  Component,
+  OnDestroy,
+  OnInit,
+  inject
+} from '@angular/core';
 
-import { AiService } from '../../../core/services/ai';
+import {
+  CommonModule
+} from '@angular/common';
+
+import {
+  MatCardModule
+} from '@angular/material/card';
+
+import {
+  MatIconModule
+} from '@angular/material/icon';
+
+import {
+  Subscription
+} from 'rxjs';
+
+import {
+  AiService,
+  RecommendationResponse
+} from '../../../core/services/ai';
+
 
 @Component({
   selector: 'app-ai-recommendation',
+
   standalone: true,
+
   imports: [
     CommonModule,
-    MatCardModule
+    MatCardModule,
+    MatIconModule
   ],
+
   templateUrl: './ai-recommendation.html',
+
   styleUrl: './ai-recommendation.css'
 })
-export class AiRecommendation implements OnInit {
+export class AiRecommendation
+  implements OnInit, OnDestroy {
 
-  private aiService = inject(AiService);
+  private readonly aiService =
+    inject(AiService);
 
-  recommendationData: any = {
-    icon: '🌱',
-    title: 'AI Recommendation',
-    text: 'Loading recommendation...',
-    saving: '',
-    priority: '',
-    confidence: 0
-  };
+  private subscription?: Subscription;
+
+
+  recommendation:
+    RecommendationResponse | null =
+      null;
+
+
+  loading = true;
+
+  error = false;
+
+
+  // =========================================================
+  // INIT
+  // =========================================================
 
   ngOnInit(): void {
+
     this.refreshRecommendation();
+
   }
+
+
+  // =========================================================
+  // DESTROY
+  // =========================================================
+
+  ngOnDestroy(): void {
+
+    this.subscription?.unsubscribe();
+
+  }
+
+
+  // =========================================================
+  // LIVE AI REQUEST
+  // =========================================================
 
   refreshRecommendation(): void {
-    this.aiService.getRecommendation().subscribe({
-      next: (res) => {
-        // Since backend just returns a single string 'recommendation', we map it to 'text'.
-        this.recommendationData = {
-          icon: '💡',
-          title: 'AI Insight',
-          text: res.recommendation,
-          saving: 'Personalized Insight',
-          priority: 'Dynamic',
-          confidence: 100
-        };
-      },
-      error: (err) => {
-        console.error('Failed to load AI recommendation', err);
-        this.recommendationData.text = 'Failed to load recommendation. Please try again later.';
-      }
-    });
+
+    this.subscription?.unsubscribe();
+
+    this.loading = true;
+
+    this.error = false;
+
+
+    this.subscription =
+      this.aiService
+        .getRecommendation()
+        .subscribe({
+
+          next: (
+            response: RecommendationResponse
+          ) => {
+
+            console.log(
+              'AI RECOMMENDATION:',
+              response
+            );
+
+            this.recommendation =
+              response;
+
+            this.loading = false;
+
+            this.error = false;
+
+          },
+
+          error: error => {
+
+            console.error(
+              'AI recommendation failed:',
+              error
+            );
+
+            this.recommendation = null;
+
+            this.loading = false;
+
+            this.error = true;
+
+          }
+
+        });
+
   }
 
-  get recommendation() {
-    return this.recommendationData;
+
+  // =========================================================
+  // DISPLAY
+  // =========================================================
+
+  get icon(): string {
+
+    switch (
+      String(
+        this.recommendation?.category || ''
+      ).toUpperCase()
+    ) {
+
+      case 'TRANSPORT':
+        return '🚗';
+
+      case 'FOOD':
+        return '🍽️';
+
+      case 'ENERGY':
+      case 'ELECTRICITY':
+        return '⚡';
+
+      case 'WATER':
+        return '💧';
+
+      case 'WASTE':
+        return '♻️';
+
+      default:
+        return '🌱';
+
+    }
+
+  }
+
+
+  get title(): string {
+
+    return (
+      this.recommendation?.title ||
+      'AI Sustainability Insight'
+    );
+
+  }
+
+
+  get text(): string {
+
+    return (
+      this.recommendation?.recommendation ||
+      ''
+    );
+
+  }
+
+
+  get category(): string {
+
+    return (
+      this.recommendation?.category ||
+      'GENERAL'
+    );
+
+  }
+
+
+  get priority(): string {
+
+    return (
+      this.recommendation?.priority ||
+      'MEDIUM'
+    );
+
+  }
+
+
+  get reason(): string {
+
+    return (
+      this.recommendation?.reason ||
+      ''
+    );
+
   }
 
 }

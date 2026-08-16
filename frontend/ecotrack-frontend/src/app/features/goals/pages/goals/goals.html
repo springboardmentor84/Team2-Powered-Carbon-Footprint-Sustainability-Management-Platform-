@@ -1,81 +1,1060 @@
-<div class="page">
+<div class="goals-page">
 
-  <section class="hero">
+  <!-- =========================================================
+       HEADER
+       ========================================================= -->
 
-    <div>
+  <section class="page-header">
 
-      <h1>Sustainability Goals</h1>
+    <div class="header-copy">
+
+      <span class="eyebrow">
+        SUSTAINABILITY MANAGEMENT
+      </span>
+
+      <h1>
+        Sustainability Goals
+      </h1>
 
       <p>
-
-        Track your progress toward your carbon reduction targets.
-
+        Set measurable carbon targets and see how your real activity
+        history changes your goal progress and sustainability score.
       </p>
+
+    </div>
+
+
+    <button
+      class="primary-button"
+      type="button"
+      (click)="openCreateGoal()">
+
+      <span class="material-symbols-outlined">
+        add
+      </span>
+
+      Create Goal
+
+    </button>
+
+  </section>
+
+
+  <!-- =========================================================
+       SUMMARY
+       ========================================================= -->
+
+  <section class="summary-grid">
+
+    <article class="summary-card">
+
+      <div class="summary-icon green">
+
+        <span class="material-symbols-outlined">
+          flag
+        </span>
+
+      </div>
+
+      <div class="summary-content">
+
+        <span class="summary-label">
+          ACTIVE GOALS
+        </span>
+
+        <strong>
+          {{ activeGoalsCount }}
+        </strong>
+
+        <small>
+          {{ completedGoalsCount }} completed
+        </small>
+
+      </div>
+
+    </article>
+
+
+    <article class="summary-card">
+
+      <div class="summary-icon blue">
+
+        <span class="material-symbols-outlined">
+          target
+        </span>
+
+      </div>
+
+      <div class="summary-content">
+
+        <span class="summary-label">
+          CARBON TARGET
+        </span>
+
+        <strong>
+          {{ totalTarget | number:'1.0-1' }}
+          <em>kg</em>
+        </strong>
+
+        <small>
+          Total target across your goals
+        </small>
+
+      </div>
+
+    </article>
+
+
+    <article class="summary-card">
+
+      <div class="summary-icon orange">
+
+        <span class="material-symbols-outlined">
+          trending_down
+        </span>
+
+      </div>
+
+      <div class="summary-content">
+
+        <span class="summary-label">
+          CURRENT CARBON
+        </span>
+
+        <strong>
+          {{ totalCurrent | number:'1.0-1' }}
+          <em>kg</em>
+        </strong>
+
+        <small>
+          {{ overallProgress }}% of combined target
+        </small>
+
+      </div>
+
+    </article>
+
+
+    <article class="summary-card score-card">
+
+      <div class="summary-icon purple">
+
+        <span class="material-symbols-outlined">
+          workspace_premium
+        </span>
+
+      </div>
+
+      <div class="summary-content">
+
+        <span class="summary-label">
+          SUSTAINABILITY SCORE
+        </span>
+
+        <strong>
+          {{ sustainabilityScore }}
+          <em>/100</em>
+        </strong>
+
+        <small>
+          Calculated from recorded activities
+        </small>
+
+      </div>
+
+    </article>
+
+  </section>
+
+
+  <!-- =========================================================
+       ERROR
+       ========================================================= -->
+
+  <div
+    class="global-error"
+    *ngIf="error">
+
+    <span class="material-symbols-outlined">
+      error_outline
+    </span>
+
+    <span>
+      {{ error }}
+    </span>
+
+    <button
+      type="button"
+      (click)="error = ''">
+
+      ×
+
+    </button>
+
+  </div>
+
+
+  <!-- =========================================================
+       LOADING
+       ========================================================= -->
+
+  <section
+    class="state-card"
+    *ngIf="loading">
+
+    <span class="material-symbols-outlined spin">
+      progress_activity
+    </span>
+
+    <h3>
+      Loading your goals
+    </h3>
+
+    <p>
+      Reading your goals and live carbon progress from the backend.
+    </p>
+
+  </section>
+
+
+  <!-- =========================================================
+       EMPTY
+       ========================================================= -->
+
+  <section
+    class="empty-card"
+    *ngIf="
+      !loading &&
+      !goals.length
+    ">
+
+    <div class="empty-icon">
+
+      <span class="material-symbols-outlined">
+        eco
+      </span>
+
+    </div>
+
+    <span class="eyebrow">
+      YOUR SUSTAINABILITY JOURNEY
+    </span>
+
+    <h2>
+      No goals yet
+    </h2>
+
+    <p>
+      Create your first target. Activities saved on the Activities
+      or Carbon Tracker page can then contribute to its live progress.
+    </p>
+
+    <button
+      class="primary-button"
+      type="button"
+      (click)="openCreateGoal()">
+
+      <span class="material-symbols-outlined">
+        add
+      </span>
+
+      Create Your First Goal
+
+    </button>
+
+  </section>
+
+
+  <!-- =========================================================
+       GOALS
+       ========================================================= -->
+
+  <section
+    class="goals-section"
+    *ngIf="
+      !loading &&
+      goals.length
+    ">
+
+    <div class="section-heading">
+
+      <div>
+
+        <span class="eyebrow">
+          YOUR TARGETS
+        </span>
+
+        <h2>
+          Goal Progress
+        </h2>
+
+      </div>
+
+      <span class="goal-count">
+
+        {{ goals.length }}
+
+        {{ goals.length === 1 ? 'Goal' : 'Goals' }}
+
+      </span>
+
+    </div>
+
+
+    <div class="goals-grid">
+
+      <article
+        class="goal-card"
+        *ngFor="
+          let goal of goals;
+          trackBy: trackByGoalId
+        ">
+
+
+        <!-- CARD HEADER -->
+
+        <div class="goal-card-top">
+
+          <div class="goal-heading">
+
+            <div class="goal-icon">
+
+              <span class="material-symbols-outlined">
+
+                {{ getGoalIcon(goal.title) }}
+
+              </span>
+
+            </div>
+
+
+            <div class="goal-heading-copy">
+
+              <span
+                class="status"
+                [class.active]="isActive(goal)"
+                [class.completed]="isCompleted(goal)"
+                [class.expired]="isExpired(goal)">
+
+                {{ getStatusLabel(goal) }}
+
+              </span>
+
+
+              <h3>
+                {{ goal.title }}
+              </h3>
+
+            </div>
+
+          </div>
+
+
+          <button
+            class="icon-button"
+            type="button"
+            aria-label="Open goal"
+            (click)="openGoal(goal)">
+
+            <span class="material-symbols-outlined">
+              more_horiz
+            </span>
+
+          </button>
+
+        </div>
+
+
+        <!-- PROGRESS -->
+
+        <div class="progress-block">
+
+          <div class="progress-label">
+
+            <span>
+              Live progress
+            </span>
+
+            <strong>
+              {{ getProgress(goal) }}%
+            </strong>
+
+          </div>
+
+
+          <div class="progress-track">
+
+            <div
+              class="progress-fill"
+              [style.width.%]="getProgress(goal)">
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- METRICS -->
+
+        <div class="metric-grid">
+
+          <div class="metric">
+
+            <span>
+              Current
+            </span>
+
+            <strong>
+              {{ getCurrentCarbon(goal) | number:'1.0-1' }}
+            </strong>
+
+            <small>
+              kg CO₂
+            </small>
+
+          </div>
+
+
+          <div class="metric">
+
+            <span>
+              Target
+            </span>
+
+            <strong>
+              {{ getTargetCarbon(goal) | number:'1.0-1' }}
+            </strong>
+
+            <small>
+              kg CO₂
+            </small>
+
+          </div>
+
+
+          <div class="metric">
+
+            <span>
+              Remaining
+            </span>
+
+            <strong>
+              {{ getRemainingCarbon(goal) | number:'1.0-1' }}
+            </strong>
+
+            <small>
+              kg CO₂
+            </small>
+
+          </div>
+
+        </div>
+
+
+        <!-- DATES -->
+
+        <div class="goal-meta">
+
+          <div>
+
+            <span class="material-symbols-outlined">
+              calendar_month
+            </span>
+
+            <span>
+              {{ goal.startDate | date:'dd MMM yyyy' }}
+            </span>
+
+          </div>
+
+
+          <span class="arrow">
+            →
+          </span>
+
+
+          <div>
+
+            <span>
+              {{ goal.endDate | date:'dd MMM yyyy' }}
+            </span>
+
+          </div>
+
+        </div>
+
+
+        <!-- FOOTER -->
+
+        <div class="goal-footer">
+
+          <span
+            *ngIf="
+              getDaysRemaining(goal) > 0
+            ">
+
+            {{ getDaysRemaining(goal) }}
+            days remaining
+
+          </span>
+
+
+          <span
+            *ngIf="
+              getDaysRemaining(goal) === 0
+            ">
+
+            Goal period ended
+
+          </span>
+
+
+          <button
+            type="button"
+            (click)="openGoal(goal)">
+
+            View details
+
+            <span class="material-symbols-outlined">
+              arrow_forward
+            </span>
+
+          </button>
+
+        </div>
+
+      </article>
 
     </div>
 
   </section>
 
-  <div class="goal-grid">
 
-    <mat-card class="goal-card">
+  <!-- =========================================================
+       INSIGHT
+       ========================================================= -->
 
-      <h3>Goal Target</h3>
+  <section
+    class="insight-card"
+    *ngIf="!loading">
 
-      <div class="number">
+    <div class="insight-icon">
 
-        {{target}} kg
+      <span class="material-symbols-outlined">
+        auto_awesome
+      </span>
+
+    </div>
+
+
+    <div class="insight-copy">
+
+      <span class="eyebrow">
+        SUSTAINABILITY INSIGHT
+      </span>
+
+      <h2>
+        Build the score from real activity data
+      </h2>
+
+      <p>
+        Add activities from the Activities or Carbon Tracker page.
+        The shared activity stream refreshes this page automatically,
+        so goal progress and the sustainability score update without
+        manually entering carbon values into a goal.
+      </p>
+
+    </div>
+
+
+    <div class="score-pill">
+
+      <strong>
+        {{ sustainabilityScore }}
+      </strong>
+
+      <span>
+        / 100
+      </span>
+
+    </div>
+
+  </section>
+
+
+  <!-- =========================================================
+       CREATE / EDIT MODAL
+       ========================================================= -->
+
+  <div
+    class="modal-backdrop"
+    *ngIf="showGoalModal"
+    (click)="closeGoalModal()">
+
+
+    <div
+      class="goal-modal"
+      (click)="$event.stopPropagation()">
+
+
+      <div class="modal-header">
+
+        <div>
+
+          <span class="eyebrow">
+
+            {{
+              editingGoalId
+                ? 'EDIT TARGET'
+                : 'NEW TARGET'
+            }}
+
+          </span>
+
+
+          <h2>
+
+            {{
+              editingGoalId
+                ? 'Edit Sustainability Goal'
+                : 'Create Sustainability Goal'
+            }}
+
+          </h2>
+
+        </div>
+
+
+        <button
+          class="icon-button"
+          type="button"
+          (click)="closeGoalModal()">
+
+          <span class="material-symbols-outlined">
+            close
+          </span>
+
+        </button>
 
       </div>
 
-    </mat-card>
 
-    <mat-card class="goal-card">
+      <form
+        (ngSubmit)="saveGoal()"
+        class="goal-form">
 
-      <h3>Carbon Saved</h3>
 
-      <div class="number">
+        <label>
 
-        {{carbonSaved | number:'1.1-1'}} kg
+          Goal title
 
-      </div>
+          <input
+            type="text"
+            name="title"
+            [(ngModel)]="form.title"
+            placeholder="e.g. Reduce monthly transport emissions"
+            required>
 
-    </mat-card>
+        </label>
 
-    <mat-card class="goal-card">
 
-      <h3>Remaining</h3>
+        <div class="form-grid">
 
-      <div class="number">
 
-        {{remaining}} kg
+          <label>
 
-      </div>
+            Target carbon (kg)
 
-    </mat-card>
+            <input
+              type="number"
+              name="targetCarbon"
+              [(ngModel)]="form.targetCarbon"
+              min="1"
+              step="0.1"
+              required>
+
+          </label>
+
+
+          <label>
+
+            Start date
+
+            <input
+              type="date"
+              name="startDate"
+              [(ngModel)]="form.startDate"
+              required>
+
+          </label>
+
+
+          <label>
+
+            End date
+
+            <input
+              type="date"
+              name="endDate"
+              [(ngModel)]="form.endDate"
+              required>
+
+          </label>
+
+
+        </div>
+
+
+        <div class="form-note">
+
+          <span class="material-symbols-outlined">
+            database
+          </span>
+
+          <span>
+
+            Saving this form creates or updates the goal in the
+            backend database. Carbon progress is calculated from
+            your activity history.
+
+          </span>
+
+        </div>
+
+
+        <div class="modal-actions">
+
+          <button
+            class="secondary-button"
+            type="button"
+            (click)="closeGoalModal()">
+
+            Cancel
+
+          </button>
+
+
+          <button
+            class="primary-button"
+            type="submit"
+            [disabled]="saving">
+
+            <span
+              class="material-symbols-outlined"
+              [class.spin]="saving">
+
+              {{
+                saving
+                  ? 'progress_activity'
+                  : 'check'
+              }}
+
+            </span>
+
+
+            {{
+              saving
+                ? 'Saving...'
+                : (
+                    editingGoalId
+                      ? 'Save Changes'
+                      : 'Create Goal'
+                  )
+            }}
+
+          </button>
+
+        </div>
+
+      </form>
+
+    </div>
 
   </div>
 
-  <mat-card class="progress-card">
 
-    <h2>Overall Goal Progress</h2>
+  <!-- =========================================================
+       DETAILS MODAL
+       ========================================================= -->
 
-    <div class="progress">
+  <div
+    class="modal-backdrop"
+    *ngIf="
+      showDetailsModal &&
+      selectedGoal
+    "
+    (click)="closeDetails()">
 
-      <div
-        class="fill"
-        [style.width.%]="progress">
+
+    <div
+      class="details-modal"
+      (click)="$event.stopPropagation()">
+
+
+      <div class="modal-header">
+
+        <div>
+
+          <span class="eyebrow">
+            GOAL DETAILS
+          </span>
+
+          <h2>
+            {{ selectedGoal.title }}
+          </h2>
+
+        </div>
+
+
+        <button
+          class="icon-button"
+          type="button"
+          (click)="closeDetails()">
+
+          <span class="material-symbols-outlined">
+            close
+          </span>
+
+        </button>
+
+      </div>
+
+
+      <div class="detail-progress">
+
+
+        <div class="detail-progress-circle">
+
+          <strong>
+            {{ getProgress(selectedGoal) }}%
+          </strong>
+
+          <span>
+            progress
+          </span>
+
+        </div>
+
+
+        <div>
+
+          <span
+            class="status"
+            [class.active]="isActive(selectedGoal)"
+            [class.completed]="isCompleted(selectedGoal)"
+            [class.expired]="isExpired(selectedGoal)">
+
+            {{ getStatusLabel(selectedGoal) }}
+
+          </span>
+
+
+          <p>
+
+            {{
+              getCurrentCarbon(selectedGoal)
+              | number:'1.0-1'
+            }}
+
+            kg of
+
+            {{
+              getTargetCarbon(selectedGoal)
+              | number:'1.0-1'
+            }}
+
+            kg recorded during this goal period.
+
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <div class="detail-grid">
+
+        <div>
+
+          <span>
+            Current carbon
+          </span>
+
+          <strong>
+
+            {{
+              getCurrentCarbon(selectedGoal)
+              | number:'1.0-1'
+            }}
+
+            kg
+
+          </strong>
+
+        </div>
+
+
+        <div>
+
+          <span>
+            Target
+          </span>
+
+          <strong>
+
+            {{
+              getTargetCarbon(selectedGoal)
+              | number:'1.0-1'
+            }}
+
+            kg
+
+          </strong>
+
+        </div>
+
+
+        <div>
+
+          <span>
+            Remaining
+          </span>
+
+          <strong>
+
+            {{
+              getRemainingCarbon(selectedGoal)
+              | number:'1.0-1'
+            }}
+
+            kg
+
+          </strong>
+
+        </div>
+
+
+        <div>
+
+          <span>
+            Days remaining
+          </span>
+
+          <strong>
+            {{ getDaysRemaining(selectedGoal) }}
+          </strong>
+
+        </div>
+
+      </div>
+
+
+      <div class="modal-actions">
+
+        <button
+          class="secondary-button"
+          type="button"
+          (click)="openEditGoal(selectedGoal)">
+
+          <span class="material-symbols-outlined">
+            edit
+          </span>
+
+          Edit
+
+        </button>
+
+
+        <button
+          class="danger-button"
+          type="button"
+          (click)="confirmDelete(selectedGoal)">
+
+          <span class="material-symbols-outlined">
+            delete
+          </span>
+
+          Delete
+
+        </button>
 
       </div>
 
     </div>
 
-    <p>
+  </div>
 
-      {{progress}}% Completed
 
-    </p>
+  <!-- =========================================================
+       DELETE MODAL
+       ========================================================= -->
 
-  </mat-card>
+  <div
+    class="modal-backdrop"
+    *ngIf="
+      showDeleteModal &&
+      selectedGoal
+    "
+    (click)="closeDelete()">
+
+
+    <div
+      class="delete-modal"
+      (click)="$event.stopPropagation()">
+
+
+      <div class="delete-icon">
+
+        <span class="material-symbols-outlined">
+          delete_forever
+        </span>
+
+      </div>
+
+
+      <h2>
+        Delete this goal?
+      </h2>
+
+
+      <p>
+
+        “{{ selectedGoal.title }}” will be removed from the
+        database. Your carbon activities will not be deleted.
+
+      </p>
+
+
+      <div class="modal-actions">
+
+        <button
+          class="secondary-button"
+          type="button"
+          (click)="closeDelete()">
+
+          Cancel
+
+        </button>
+
+
+        <button
+          class="danger-button"
+          type="button"
+          [disabled]="saving"
+          (click)="deleteGoal()">
+
+          {{
+            saving
+              ? 'Deleting...'
+              : 'Delete Goal'
+          }}
+
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
 
 </div>

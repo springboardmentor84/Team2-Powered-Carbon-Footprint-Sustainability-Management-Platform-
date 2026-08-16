@@ -57,6 +57,26 @@
       (ngModelChange)="loadData()">
   </mat-form-field>
 
+  <mat-form-field appearance="outline">
+    <mat-label>Sort</mat-label>
+    <mat-select
+      [(ngModel)]="sortType"
+      (selectionChange)="loadData()">
+      <mat-option value="latest">Latest</mat-option>
+      <mat-option value="oldest">Oldest</mat-option>
+      <mat-option value="carbon-high">Highest Carbon</mat-option>
+      <mat-option value="carbon-low">Lowest Carbon</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <button
+    mat-raised-button
+    color="primary"
+    type="button"
+    (click)="reset()">
+    Reset
+  </button>
+
 
   <button
     mat-raised-button

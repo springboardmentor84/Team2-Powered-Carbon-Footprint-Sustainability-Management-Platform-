@@ -40,7 +40,7 @@ export class ActivitySummary {
       },
 
       {
-        title: 'Carbon Saved',
+        title: 'Total Emissions',
         value: carbon.toFixed(1) + ' kg',
         icon: 'eco',
         color: '#43A047'

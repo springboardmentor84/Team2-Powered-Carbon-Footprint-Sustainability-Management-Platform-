@@ -1,133 +1,315 @@
-/* ---------------- Google Font ---------------- */
+/* ============================================================
+   ECOTRACK GLOBAL RESPONSIVE SYSTEM
+   ============================================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
 
-/* ---------------- Theme Variables ---------------- */
+/* ============================================================
+   HTML / BODY
+   ============================================================ */
 
-:root{
+html {
+  width: 100%;
+  max-width: 100%;
 
---primary:#2E7D32;
+  min-width: 320px;
 
---primary-light:#43A047;
+  margin: 0;
+  padding: 0;
 
---secondary:#1976D2;
+  overflow-x: hidden;
 
---danger:#D32F2F;
+  background: #f5f7fa;
 
---warning:#F9A825;
+  font-size: 16px;
+}
 
---success:#43A047;
+body {
+  width: 100%;
+  max-width: 100%;
 
---background:#F5F7FA;
+  min-width: 320px;
+  min-height: 100vh;
 
---surface:#FFFFFF;
+  margin: 0;
+  padding: 0;
 
---text:#212121;
+  overflow-x: hidden;
 
---text-light:#757575;
+  background: #f5f7fa;
 
---border:#E5E7EB;
+  color: #17251c;
 
---radius:14px;
+  font-family:
+    Inter,
+    Arial,
+    Helvetica,
+    sans-serif;
 
---shadow:0 8px 25px rgba(0,0,0,.08);
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+/* ============================================================
+   ANGULAR ROOT
+   ============================================================ */
+
+app-root {
+  display: block;
+
+  width: 100%;
+  max-width: 100%;
+
+  min-width: 0;
+  min-height: 100vh;
+
+  margin: 0;
+  padding: 0;
+
+  overflow-x: hidden;
+}
+
+/* ============================================================
+   ALL ANGULAR COMPONENT HOSTS
+   ============================================================ */
+
+app-dashboard-layout,
+app-dashboard-home,
+app-goals,
+app-activities,
+app-carbon-tracker,
+app-reports,
+app-analytics,
+app-leaderboard,
+app-notifications,
+app-profile,
+app-settings,
+app-landing,
+app-login,
+app-signup,
+app-forgot-password,
+app-reset-password,
+app-otp {
+  display: block;
+
+  width: 100%;
+  max-width: 100%;
+
+  min-width: 0;
+
+  box-sizing: border-box;
+}
+
+/* ============================================================
+   MATERIAL COMPONENT SAFETY
+   ============================================================ */
+
+mat-sidenav-container,
+mat-sidenav-content,
+mat-sidenav,
+mat-card,
+mat-dialog-container,
+mat-nav-list {
+  box-sizing: border-box;
+
+  min-width: 0;
+}
+
+/* ============================================================
+   IMAGES / SVG / CANVAS / VIDEO
+   ============================================================ */
+
+img,
+svg,
+canvas,
+video {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* ============================================================
+   FORMS
+   ============================================================ */
+
+button,
+input,
+select,
+textarea {
+  box-sizing: border-box;
+
+  max-width: 100%;
+
+  font: inherit;
+}
+
+/* ============================================================
+   TABLES
+   ============================================================ */
+
+table {
+  max-width: 100%;
+  border-collapse: collapse;
+}
+
+.table-wrapper,
+.table-container,
+.data-table-wrapper {
+  width: 100%;
+  max-width: 100%;
+
+  min-width: 0;
+
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+/* ============================================================
+   TEXT
+   ============================================================ */
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+  max-width: 100%;
+
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+}
+
+h1 {
+  font-size: clamp(1.75rem, 3vw, 2.35rem);
+}
+
+h2 {
+  font-size: clamp(1.45rem, 2.5vw, 1.9rem);
+}
+
+h3 {
+  font-size: clamp(1.2rem, 2vw, 1.5rem);
+}
+
+/* ============================================================
+   COMMON PAGE CONTAINERS
+   ============================================================ */
+
+.container,
+.wrapper,
+.page,
+.page-container,
+.content-wrapper,
+.main-content,
+.dashboard,
+.dashboard-page,
+.goals-page,
+.activities-page,
+.analytics-page,
+.reports-page,
+.profile-page,
+.settings-page,
+.leaderboard-page,
+.notifications-page {
+  width: 100%;
+  max-width: 100%;
+
+  min-width: 0;
+
+  box-sizing: border-box;
+}
+
+/* ============================================================
+   COMMON FLEX SAFETY
+   ============================================================ */
+
+.flex,
+.row,
+.column,
+.grid,
+.card-grid,
+.cards,
+.stats-grid,
+.dashboard-grid {
+  min-width: 0;
+  max-width: 100%;
+}
+
+/* ============================================================
+   FLEX CHILD SAFETY
+   ============================================================ */
+
+.flex > *,
+.row > *,
+.column > *,
+.grid > *,
+.card-grid > *,
+.cards > *,
+.stats-grid > *,
+.dashboard-grid > * {
+  min-width: 0;
+  max-width: 100%;
+}
+
+/* ============================================================
+   ABSOLUTE / FIXED CONTENT
+   ============================================================ */
+
+pre,
+code {
+  max-width: 100%;
+
+  overflow-x: auto;
+
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+}
+
+/* ============================================================
+   LINKS
+   ============================================================ */
+
+a {
+  text-decoration: none;
+}
+
+/* ============================================================
+   MOBILE GLOBAL
+   ============================================================ */
+
+@media (max-width: 768px) {
+
+  html {
+    font-size: 15px;
+  }
+
+  body {
+    font-size: 15px;
+  }
+
+  button {
+    min-height: 42px;
+  }
 
 }
 
-/* ---------------- Reset ---------------- */
+/* ============================================================
+   SMALL MOBILE
+   ============================================================ */
 
-*{
+@media (max-width: 480px) {
 
-margin:0;
+  html {
+    font-size: 14px;
+  }
 
-padding:0;
-
-box-sizing:border-box;
-
-}
-
-html{
-
-scroll-behavior:smooth;
-
-}
-
-body{
-
-font-family:'Inter',sans-serif;
-
-background:var(--background);
-
-color:var(--text);
-
-}
-
-/* ---------------- Containers ---------------- */
-
-.container{
-
-width:min(1300px,95%);
-
-margin:auto;
-
-}
-
-/* ---------------- Cards ---------------- */
-
-.card{
-
-background:var(--surface);
-
-border-radius:var(--radius);
-
-box-shadow:var(--shadow);
-
-padding:24px;
-
-}
-
-/* ---------------- Buttons ---------------- */
-
-.primary-btn{
-
-background:var(--primary);
-
-color:white;
-
-border:none;
-
-padding:12px 24px;
-
-border-radius:10px;
-
-cursor:pointer;
-
-transition:.3s;
-
-}
-
-.primary-btn:hover{
-
-background:var(--primary-light);
-
-}
-
-/* ---------------- Responsive ---------------- */
-
-img{
-
-max-width:100%;
-
-display:block;
-
-}
-
-@media(max-width:768px){
-
-.container{
-
-width:95%;
-
-}
+  body {
+    font-size: 14px;
+  }
 
 }

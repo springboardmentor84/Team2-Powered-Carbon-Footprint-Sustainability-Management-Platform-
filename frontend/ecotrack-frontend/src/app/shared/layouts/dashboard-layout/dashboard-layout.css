@@ -1,43 +1,224 @@
-.layout-container{
+/* ============================================================
+   ECOTRACK DASHBOARD LAYOUT
+   GLOBAL RESPONSIVE FIX
+   ============================================================ */
 
-    height:100vh;
+:host {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  min-height: 100vh;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* ============================================================
+   MAIN MATERIAL CONTAINER
+   ============================================================ */
+
+.layout-container {
+  display: flex;
+
+  width: 100%;
+  max-width: 100%;
+
+  height: 100vh;
+  min-height: 100vh;
+
+  margin: 0;
+  padding: 0;
+
+  overflow: hidden;
+
+  background: #f5f7fa;
+}
+
+/* ============================================================
+   SIDEBAR
+   ============================================================ */
+
+.sidebar {
+  width: 250px;
+  min-width: 250px;
+  max-width: 250px;
+
+  height: 100vh;
+
+  margin: 0;
+  padding: 0;
+
+  overflow: hidden;
+
+  box-sizing: border-box;
+}
+
+/* ============================================================
+   CONTENT AREA
+   IMPORTANT:
+   Do NOT use calc(100vw - sidebar)
+   ============================================================ */
+
+mat-sidenav-content {
+  width: auto;
+  min-width: 0;
+  max-width: 100%;
+
+  flex: 1 1 auto;
+
+  height: 100vh;
+  min-height: 0;
+
+  margin: 0;
+  padding: 0;
+
+  overflow: hidden;
+
+  background: #f5f7fa;
+
+  box-sizing: border-box;
+}
+
+/* ============================================================
+   ROUTED PAGE SCROLL AREA
+   ============================================================ */
+
+.content {
+  display: block;
+
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+
+  height: calc(100vh - 72px);
+  min-height: 0;
+
+  margin: 0;
+  padding: 0;
+
+  overflow-x: hidden;
+  overflow-y: auto;
+
+  box-sizing: border-box;
+}
+
+/* ============================================================
+   EVERY ANGULAR PAGE
+   ============================================================ */
+
+.content > * {
+  display: block;
+
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+
+  margin: 0;
+
+  box-sizing: border-box;
+}
+
+/* ============================================================
+   PREVENT COMMON OVERFLOW SOURCES
+   ============================================================ */
+
+.content img,
+.content canvas,
+.content video,
+.content iframe,
+.content table {
+  max-width: 100%;
+}
+
+.content table {
+  width: 100%;
+}
+
+/* ============================================================
+   TABLET
+   ============================================================ */
+
+@media (max-width: 1100px) {
+
+  .sidebar {
+    width: 220px;
+    min-width: 220px;
+    max-width: 220px;
+  }
 
 }
 
-.sidebar{
+/* ============================================================
+   SMALL TABLET
+   ============================================================ */
 
-    width:260px;
+@media (max-width: 850px) {
 
-    border-right:none;
-
-}
-
-.content{
-
-    padding:25px;
-
-    min-height:calc(100vh - 130px);
-
-    background:#F5F7FA;
+  .sidebar {
+    width: 200px;
+    min-width: 200px;
+    max-width: 200px;
+  }
 
 }
 
-@media(max-width:992px){
+/* ============================================================
+   MOBILE
+   ============================================================ */
 
-    .sidebar{
+@media (max-width: 650px) {
 
-        width:220px;
+  .layout-container {
+    display: block;
 
-    }
+    width: 100%;
+    max-width: 100%;
 
-}
+    height: auto;
+    min-height: 100vh;
 
-@media(max-width:768px){
+    overflow-x: hidden;
+    overflow-y: visible;
+  }
 
-    .content{
+  .sidebar {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
 
-        padding:15px;
+    height: auto;
+    min-height: auto;
 
-    }
+    overflow: visible;
+  }
+
+  mat-sidenav-content {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+
+    height: auto;
+    min-height: 0;
+
+    overflow: visible;
+  }
+
+  .content {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+
+    height: auto;
+    min-height: calc(100vh - 62px);
+
+    overflow-x: hidden;
+    overflow-y: visible;
+  }
 
 }

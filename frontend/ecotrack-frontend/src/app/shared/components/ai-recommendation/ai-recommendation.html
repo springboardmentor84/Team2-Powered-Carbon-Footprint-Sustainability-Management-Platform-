@@ -1,50 +1,159 @@
-<mat-card class="card">
+<div class="ai-recommendation">
+
+  <!-- =====================================================
+       HEADER
+       ===================================================== -->
 
   <div class="header">
 
-    <h2>AI Recommendation</h2>
+    <div>
+
+      <span class="ai-label">
+        AI POWERED
+      </span>
+
+      <h2>
+        AI Recommendation
+      </h2>
+
+    </div>
+
 
     <button
+      type="button"
       class="refresh"
+      aria-label="Refresh AI recommendation"
+      [disabled]="loading"
       (click)="refreshRecommendation()">
 
-      ↻
+      <mat-icon>
+        refresh
+      </mat-icon>
 
     </button>
 
   </div>
 
-  <div class="content">
+
+  <!-- =====================================================
+       LOADING
+       ===================================================== -->
+
+  <div
+    class="ai-state"
+    *ngIf="loading">
+
+    <mat-icon>
+      auto_awesome
+    </mat-icon>
+
+    <span>
+      Analysing your sustainability data...
+    </span>
+
+  </div>
+
+
+  <!-- =====================================================
+       ERROR
+       ===================================================== -->
+
+  <div
+    class="ai-state error"
+    *ngIf="
+      !loading &&
+      error
+    ">
+
+    <mat-icon>
+      info
+    </mat-icon>
+
+    <h3>
+      AI recommendation unavailable
+    </h3>
+
+    <p>
+      The recommendation service could not be reached.
+    </p>
+
+    <button
+      type="button"
+      class="retry"
+      (click)="refreshRecommendation()">
+
+      Try Again
+
+    </button>
+
+  </div>
+
+
+  <!-- =====================================================
+       RECOMMENDATION
+       ===================================================== -->
+
+  <div
+    class="content"
+    *ngIf="
+      !loading &&
+      !error &&
+      recommendation
+    ">
+
 
     <div class="emoji">
 
-      {{ recommendation.icon }}
+      {{ icon }}
 
     </div>
 
+
     <div class="details">
 
-      <h3>{{ recommendation.title }}</h3>
+      <div class="category">
+        {{ category | titlecase }}
+      </div>
 
-      <p>{{ recommendation.text }}</p>
 
-      <div class="saving">
+      <h3>
+        {{ title }}
+      </h3>
 
-        {{ recommendation.saving }}
+
+      <p>
+        {{ text }}
+      </p>
+
+
+      <div
+        class="reason"
+        *ngIf="reason">
+
+        {{ reason }}
 
       </div>
 
+
       <div class="meta">
 
-        <span class="priority">
+        <span
+          class="priority"
+          [class.high]="priority === 'HIGH'"
+          [class.medium]="priority === 'MEDIUM'"
+          [class.low]="priority === 'LOW'">
 
-          {{ recommendation.priority }} Priority
+          {{ priority }}
+          Priority
 
         </span>
 
-        <span class="confidence">
 
-          AI Confidence {{ recommendation.confidence }}%
+        <span class="live">
+
+          <span class="live-dot"></span>
+
+          Live AI insight
 
         </span>
 
@@ -54,4 +163,4 @@
 
   </div>
 
-</mat-card>
+</div>

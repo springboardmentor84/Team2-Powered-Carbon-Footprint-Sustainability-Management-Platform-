@@ -1,71 +1,370 @@
-<div class="page">
+<div class="tracker-page">
 
-  <section class="hero">
+  <section class="page-hero">
 
     <div>
 
-      <h1>Carbon Tracker</h1>
+      <span class="eyebrow">
+        ECO TRACK
+      </span>
+
+      <h1>
+        Carbon Tracker
+      </h1>
 
       <p>
-
-        Monitor your carbon footprint and sustainability progress.
-
+        Record your daily activities and understand
+        how your lifestyle contributes to your carbon footprint.
       </p>
+
+    </div>
+
+    <div class="hero-icon">
+      🌱
+    </div>
+
+  </section>
+
+
+  <section class="summary-grid">
+
+    <div class="summary-card">
+
+      <span class="summary-icon">
+        🌍
+      </span>
+
+      <div>
+
+        <small>
+          TOTAL EMISSIONS
+        </small>
+
+        <strong>
+          {{ totalCarbon | number:'1.0-2' }}
+          kg
+        </strong>
+
+      </div>
+
+    </div>
+
+
+    <div class="summary-card">
+
+      <span class="summary-icon">
+        📊
+      </span>
+
+      <div>
+
+        <small>
+          ACTIVITIES
+        </small>
+
+        <strong>
+          {{ activityCount }}
+        </strong>
+
+      </div>
+
+    </div>
+
+
+    <div class="summary-card">
+
+      <span class="summary-icon">
+        📉
+      </span>
+
+      <div>
+
+        <small>
+          AVERAGE / ACTIVITY
+        </small>
+
+        <strong>
+          {{ averageCarbon | number:'1.0-2' }}
+          kg
+        </strong>
+
+      </div>
 
     </div>
 
   </section>
 
-  <div class="tracker-grid">
 
-    <mat-card class="tracker-card">
+  <section class="tracker-grid">
 
-      <h3>Total Carbon Saved</h3>
 
-      <div class="value">
+    <!-- ADD ACTIVITY -->
 
-        {{totalCarbon}} kg
+    <div class="tracker-card">
 
-      </div>
+      <div class="card-heading">
 
-    </mat-card>
+        <div>
 
-    <mat-card class="tracker-card">
+          <span>
+            LOG ACTIVITY
+          </span>
 
-      <h3>Activities Logged</h3>
+          <h2>
+            Add Carbon Activity
+          </h2>
 
-      <div class="value">
+        </div>
 
-        {{totalActivities}}
-
-      </div>
-
-    </mat-card>
-
-    <mat-card class="tracker-card">
-
-      <h3>Eco Score</h3>
-
-      <div class="value">
-
-        {{ecoScore}} / 100
+        <div class="heading-icon">
+          +
+        </div>
 
       </div>
 
-    </mat-card>
 
-    <mat-card class="tracker-card">
+      <div
+        class="error"
+        *ngIf="error">
 
-      <h3>Goal Progress</h3>
-
-      <div class="value">
-
-        {{goalProgress}}%
+        {{ error }}
 
       </div>
 
-    </mat-card>
 
-  </div>
+      <div class="form-group">
+
+        <label>
+          Category
+        </label>
+
+        <select
+          [(ngModel)]="form.category">
+
+          <option
+            *ngFor="let category of categories"
+            [value]="category">
+
+            {{ category }}
+
+          </option>
+
+        </select>
+
+      </div>
+
+
+      <div class="form-group">
+
+        <label>
+          Activity
+        </label>
+
+        <input
+          type="text"
+          [(ngModel)]="form.activity"
+          placeholder="e.g. Car travel">
+
+      </div>
+
+
+      <div class="two-column">
+
+        <div class="form-group">
+
+          <label>
+            Quantity
+          </label>
+
+          <input
+            type="number"
+            min="1"
+            [(ngModel)]="form.quantity">
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label>
+            Unit
+          </label>
+
+          <input
+            type="text"
+            [(ngModel)]="form.unit"
+            placeholder="km / kWh / kg">
+
+        </div>
+
+      </div>
+
+
+      <button
+        class="save-btn"
+        type="button"
+        [disabled]="saving"
+        (click)="addActivity()">
+
+        <span *ngIf="!saving">
+          Add Activity
+        </span>
+
+        <span *ngIf="saving">
+          Saving...
+        </span>
+
+      </button>
+
+    </div>
+
+
+    <!-- RECENT ACTIVITIES -->
+
+    <div class="tracker-card activities-card">
+
+      <div class="card-heading">
+
+        <div>
+
+          <span>
+            ACTIVITY HISTORY
+          </span>
+
+          <h2>
+            Recent Activities
+          </h2>
+
+        </div>
+
+        <button
+          class="refresh-btn"
+          type="button"
+          (click)="loadActivities()">
+
+          ↻
+
+        </button>
+
+      </div>
+
+
+      <div
+        class="loading-state"
+        *ngIf="loading">
+
+        Loading activities...
+
+      </div>
+
+
+      <div
+        class="empty-state"
+        *ngIf="
+          !loading &&
+          filteredActivities.length === 0
+        ">
+
+        <div>
+          🌱
+        </div>
+
+        <strong>
+          No activities yet
+        </strong>
+
+        <p>
+          Add your first activity to start tracking your footprint.
+        </p>
+
+      </div>
+
+
+      <div
+        class="activity-list"
+        *ngIf="
+          !loading &&
+          filteredActivities.length > 0
+        ">
+
+        <div
+          class="activity-row"
+          *ngFor="
+            let activity of filteredActivities
+          ">
+
+          <div class="activity-symbol">
+
+            {{
+              getCategoryIcon(
+                activity.category
+              )
+            }}
+
+          </div>
+
+
+          <div class="activity-info">
+
+            <strong>
+
+              {{
+                activity.activity ||
+                activity.title ||
+                'Carbon activity'
+              }}
+
+            </strong>
+
+            <small>
+
+              {{
+                activity.category
+                  | titlecase
+              }}
+
+              ·
+
+              {{
+                activity.quantity
+              }}
+              {{
+                activity.unit
+              }}
+
+            </small>
+
+          </div>
+
+
+          <div class="activity-emission">
+
+            <strong>
+              {{
+                activity.carbonEmission ||
+                activity.carbon ||
+                0
+                | number:'1.0-2'
+              }}
+              kg
+            </strong>
+
+            <button
+              type="button"
+              (click)="deleteActivity(activity.id)">
+
+              ×
+
+            </button>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
 
 </div>

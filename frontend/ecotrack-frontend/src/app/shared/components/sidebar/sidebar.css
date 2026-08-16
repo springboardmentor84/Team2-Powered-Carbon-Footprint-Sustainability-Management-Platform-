@@ -1,92 +1,289 @@
-.sidebar{
+/* ============================================================
+   ECOTRACK SIDEBAR
+   ============================================================ */
 
-    height:100%;
+:host {
+  display: block;
 
-    background:#218260e8;
+  width: 100%;
+  max-width: 100%;
 
-    color:#E8F5E9;
+  min-width: 0;
+  height: 100%;
 
-    display:flex;
-
-    flex-direction:column;
-
+  box-sizing: border-box;
 }
 
-.logo{
-
-    height:70px;
-
-    display:flex;
-
-    align-items:center;
-
-    justify-content:center;
-
-    gap:10px;
-
-    font-size:24px;
-
-    font-weight:600;
-
-    color:#ffffff;
-
-    border-bottom:1px solid rgba(14, 13, 13, 0.15);
-
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 
-mat-nav-list{
+/* ============================================================
+   SIDEBAR
+   ============================================================ */
 
-    padding-top:15px;
+.sidebar {
+  width: 100%;
+  height: 100%;
 
+  min-height: 100vh;
+
+  display: flex;
+  flex-direction: column;
+
+  overflow: hidden;
+
+  color: #ffffff;
+
+  background:
+    linear-gradient(
+      180deg,
+      #176b3a 0%,
+      #155f35 55%,
+      #104b2b 100%
+    );
 }
 
-a{
+/* ============================================================
+   LOGO
+   ============================================================ */
 
-    color:#E8F5E9 !important;
+.logo {
+  flex: 0 0 72px;
 
-    border-radius:10px;
+  width: 100%;
+  min-width: 0;
 
-    margin:6px 10px;
+  display: flex;
+  align-items: center;
 
-    font-size:15px;
-    font-weight:500;
+  gap: 11px;
 
+  padding: 0 18px;
+
+  border-bottom:
+    1px solid rgba(255, 255, 255, 0.14);
+
+  overflow: hidden;
 }
 
-.active{
+.logo mat-icon {
+  flex: 0 0 30px;
 
-    background:#024406;
+  width: 30px;
+  height: 30px;
 
-    color:#ffffff !important;
+  font-size: 29px;
 
+  color: #d7f3dc;
 }
 
-a:hover{
+.logo span {
+  min-width: 0;
 
-    background:#2D6A4F;
+  overflow: hidden;
 
-    color:#ffffff !important;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 
+  font-size: 21px;
+  font-weight: 800;
 }
 
-mat-icon{
+/* ============================================================
+   NAVIGATION
+   ============================================================ */
 
-    color:#A5D6A7;
+mat-nav-list {
+  flex: 1 1 auto;
 
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 5px;
+
+  padding: 14px 10px 14px !important;
+  margin: 0 !important;
+
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
-.active mat-icon{
+/* ============================================================
+   NAV ITEM
+   ============================================================ */
 
-    color:#ffffff;
+mat-nav-list a {
+  flex: 0 0 auto;
 
+  width: 100%;
+  min-width: 0;
+
+  min-height: 50px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 13px;
+
+  padding: 0 14px !important;
+  margin: 0 !important;
+
+  border-radius: 11px;
+
+  color: #e7f4e9 !important;
+
+  font-size: 15px;
+  font-weight: 650;
+
+  line-height: 1.2;
+
+  text-decoration: none;
+
+  overflow: hidden;
+
+  transition:
+    background .2s ease,
+    color .2s ease,
+    transform .2s ease;
 }
 
-@media(max-width:768px){
+mat-nav-list a mat-icon {
+  flex: 0 0 24px;
 
-    .logo span{
+  width: 24px;
+  height: 24px;
 
-        display:none;
+  font-size: 23px;
 
-    }
+  color: #b9dfc1;
+}
+
+mat-nav-list a span {
+  min-width: 0;
+
+  overflow: hidden;
+
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* ============================================================
+   HOVER
+   ============================================================ */
+
+mat-nav-list a:hover {
+  color: #ffffff !important;
+
+  background:
+    rgba(255, 255, 255, .11);
+
+  transform: translateX(2px);
+}
+
+/* ============================================================
+   ACTIVE
+   ============================================================ */
+
+mat-nav-list a.active {
+  color: #ffffff !important;
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(255,255,255,.20),
+      rgba(255,255,255,.08)
+    );
+
+  box-shadow:
+    inset 3px 0 0 #b8e6bf;
+}
+
+mat-nav-list a.active mat-icon {
+  color: #ffffff;
+}
+
+/* ============================================================
+   SCROLLBAR
+   ============================================================ */
+
+mat-nav-list::-webkit-scrollbar {
+  width: 5px;
+}
+
+mat-nav-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+mat-nav-list::-webkit-scrollbar-thumb {
+  background:
+    rgba(255,255,255,.18);
+
+  border-radius: 20px;
+}
+
+/* ============================================================
+   MOBILE
+   ============================================================ */
+
+@media (max-width: 650px) {
+
+  .sidebar {
+    width: 100%;
+    min-height: auto;
+    height: auto;
+
+    overflow: visible;
+  }
+
+  .logo {
+    height: 62px;
+    min-height: 62px;
+
+    flex-basis: 62px;
+
+    padding: 0 16px;
+  }
+
+  .logo span {
+    font-size: 19px;
+  }
+
+  mat-nav-list {
+    flex: none;
+
+    height: auto;
+
+    display: flex;
+    flex-direction: row;
+
+    gap: 6px;
+
+    padding: 8px !important;
+
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+
+  mat-nav-list a {
+    width: auto;
+    min-width: max-content;
+
+    min-height: 44px;
+
+    padding: 0 13px !important;
+
+    transform: none;
+  }
+
+  mat-nav-list a:hover {
+    transform: none;
+  }
 
 }

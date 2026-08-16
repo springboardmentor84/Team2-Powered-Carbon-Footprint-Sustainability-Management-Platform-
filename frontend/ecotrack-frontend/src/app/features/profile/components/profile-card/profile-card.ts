@@ -9,6 +9,7 @@ import { EditProfileDialog } from '../edit-profile-dialog/edit-profile-dialog';
 import { environment } from '../../../../../environments/environment';
 import { TOKEN_KEY } from '../../../../core/constants/app.constants';
 import { ProfileService, UserProfile } from '../../../../core/services/profile';
+import { DashboardService } from '../../../../core/services/dashboard/dashboard.service';
 
 @Component({
   selector: 'app-profile-card',
@@ -28,6 +29,7 @@ export class ProfileCard implements OnInit {
   private snackBar = inject(MatSnackBar);
   private http = inject(HttpClient);
   private profileService = inject(ProfileService);
+  private dashboardService = inject(DashboardService);
   private cdr = inject(ChangeDetectorRef);
 
   isUploading = false;
@@ -82,6 +84,16 @@ export class ProfileCard implements OnInit {
         this.user.email = 'Error loading';
         this.cdr.detectChanges();
       }
+    });
+
+    this.dashboardService.getSummary().subscribe({
+      next: (summary) => {
+        if (summary) {
+          this.user.carbon = `${summary.totalCarbonEmission.toFixed(1)} kg`;
+          this.cdr.detectChanges();
+        }
+      },
+      error: (err) => console.error('Failed to load dashboard summary for profile', err)
     });
   }
 

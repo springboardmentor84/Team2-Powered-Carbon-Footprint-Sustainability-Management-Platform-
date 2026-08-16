@@ -127,3 +127,29 @@ width:100%;
 }
 
 }
+:host {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow-x: hidden;
+}
+
+.page-container,
+.activities-page,
+.activities-container {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+@media (max-width: 700px) {
+
+  .page-container,
+  .activities-page,
+  .activities-container {
+    width: 100%;
+    max-width: 100%;
+  }
+
+}

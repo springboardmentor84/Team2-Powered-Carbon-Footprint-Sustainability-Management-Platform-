@@ -120,6 +120,8 @@ export class ActivityTableComponent
 
   minCarbon: number | null = null;
 
+  sortType = 'latest';
+
   categories: string[] = [
     'TRANSPORT',
     'ELECTRICITY',
@@ -322,6 +324,19 @@ export class ActivityTableComponent
 
 
     /*
+     * SORTING
+     */
+    if (this.sortType === 'latest') {
+      result.sort((a, b) => new Date(b.date || 0).getTime() - new Date(a.date || 0).getTime());
+    } else if (this.sortType === 'oldest') {
+      result.sort((a, b) => new Date(a.date || 0).getTime() - new Date(b.date || 0).getTime());
+    } else if (this.sortType === 'carbon-high') {
+      result.sort((a, b) => Number(b.carbonEmission ?? b.carbon ?? 0) - Number(a.carbonEmission ?? a.carbon ?? 0));
+    } else if (this.sortType === 'carbon-low') {
+      result.sort((a, b) => Number(a.carbonEmission ?? a.carbon ?? 0) - Number(b.carbonEmission ?? b.carbon ?? 0));
+    }
+
+    /*
      * Update table.
      */
     this.dataSource.data =
@@ -331,6 +346,18 @@ export class ActivityTableComponent
     /*
      * Reset pagination after filtering.
      */
+    if (this.paginator) {
+      this.paginator.firstPage();
+    }
+  }
+
+  reset(): void {
+    this.search = '';
+    this.selectedCategory = '';
+    this.selectedDate = '';
+    this.minCarbon = null;
+    this.sortType = 'latest';
+    this.loadData();
     if (this.paginator) {
       this.paginator.firstPage();
     }

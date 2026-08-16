@@ -28,7 +28,7 @@ export class ProfileWidget implements OnInit {
   user: any = {
     name: 'Loading...',
     email: 'Loading...',
-    avatar: 'assets/images/avatar.png',
+    avatar: 'https://ui-avatars.com/api/?name=User&background=2E7D32&color=fff&size=256',
     memberSince: 'Loading...'
   };
 

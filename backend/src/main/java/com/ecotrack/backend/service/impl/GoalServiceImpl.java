@@ -42,23 +42,28 @@ public class GoalServiceImpl implements GoalService {
                 .user(user)
                 .title(request.getTitle())
                 .targetCarbon(request.getTargetCarbon())
-                .currentCarbon(0.0)
                 .startDate(request.getStartDate())
                 .endDate(request.getEndDate())
-                .status(GoalStatus.ACTIVE)
                 .build();
+                
+        recalculateGoalProgressInternally(goal, email);
 
         Goal savedGoal = goalRepository.save(goal);
         return mapToGoalResponse(savedGoal);
     }
 
-    @Override
-    public List<GoalResponse> getMyGoals(String email) {
-        User user = getUserByEmail(email);
-        return goalRepository.findAllByUser(user).stream()
-                .map(this::mapToGoalResponse)
-                .collect(Collectors.toList());
-    }
+   @Override
+@Transactional(readOnly = true)
+public List<GoalResponse> getMyGoals(String email) {
+
+    User user = getUserByEmail(email);
+
+    return goalRepository
+            .findAllByUserId(user.getId())
+            .stream()
+            .map(this::mapToGoalResponse)
+            .collect(Collectors.toList());
+}
 
     @Override
     public GoalResponse getGoalById(Long id, String email) {
@@ -78,6 +83,8 @@ public class GoalServiceImpl implements GoalService {
         goal.setStartDate(request.getStartDate());
         goal.setEndDate(request.getEndDate());
         goal.setUpdatedAt(LocalDateTime.now());
+        
+        recalculateGoalProgressInternally(goal, email);
 
         Goal updatedGoal = goalRepository.save(goal);
         return mapToGoalResponse(updatedGoal);
@@ -161,6 +168,28 @@ public class GoalServiceImpl implements GoalService {
                 .startDate(goal.getStartDate())
                 .endDate(goal.getEndDate())
                 .build();
+    }
+
+    private void recalculateGoalProgressInternally(Goal goal, String email) {
+        LocalDateTime startDateTime = goal.getStartDate().atStartOfDay();
+        LocalDateTime endDateTime = goal.getEndDate().atTime(LocalTime.MAX);
+
+        Double sumEmission = carbonEntryRepository.sumCarbonEmissionByUser_EmailAndCreatedAtBetween(
+                email, startDateTime, endDateTime);
+
+        double currentCarbon = sumEmission != null ? sumEmission : 0.0;
+        
+        GoalStatus newStatus;
+        if (currentCarbon >= goal.getTargetCarbon()) {
+            newStatus = GoalStatus.COMPLETED;
+        } else if (LocalDate.now().isAfter(goal.getEndDate())) {
+            newStatus = GoalStatus.FAILED;
+        } else {
+            newStatus = GoalStatus.ACTIVE;
+        }
+
+        goal.setCurrentCarbon(currentCarbon);
+        goal.setStatus(newStatus);
     }
 
     private User getUserByEmail(String email) {

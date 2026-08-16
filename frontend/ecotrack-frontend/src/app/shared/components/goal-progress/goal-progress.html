@@ -1,27 +1,294 @@
-<mat-card class="card">
+<div class="goal-progress">
 
-    <h2>Goal Progress</h2>
+  <!-- =====================================================
+       HEADER
+       ===================================================== -->
 
-    <div class="value">
+  <div class="goal-header">
 
-        {{carbonSaved | number:'1.0-1'}} kg
+    <div>
+
+      <span class="goal-label">
+        SUSTAINABILITY GOAL
+      </span>
+
+      <h2>
+        Goal Progress
+      </h2>
 
     </div>
 
-    <mat-progress-bar
+    <a
+      class="goal-link"
+      routerLink="/goals">
 
+      Manage
+
+      <mat-icon>
+        arrow_forward
+      </mat-icon>
+
+    </a>
+
+  </div>
+
+
+  <!-- =====================================================
+       LOADING
+       ===================================================== -->
+
+  <div
+    class="goal-state"
+    *ngIf="loading">
+
+    <mat-icon>
+      sync
+    </mat-icon>
+
+    <span>
+      Loading your sustainability goal...
+    </span>
+
+  </div>
+
+
+  <!-- =====================================================
+       NO GOAL
+       ===================================================== -->
+
+  <div
+    class="goal-state no-goal"
+    *ngIf="
+      !loading &&
+      !hasGoal &&
+      !error
+    ">
+
+    <mat-icon>
+      eco
+    </mat-icon>
+
+    <h3>
+      Set Your Internship Sustainability Goal
+    </h3>
+
+    <p>
+      Track your carbon footprint during your
+      internship and work toward a measurable
+      sustainability target.
+    </p>
+
+    <a
+      routerLink="/goals"
+      class="create-goal-btn">
+
+      Create Sustainability Goal
+
+      <mat-icon>
+        arrow_forward
+      </mat-icon>
+
+    </a>
+
+  </div>
+
+
+  <!-- =====================================================
+       ERROR
+       ===================================================== -->
+
+  <div
+    class="goal-state"
+    *ngIf="
+      !loading &&
+      error
+    ">
+
+    <mat-icon>
+      info
+    </mat-icon>
+
+    <h3>
+      Goal data unavailable
+    </h3>
+
+    <p>
+      We could not load your latest goal progress
+      from the server.
+    </p>
+
+    <a
+      routerLink="/goals"
+      class="goal-link">
+
+      Open Goals
+
+      <mat-icon>
+        arrow_forward
+      </mat-icon>
+
+    </a>
+
+  </div>
+
+
+  <!-- =====================================================
+       LIVE GOAL
+       ===================================================== -->
+
+  <ng-container
+    *ngIf="
+      !loading &&
+      hasGoal &&
+      !error
+    ">
+
+
+    <div class="goal-top">
+
+      <div class="goal-title-area">
+
+        <span class="active-badge">
+          ACTIVE
+        </span>
+
+        <h3>
+          {{ goalTitle }}
+        </h3>
+
+      </div>
+
+
+      <div class="goal-status">
+
+        {{ status }}
+
+      </div>
+
+    </div>
+
+
+    <!-- ===================================================
+         PROGRESS
+         =================================================== -->
+
+    <div class="progress-section">
+
+      <div class="progress-header">
+
+        <span>
+          Carbon Goal Progress
+        </span>
+
+        <strong>
+          {{ progress | number:'1.0-0' }}%
+        </strong>
+
+      </div>
+
+
+      <mat-progress-bar
         mode="determinate"
-
         [value]="progress">
-
-    </mat-progress-bar>
-
-    <div class="footer">
-
-        <span>{{progress | number:'1.0-0'}}%</span>
-
-        <span>{{remaining | number:'1.0-1'}} kg left</span>
+      </mat-progress-bar>
 
     </div>
 
-</mat-card>
+
+    <!-- ===================================================
+         VALUES
+         =================================================== -->
+
+    <div class="goal-values">
+
+      <div class="goal-value">
+
+        <span>
+          Current
+        </span>
+
+        <strong>
+          {{ currentCarbon | number:'1.0-2' }} kg
+        </strong>
+
+      </div>
+
+
+      <div class="goal-value">
+
+        <span>
+          Target
+        </span>
+
+        <strong>
+          {{ targetCarbon | number:'1.0-2' }} kg
+        </strong>
+
+      </div>
+
+
+      <div class="goal-value">
+
+        <span>
+          Remaining
+        </span>
+
+        <strong>
+          {{ remainingCarbon | number:'1.0-2' }} kg
+        </strong>
+
+      </div>
+
+    </div>
+
+
+    <!-- ===================================================
+         DATES
+         =================================================== -->
+
+    <div class="goal-dates">
+
+      <span>
+
+        <mat-icon>
+          event
+        </mat-icon>
+
+        {{ startDate | date:'dd MMM yyyy' }}
+
+      </span>
+
+
+      <mat-icon class="arrow">
+        arrow_forward
+      </mat-icon>
+
+
+      <span>
+
+        <mat-icon>
+          event
+        </mat-icon>
+
+        {{ endDate | date:'dd MMM yyyy' }}
+
+      </span>
+
+    </div>
+
+
+    <!-- ===================================================
+         LIVE
+         =================================================== -->
+
+    <div class="live-indicator">
+
+      <span class="live-dot"></span>
+
+      Live progress from your carbon activity data
+
+    </div>
+
+  </ng-container>
+
+</div>

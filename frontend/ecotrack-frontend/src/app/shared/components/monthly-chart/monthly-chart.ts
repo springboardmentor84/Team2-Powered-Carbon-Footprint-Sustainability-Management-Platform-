@@ -1,158 +1,202 @@
 import {
-  Component,
   AfterViewInit,
+  Component,
   ElementRef,
+  OnDestroy,
   ViewChild,
   inject
 } from '@angular/core';
 
-import { MatCardModule } from '@angular/material/card';
+import {
+  MatCardModule
+} from '@angular/material/card';
 
-import { Chart } from 'chart.js/auto';
+import {
+  Subscription
+} from 'rxjs';
 
-import { ActivityService } from '../../../core/services/activity.service';
+import {
+  Chart
+} from 'chart.js/auto';
 
-import { MonthlyCarbonSummary } from '../../../core/models/dashboard.model';
+import {
+  ActivityService
+} from '../../../core/services/activity.service';
 
 @Component({
   selector: 'app-monthly-chart',
+
   standalone: true,
+
   imports: [
     MatCardModule
   ],
-  templateUrl: './monthly-chart.html',
-  styleUrl: './monthly-chart.css'
+
+  templateUrl:
+    './monthly-chart.html',
+
+  styleUrl:
+    './monthly-chart.css'
 })
-export class MonthlyChart implements AfterViewInit {
+export class MonthlyChart
+  implements AfterViewInit, OnDestroy {
 
   @ViewChild('monthlyChart')
   monthlyChart!: ElementRef<HTMLCanvasElement>;
 
-  private activityService = inject(ActivityService);
+  private readonly activityService =
+    inject(ActivityService);
 
-  chart!: Chart;
+  private subscription?: Subscription;
+
+  chart?: Chart;
 
   ngAfterViewInit(): void {
 
     this.createChart();
 
+    /*
+     * Automatically update whenever
+     * ActivityService changes.
+     */
+
+    this.subscription =
+      this.activityService.activities$
+        .subscribe(() => {
+
+          this.updateChart();
+
+        });
+
   }
 
-  createChart(): void {
+  ngOnDestroy(): void {
 
-    const monthlyData = this.getMonthlySummary();
+    this.subscription?.unsubscribe();
 
-    this.chart = new Chart(this.monthlyChart.nativeElement, {
+    this.chart?.destroy();
 
-      type: 'bar',
+  }
 
-      data: {
+  private createChart(): void {
 
-        labels: monthlyData.map(item => item.month),
+    this.chart =
+      new Chart(
+        this.monthlyChart.nativeElement,
+        {
 
-        datasets: [
+          type: 'bar',
 
-          {
+          data: {
 
-            label: 'Carbon Saved (kg)',
+            labels: [
+              'Jan',
+              'Feb',
+              'Mar',
+              'Apr',
+              'May',
+              'Jun',
+              'Jul',
+              'Aug',
+              'Sep',
+              'Oct',
+              'Nov',
+              'Dec'
+            ],
 
-            data: monthlyData.map(item => item.carbonSaved),
+            datasets: [
 
-            backgroundColor: '#43A047',
+              {
 
-            borderRadius: 8
+                label:
+                  'Carbon Emission (kg)',
 
-          }
+                data:
+                  new Array(12).fill(0),
 
-        ]
+                backgroundColor:
+                  '#43A047',
 
-      },
+                borderRadius: 8
 
-      options: {
+              }
 
-        responsive: true,
+            ]
 
-        maintainAspectRatio: false,
+          },
 
-        animation: {
+          options: {
 
-          duration: 1500
+            responsive: true,
 
-        },
+            maintainAspectRatio: false,
 
-        plugins: {
+            animation: {
+              duration: 500
+            },
 
-          legend: {
+            plugins: {
 
-            display: false
+              legend: {
+                display: false
+              }
 
-          }
+            },
 
-        },
+            scales: {
 
-        scales: {
+              y: {
 
-          y: {
+                beginAtZero: true
 
-            beginAtZero: true
+              }
+
+            }
 
           }
 
         }
+      );
 
-      }
-
-    });
+    this.updateChart();
 
   }
 
-  private getMonthlySummary(): MonthlyCarbonSummary[] {
+  private updateChart(): void {
 
-    const months = [
+    if (!this.chart) {
+      return;
+    }
 
-      'Jan',
+    const totals =
+      new Array(12).fill(0);
 
-      'Feb',
+    this.activityService
+      .getActivities()
+      .forEach(activity => {
 
-      'Mar',
+        if (!activity.date) {
+          return;
+        }
 
-      'Apr',
+        const month =
+          new Date(
+            activity.date
+          ).getMonth();
 
-      'May',
+        totals[month] +=
+          Number(
+            activity.carbonEmission ||
+            activity.carbon ||
+            0
+          );
 
-      'Jun',
+      });
 
-      'Jul',
+    this.chart.data.datasets[0].data =
+      totals;
 
-      'Aug',
-
-      'Sep',
-
-      'Oct',
-
-      'Nov',
-
-      'Dec'
-
-    ];
-
-    const totals = new Array(12).fill(0);
-
-    this.activityService.getActivities().forEach(activity => {
-
-      const month = new Date(activity.date).getMonth();
-
-      totals[month] += activity.carbon;
-
-    });
-
-    return months.map((month, index) => ({
-
-      month,
-
-      carbonSaved: totals[index]
-
-    }));
+    this.chart.update();
 
   }
 
