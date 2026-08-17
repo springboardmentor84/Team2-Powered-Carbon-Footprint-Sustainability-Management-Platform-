@@ -24,8 +24,6 @@
    ============================================================ */
 
 .layout-container {
-  display: flex;
-
   width: 100%;
   max-width: 100%;
 
@@ -45,9 +43,9 @@
    ============================================================ */
 
 .sidebar {
-  width: 230px;
-  min-width: 230px;
-  max-width: 230px;
+  width: 260px;
+  min-width: 260px;
+  max-width: 260px;
   transition: width 0.3s cubic-bezier(0.4, 0.0, 0.2, 1), 
               min-width 0.3s cubic-bezier(0.4, 0.0, 0.2, 1), 
               max-width 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
@@ -78,8 +76,6 @@ mat-sidenav-content {
   width: auto;
   min-width: 0;
   max-width: 100%;
-
-  flex: 1 1 auto;
 
   height: 100vh;
   min-height: 0;

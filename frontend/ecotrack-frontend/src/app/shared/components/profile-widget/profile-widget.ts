@@ -67,6 +67,7 @@ export class ProfileWidget implements OnInit {
     this.dashboardService.getSummary().subscribe({
       next: (summary) => {
         this.summaryData = summary;
+        this.cdr.detectChanges();
       },
       error: (err) => console.error('Failed to load dashboard summary', err)
     });

@@ -1,79 +1,33 @@
 <mat-card class="card">
+  <div class="header">
+    <h2>Weather</h2>
+    <button (click)="refresh()" *ngIf="locationSet">↻</button>
+  </div>
 
-<div class="header">
+  <ng-container *ngIf="locationSet && weather">
+    <div class="weather">
+      <div class="icon">{{weather.icon}}</div>
+      <div>
+        <h1>{{weather.temperature}}°C</h1>
+        <h3>{{weather.condition}}</h3>
+        <p>📍 {{weather.city}}</p>
+      </div>
+    </div>
+    
+    <div class="details">
+      <div>💧 {{weather.humidity}}%</div>
+      <div>💨 {{weather.wind}} km/h</div>
+    </div>
+    
+    <div class="tip">🌱 {{ecoSuggestion}}</div>
+  </ng-container>
 
-<h2>
-
-Weather
-
-</h2>
-
-<button (click)="refresh()">
-
-↻
-
-</button>
-
-</div>
-
-<div class="weather">
-
-<div class="icon">
-
-{{weather.icon}}
-
-</div>
-
-<div>
-
-<h1>
-
-{{weather.temperature}}°C
-
-</h1>
-
-<h3>
-
-{{weather.condition}}
-
-</h3>
-
-<p>
-
-📍 {{weather.city}}
-
-</p>
-
-</div>
-
-</div>
-
-<div class="details">
-
-<div>
-
-💧
-
-{{weather.humidity}}%
-
-</div>
-
-<div>
-
-💨
-
-{{weather.wind}} km/h
-
-</div>
-
-</div>
-
-<div class="tip">
-
-🌱
-
-{{ecoSuggestion}}
-
-</div>
-
+  <ng-container *ngIf="!locationSet">
+    <div class="no-location" style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px 0;">
+      <mat-icon style="font-size: 32px; width: 32px; height: 32px; color: #a0aec0; margin-bottom: 8px;">location_off</mat-icon>
+      <h3 style="margin: 0; font-size: 16px; color: #2d3748;">Location not set</h3>
+      <p style="margin: 4px 0 16px 0; font-size: 14px; color: #718096; text-align: center;">Set your location in Profile to see local weather.</p>
+      <button mat-stroked-button color="primary" routerLink="/dashboard/profile" style="border: 1px solid #176b3a; color: #176b3a; background: transparent; padding: 4px 16px; border-radius: 4px; cursor: pointer;">Set Location</button>
+    </div>
+  </ng-container>
 </mat-card>

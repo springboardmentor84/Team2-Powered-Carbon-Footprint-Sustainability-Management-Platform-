@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { DashboardService } from '../../../core/services/dashboard/dashboard.service';
@@ -16,6 +16,7 @@ import { DashboardService } from '../../../core/services/dashboard/dashboard.ser
 export class StreakCard implements OnInit {
 
   private dashboardService = inject(DashboardService);
+  private cdr = inject(ChangeDetectorRef);
   
   loading = true;
   summary: any = null;
@@ -25,9 +26,11 @@ export class StreakCard implements OnInit {
       next: (res) => {
         this.summary = res;
         this.loading = false;
+        this.cdr.detectChanges();
       },
       error: () => {
         this.loading = false;
+        this.cdr.detectChanges();
       }
     });
   }

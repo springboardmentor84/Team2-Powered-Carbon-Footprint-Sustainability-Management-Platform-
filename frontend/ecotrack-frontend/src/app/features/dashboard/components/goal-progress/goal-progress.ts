@@ -5,7 +5,8 @@ import { MatCardModule } from '@angular/material/card';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { GoalService, GoalResponse } from '../../../core/services/goal';
+import { HttpErrorResponse } from '@angular/common/http';
+import { GoalService, GoalResponse } from '../../../../core/services/goal';
 
 @Component({
   selector: 'app-goal-progress',
@@ -43,7 +44,7 @@ export class GoalProgress implements OnInit {
     this.error = false;
     
     this.goalService.getMyGoals().subscribe({
-      next: (goals) => {
+      next: (goals: GoalResponse[]) => {
         if (goals && goals.length > 0) {
           // Assume the first one is the active goal for the dashboard
           this.activeGoal = goals[0];
@@ -54,7 +55,7 @@ export class GoalProgress implements OnInit {
         this.loading = false;
         this.cdr.detectChanges();
       },
-      error: (err) => {
+      error: (err: HttpErrorResponse) => {
         console.error('Failed to load goals for widget', err);
         this.error = true;
         this.loading = false;

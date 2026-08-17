@@ -4,6 +4,7 @@ import { RouterModule, Router } from '@angular/router';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDividerModule } from '@angular/material/divider';
 import { LayoutService } from '../../../core/services/layout/layout.service';
 import { ProfileService } from '../../../core/services/profile';
 import { AuthService } from '../../../core/services/auth';
@@ -16,7 +17,8 @@ import { AuthService } from '../../../core/services/auth';
     RouterModule,
     MatMenuModule,
     MatIconModule,
-    MatButtonModule
+    MatButtonModule,
+    MatDividerModule
   ],
   templateUrl: './header.html',
   styleUrl: './header.css'

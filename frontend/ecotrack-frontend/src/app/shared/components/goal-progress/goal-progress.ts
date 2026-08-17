@@ -2,7 +2,8 @@ import {
   Component,
   OnDestroy,
   OnInit,
-  inject
+  inject,
+  ChangeDetectorRef
 } from '@angular/core';
 
 import { CommonModule } from '@angular/common';
@@ -51,6 +52,8 @@ export class GoalProgress
   private readonly goalService =
     inject(GoalService);
 
+  private cdr = inject(ChangeDetectorRef);
+  
   private readonly activityService =
     inject(ActivityService);
 
@@ -146,9 +149,8 @@ export class GoalProgress
             ) {
 
               this.activeGoal = null;
-
               this.loading = false;
-
+              this.cdr.detectChanges();
               return;
 
             }
@@ -189,11 +191,9 @@ export class GoalProgress
             );
 
             this.activeGoal = null;
-
             this.error = true;
-
             this.loading = false;
-
+            this.cdr.detectChanges();
           }
 
         });
@@ -226,13 +226,10 @@ export class GoalProgress
               progress
             );
 
-            this.activeGoal =
-              progress;
-
+            this.activeGoal = progress;
             this.loading = false;
-
             this.error = false;
-
+            this.cdr.detectChanges();
           },
 
           error: error => {
@@ -243,11 +240,9 @@ export class GoalProgress
             );
 
             this.activeGoal = null;
-
             this.error = true;
-
             this.loading = false;
-
+            this.cdr.detectChanges();
           }
 
         });
