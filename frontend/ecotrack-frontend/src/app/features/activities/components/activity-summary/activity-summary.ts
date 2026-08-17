@@ -1,9 +1,11 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
+import { Subscription } from 'rxjs';
 
 import { ActivityService } from '../../../../core/services/activity.service';
+import { DashboardService } from '../../../../core/services/dashboard/dashboard.service';
 
 @Component({
   selector: 'app-activity-summary',
@@ -16,72 +18,64 @@ import { ActivityService } from '../../../../core/services/activity.service';
   templateUrl: './activity-summary.html',
   styleUrl: './activity-summary.css'
 })
-export class ActivitySummary {
+export class ActivitySummary implements OnInit, OnDestroy {
 
   private activityService = inject(ActivityService);
+  private dashboardService = inject(DashboardService);
+  
+  private streakSub?: Subscription;
+  private backendStreak = 0;
+
+  ngOnInit() {
+    this.streakSub = this.dashboardService.getSummary().subscribe({
+      next: (summary) => {
+        if (summary && summary.currentStreak !== undefined) {
+          this.backendStreak = summary.currentStreak;
+        }
+      }
+    });
+  }
+
+  ngOnDestroy() {
+    if (this.streakSub) {
+      this.streakSub.unsubscribe();
+    }
+  }
 
   get cards() {
-
     const activities = this.activityService.getActivities();
-
     const carbon = this.activityService.getCarbonSaved();
-
     const score = this.activityService.getSustainabilityScore();
 
-    const streak = this.calculateStreak();
-
     return [
-
       {
-        title: 'Activities',
+        title: 'Total Activities',
         value: activities.length,
+        subtitle: 'All time logs',
         icon: 'task_alt',
         color: '#2E7D32'
       },
-
       {
         title: 'Total Emissions',
         value: carbon.toFixed(1) + ' kg',
+        subtitle: 'Carbon footprint',
         icon: 'eco',
         color: '#43A047'
       },
-
       {
         title: 'Current Streak',
-        value: streak + ' Days',
+        value: this.backendStreak + ' Days',
+        subtitle: 'Keep it up!',
         icon: 'local_fire_department',
         color: '#FB8C00'
       },
-
       {
         title: 'Weekly Score',
         value: score + '%',
+        subtitle: 'Sustainability index',
         icon: 'leaderboard',
         color: '#1565C0'
       }
-
     ];
-
   }
-
-  calculateStreak(): number {
-
-    const activities = this.activityService.getActivities();
-
-    if (activities.length === 0) {
-
-      return 0;
-
-    }
-
-    const uniqueDates = [
-      ...new Set(
-        activities.map(a => a.date)
-      )
-    ];
-
-    return uniqueDates.length;
-
-  }
-
 }

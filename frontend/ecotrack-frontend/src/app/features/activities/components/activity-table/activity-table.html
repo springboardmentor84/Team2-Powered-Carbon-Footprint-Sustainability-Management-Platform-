@@ -1,346 +1,133 @@
-
-<div class="activity-filters">
-
-  <mat-form-field appearance="outline">
-    <mat-label>Search</mat-label>
-
-    <input
-      matInput
-      [(ngModel)]="search"
-      (ngModelChange)="loadData()"
-      placeholder="Search activities">
-  </mat-form-field>
-
-
-  <mat-form-field appearance="outline">
-    <mat-label>Category</mat-label>
-
-    <mat-select
-      [(ngModel)]="selectedCategory"
-      (selectionChange)="loadData()">
-
-      <mat-option value="">
-        All Categories
-      </mat-option>
-
-      <mat-option
-        *ngFor="let category of categories"
-        [value]="category">
-
-        {{ category }}
-
-      </mat-option>
-
-    </mat-select>
-  </mat-form-field>
-
-
-  <mat-form-field appearance="outline">
-    <mat-label>Date</mat-label>
-
-    <input
-      matInput
-      type="date"
-      [(ngModel)]="selectedDate"
-      (ngModelChange)="loadData()">
-  </mat-form-field>
-
-
-  <mat-form-field appearance="outline">
-    <mat-label>Minimum Carbon</mat-label>
-
-    <input
-      matInput
-      type="number"
-      min="0"
-      [(ngModel)]="minCarbon"
-      (ngModelChange)="loadData()">
-  </mat-form-field>
-
-  <mat-form-field appearance="outline">
-    <mat-label>Sort</mat-label>
-    <mat-select
-      [(ngModel)]="sortType"
-      (selectionChange)="loadData()">
-      <mat-option value="latest">Latest</mat-option>
-      <mat-option value="oldest">Oldest</mat-option>
-      <mat-option value="carbon-high">Highest Carbon</mat-option>
-      <mat-option value="carbon-low">Lowest Carbon</mat-option>
-    </mat-select>
-  </mat-form-field>
-
-  <button
-    mat-raised-button
-    color="primary"
-    type="button"
-    (click)="reset()">
-    Reset
-  </button>
-
-
-  <button
-    mat-raised-button
-    color="primary"
-    type="button"
-    (click)="exportCSV()">
-
-    Export CSV
-
-  </button>
-
-</div>
-
-
-<table
-  mat-table
-  [dataSource]="dataSource"
-  matSort
-  class="activity-table">
-
-
-  <!-- ACTIVITY -->
-
-  <ng-container matColumnDef="activity">
-
-    <th
-      mat-header-cell
-      *matHeaderCellDef
-      mat-sort-header>
-
-      Activity
-
-    </th>
-
-    <td
-      mat-cell
-      *matCellDef="let row">
-
-      {{ row.title }}
-
-    </td>
-
-  </ng-container>
-
-
-  <!-- CATEGORY -->
-
-  <ng-container matColumnDef="category">
-
-    <th
-      mat-header-cell
-      *matHeaderCellDef
-      mat-sort-header>
-
-      Category
-
-    </th>
-
-    <td
-      mat-cell
-      *matCellDef="let row">
-
-      {{ row.category }}
-
-    </td>
-
-  </ng-container>
-
-
-  <!-- QUANTITY -->
-
-  <ng-container matColumnDef="quantity">
-
-    <th
-      mat-header-cell
-      *matHeaderCellDef
-      mat-sort-header>
-
-      Quantity
-
-    </th>
-
-    <td
-      mat-cell
-      *matCellDef="let row">
-
-      {{ row.quantity }}
-
-    </td>
-
-  </ng-container>
-
-
-  <!-- UNIT -->
-
-  <ng-container matColumnDef="unit">
-
-    <th
-      mat-header-cell
-      *matHeaderCellDef
-      mat-sort-header>
-
-      Unit
-
-    </th>
-
-    <td
-      mat-cell
-      *matCellDef="let row">
-
-      {{ row.unit }}
-
-    </td>
-
-  </ng-container>
-
-
-  <!-- CARBON -->
-
-  <ng-container matColumnDef="carbon">
-
-    <th
-      mat-header-cell
-      *matHeaderCellDef
-      mat-sort-header>
-
-      Carbon Emission
-
-    </th>
-
-    <td
-      mat-cell
-      *matCellDef="let row">
-
-      {{
-        row.carbonEmission ??
-        row.carbon ??
-        0
-      }}
-      kg
-
-    </td>
-
-  </ng-container>
-
-
-  <!-- DATE -->
-
-  <ng-container matColumnDef="date">
-
-    <th
-      mat-header-cell
-      *matHeaderCellDef
-      mat-sort-header>
-
-      Date
-
-    </th>
-
-    <td
-      mat-cell
-      *matCellDef="let row">
-
-      {{
-        row.date
-          | date:'dd MMM yyyy'
-      }}
-
-    </td>
-
-  </ng-container>
-
-
-  <!-- ACTION -->
-
-  <ng-container matColumnDef="action">
-
-    <th
-      mat-header-cell
-      *matHeaderCellDef>
-
-      Action
-
-    </th>
-
-    <td
-      mat-cell
-      *matCellDef="let row">
-
-      <button
-        mat-icon-button
-        color="primary"
-        type="button"
-        (click)="edit(row)"
-        aria-label="Edit activity">
-
-        <mat-icon>
-          edit
-        </mat-icon>
-
+<mat-card class="table-card">
+  <div class="filter-bar">
+    <div class="search-section">
+      <mat-form-field appearance="outline" class="search-field">
+        <mat-icon matPrefix>search</mat-icon>
+        <mat-label>Search</mat-label>
+        <input matInput [(ngModel)]="search" (ngModelChange)="onSearchChange($event)" placeholder="Search activities...">
+      </mat-form-field>
+    </div>
+    
+    <div class="filters-section">
+      <mat-form-field appearance="outline">
+        <mat-label>Category</mat-label>
+        <mat-select [(ngModel)]="selectedCategory" (selectionChange)="loadData()">
+          <mat-option value="">All Categories</mat-option>
+          <mat-option *ngFor="let category of categories" [value]="category">{{ category }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Date</mat-label>
+        <input matInput type="date" [(ngModel)]="selectedDate" (ngModelChange)="loadData()">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Min Carbon (kg)</mat-label>
+        <input matInput type="number" min="0" [(ngModel)]="minCarbon" (ngModelChange)="loadData()">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Sort By</mat-label>
+        <mat-select [(ngModel)]="sortType" (selectionChange)="loadData()">
+          <mat-option value="latest">Latest</mat-option>
+          <mat-option value="oldest">Oldest</mat-option>
+          <mat-option value="carbon-high">Highest Carbon</mat-option>
+          <mat-option value="carbon-low">Lowest Carbon</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <button mat-stroked-button color="primary" type="button" (click)="reset()" class="icon-button">
+        <mat-icon>refresh</mat-icon> Reset
       </button>
 
-
-      <button
-        mat-icon-button
-        color="warn"
-        type="button"
-        (click)="delete(row)"
-        aria-label="Delete activity">
-
-        <mat-icon>
-          delete
-        </mat-icon>
-
+      <button mat-flat-button color="primary" type="button" (click)="exportCSV()" [disabled]="exporting">
+        <mat-icon>download</mat-icon> {{ exporting ? 'Exporting...' : 'Export CSV' }}
       </button>
+    </div>
+  </div>
 
-    </td>
+  <div class="table-container">
+    <table mat-table [dataSource]="dataSource" matSort class="activity-table">
 
-  </ng-container>
+      <!-- ACTIVITY -->
+      <ng-container matColumnDef="activity">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Activity</th>
+        <td mat-cell *matCellDef="let row">
+          <div class="activity-cell">
+            <strong>{{ row.title }}</strong>
+          </div>
+        </td>
+      </ng-container>
 
+      <!-- CATEGORY -->
+      <ng-container matColumnDef="category">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Category</th>
+        <td mat-cell *matCellDef="let row">
+          <span class="category-badge" [attr.data-category]="row.category">{{ row.category }}</span>
+        </td>
+      </ng-container>
 
-  <!-- HEADER -->
+      <!-- QUANTITY -->
+      <ng-container matColumnDef="quantity">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Quantity</th>
+        <td mat-cell *matCellDef="let row">{{ row.quantity }}</td>
+      </ng-container>
 
-  <tr
-    mat-header-row
-    *matHeaderRowDef="displayedColumns">
+      <!-- UNIT -->
+      <ng-container matColumnDef="unit">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Unit</th>
+        <td mat-cell *matCellDef="let row">{{ row.unit }}</td>
+      </ng-container>
 
-  </tr>
+      <!-- CARBON -->
+      <ng-container matColumnDef="carbon">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Carbon Emission</th>
+        <td mat-cell *matCellDef="let row" class="carbon-cell">
+          {{ row.carbonEmission ?? row.carbon ?? 0 }} <small>kg</small>
+        </td>
+      </ng-container>
 
+      <!-- DATE -->
+      <ng-container matColumnDef="date">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Date</th>
+        <td mat-cell *matCellDef="let row">{{ row.date | date:'dd MMM yyyy' }}</td>
+      </ng-container>
 
-  <!-- ROW -->
+      <!-- ACTION -->
+      <ng-container matColumnDef="action">
+        <th mat-header-cell *matHeaderCellDef>Action</th>
+        <td mat-cell *matCellDef="let row">
+          <div class="action-buttons">
+            <button mat-icon-button color="primary" type="button" (click)="edit(row)" aria-label="Edit activity">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button color="warn" type="button" (click)="delete(row)" aria-label="Delete activity">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        </td>
+      </ng-container>
 
-  <tr
-    mat-row
-    *matRowDef="
-      let row;
-      columns: displayedColumns
-    ">
+      <!-- HEADER -->
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
 
-  </tr>
+      <!-- ROW -->
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 
+      <!-- EMPTY -->
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell empty-state" [attr.colspan]="displayedColumns.length">
+          <div class="empty-state-content">
+            <mat-icon>search_off</mat-icon>
+            <h3>No activities found</h3>
+            <p>Try adjusting your filters or search terms.</p>
+          </div>
+        </td>
+      </tr>
+    </table>
+  </div>
 
-  <!-- EMPTY -->
-
-  <tr
-    class="mat-row"
-    *matNoDataRow>
-
-    <td
-      class="mat-cell empty-state"
-      [attr.colspan]="displayedColumns.length">
-
-      No activities found.
-
-    </td>
-
-  </tr>
-
-</table>
-
-
-<mat-paginator
-  [pageSize]="5"
-  [pageSizeOptions]="[5, 10, 20]"
-  showFirstLastButtons>
-</mat-paginator>
+  <mat-paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 25, 50]" showFirstLastButtons class="custom-paginator"></mat-paginator>
+</mat-card>
 

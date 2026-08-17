@@ -6,6 +6,9 @@ import {
   inject
 } from '@angular/core';
 
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -49,6 +52,10 @@ import {
   MatIconModule
 } from '@angular/material/icon';
 
+import {
+  MatCardModule
+} from '@angular/material/card';
+
 import { AddActivityDialog } from '../add-activity-dialog/add-activity-dialog';
 
 import {
@@ -77,7 +84,8 @@ import {
     MatSelectModule,
     MatButtonModule,
     MatIconModule,
-    MatDialogModule
+    MatDialogModule,
+    MatCardModule
   ],
 
   templateUrl: './activity-table.html',
@@ -132,17 +140,30 @@ export class ActivityTableComponent
     'OTHER'
   ];
 
+  exporting = false;
+  private searchSubject = new Subject<string>();
+
   @ViewChild(MatPaginator)
   paginator!: MatPaginator;
 
   @ViewChild(MatSort)
   sort!: MatSort;
 
+  onSearchChange(searchTerm: string): void {
+    this.searchSubject.next(searchTerm);
+  }
 
   ngOnInit(): void {
 
     // Fetch activities from backend on load
     this.activityService.loadActivities();
+
+    this.searchSubject.pipe(
+      debounceTime(300),
+      distinctUntilChanged()
+    ).subscribe(() => {
+      this.loadData();
+    });
 
     /*
      * ActivityService is the single source of truth.
@@ -501,6 +522,8 @@ export class ActivityTableComponent
       return;
     }
 
+    this.exporting = true;
+
 
     const headers = [
       'Activity',
@@ -551,35 +574,39 @@ export class ActivityTableComponent
     ].join('\n');
 
 
-    const blob =
-      new Blob(
-        [csv],
-        {
-          type:
-            'text/csv;charset=utf-8;'
-        }
-      );
+    setTimeout(() => {
+      const blob =
+        new Blob(
+          [csv],
+          {
+            type:
+              'text/csv;charset=utf-8;'
+          }
+        );
 
 
-    const url =
-      URL.createObjectURL(blob);
+      const url =
+        URL.createObjectURL(blob);
 
 
-    const link =
-      document.createElement('a');
+      const link =
+        document.createElement('a');
 
-    link.href = url;
+      link.href = url;
 
-    link.download =
-      'ecotrack-activities.csv';
+      link.download =
+        'ecotrack-activities.csv';
 
-    document.body.appendChild(link);
+      document.body.appendChild(link);
 
-    link.click();
+      link.click();
 
-    document.body.removeChild(link);
+      document.body.removeChild(link);
 
-    URL.revokeObjectURL(url);
+      URL.revokeObjectURL(url);
+      
+      this.exporting = false;
+    }, 500); // Simulate network/generation delay for UX
   }
 }
 

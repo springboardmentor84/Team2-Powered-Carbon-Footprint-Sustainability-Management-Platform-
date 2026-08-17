@@ -1,37 +1,12 @@
-<div class="summary-grid">
-
-    <mat-card
-        class="summary-card"
-        *ngFor="let card of cards">
-
-        <div
-            class="icon"
-            [style.background]="card.color">
-
-            <mat-icon>
-
-                {{card.icon}}
-
-            </mat-icon>
-
-        </div>
-
-        <div>
-
-            <h2>
-
-                {{card.value}}
-
-            </h2>
-
-            <p>
-
-                {{card.title}}
-
-            </p>
-
-        </div>
-
-    </mat-card>
-
+<div class="stats-row">
+  <div class="stat-card" *ngFor="let card of cards">
+    <div class="stat-icon" [style.background]="card.color">
+      <mat-icon>{{card.icon}}</mat-icon>
+    </div>
+    <div class="stat-content">
+      <div class="stat-heading">{{card.title}}</div>
+      <h2>{{card.value}}</h2>
+      <small>{{card.subtitle}}</small>
+    </div>
+  </div>
 </div>

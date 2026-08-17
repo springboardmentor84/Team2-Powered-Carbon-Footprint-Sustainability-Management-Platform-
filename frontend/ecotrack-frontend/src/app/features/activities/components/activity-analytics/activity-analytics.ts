@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
 
 import { ActivityService } from '../../../../core/services/activity.service';
 
@@ -9,7 +10,8 @@ import { ActivityService } from '../../../../core/services/activity.service';
   standalone: true,
   imports: [
     CommonModule,
-    MatCardModule
+    MatCardModule,
+    MatIconModule
   ],
   templateUrl: './activity-analytics.html',
   styleUrl: './activity-analytics.css'

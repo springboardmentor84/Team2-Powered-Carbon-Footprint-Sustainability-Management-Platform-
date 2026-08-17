@@ -2,25 +2,65 @@
   display: block;
 }
 
+.dialog-header {
+  padding: 24px 24px 16px;
+  background: #f8faf9;
+  border-bottom: 1px solid #edf2ef;
+}
+
+.dialog-header h2 {
+  margin: 0 0 4px;
+  font-size: 20px;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.dialog-subtitle {
+  margin: 0;
+  font-size: 14px;
+  color: #64748b;
+}
+
 mat-dialog-content {
-  padding-top: 8px;
+  padding-top: 24px !important;
+}
+
+.form-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .full-width {
   width: 100%;
-  display: block;
-  margin-bottom: 8px;
 }
 
 .error-message {
   color: #d32f2f;
   background: #ffebee;
-  border-radius: 6px;
-  padding: 10px 12px;
-  margin-top: 4px;
-  margin-bottom: 8px;
+  border-radius: 8px;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 500;
 }
 
-mat-dialog-actions {
+.dialog-actions {
   padding: 16px 24px;
+  border-top: 1px solid #edf2ef;
+  display: flex;
+  gap: 12px;
+}
+
+.cancel-btn {
+  font-weight: 600;
+}
+
+.save-btn {
+  font-weight: 600;
+  padding: 0 24px;
+  background-color: #176b3a !important;
+  color: white !important;
 }

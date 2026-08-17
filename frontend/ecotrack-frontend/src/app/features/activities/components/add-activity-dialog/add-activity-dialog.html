@@ -1,170 +1,65 @@
-<h2 mat-dialog-title>
-
-  {{ isEditMode ? 'Edit Activity' : 'Add Activity' }}
-
-</h2>
-
+<div class="dialog-header">
+  <h2 mat-dialog-title>
+    {{ isEditMode ? 'Edit Activity' : 'Add Activity' }}
+  </h2>
+  <p class="dialog-subtitle">
+    {{ isEditMode ? 'Update the details of your sustainability activity.' : 'Log a new sustainability activity to track your impact.' }}
+  </p>
+</div>
 
 <mat-dialog-content>
+  <div class="form-container">
+    <!-- CATEGORY -->
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Category</mat-label>
+      <mat-select [(ngModel)]="category">
+        @for (item of categories; track item.value) {
+          <mat-option [value]="item.value">{{ item.label }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
 
+    <!-- ACTIVITY -->
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Activity</mat-label>
+      <input matInput [(ngModel)]="activity" placeholder="Example: Car Travel">
+    </mat-form-field>
 
-  <!-- CATEGORY -->
+    <!-- QUANTITY -->
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Quantity</mat-label>
+      <input matInput type="number" min="0" step="0.01" [(ngModel)]="quantity">
+    </mat-form-field>
 
-  <mat-form-field
-    appearance="outline"
-    class="full-width">
+    <!-- UNIT -->
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Unit</mat-label>
+      <mat-select [(ngModel)]="unit">
+        @for (item of units; track item) {
+          <mat-option [value]="item">{{ item }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
 
-    <mat-label>
-      Category
-    </mat-label>
-
-    <mat-select
-      [(ngModel)]="category">
-
-      @for (
-        item of categories;
-        track item.value
-      ) {
-
-        <mat-option
-          [value]="item.value">
-
-          {{ item.label }}
-
-        </mat-option>
-
-      }
-
-    </mat-select>
-
-  </mat-form-field>
-
-
-
-  <!-- ACTIVITY -->
-
-  <mat-form-field
-    appearance="outline"
-    class="full-width">
-
-    <mat-label>
-      Activity
-    </mat-label>
-
-    <input
-      matInput
-      [(ngModel)]="activity"
-      placeholder="Example: Car Travel">
-
-  </mat-form-field>
-
-
-
-  <!-- QUANTITY -->
-
-  <mat-form-field
-    appearance="outline"
-    class="full-width">
-
-    <mat-label>
-      Quantity
-    </mat-label>
-
-    <input
-      matInput
-      type="number"
-      min="0"
-      step="0.01"
-      [(ngModel)]="quantity">
-
-  </mat-form-field>
-
-
-
-  <!-- UNIT -->
-
-  <mat-form-field
-    appearance="outline"
-    class="full-width">
-
-    <mat-label>
-      Unit
-    </mat-label>
-
-    <mat-select
-      [(ngModel)]="unit">
-
-      @for (
-        item of units;
-        track item
-      ) {
-
-        <mat-option
-          [value]="item">
-
-          {{ item }}
-
-        </mat-option>
-
-      }
-
-    </mat-select>
-
-  </mat-form-field>
-
-
-
-  <!-- ERROR -->
-
-  @if (errorMessage) {
-
-    <div class="error-message">
-
-      {{ errorMessage }}
-
-    </div>
-
-  }
-
-
+    <!-- ERROR -->
+    @if (errorMessage) {
+      <div class="error-message">
+        <mat-icon>error_outline</mat-icon>
+        <span>{{ errorMessage }}</span>
+      </div>
+    }
+  </div>
 </mat-dialog-content>
 
-
-
-<mat-dialog-actions align="end">
-
-
-  <button
-    mat-button
-    type="button"
-    (click)="cancel()"
-    [disabled]="saving">
-
+<mat-dialog-actions align="end" class="dialog-actions">
+  <button mat-button type="button" class="cancel-btn" (click)="cancel()" [disabled]="saving">
     Cancel
-
   </button>
-
-
-  <button
-    mat-raised-button
-    color="primary"
-    type="button"
-    (click)="save()"
-    [disabled]="saving">
-
+  <button mat-flat-button class="save-btn" color="primary" type="button" (click)="save()" [disabled]="saving">
     @if (saving) {
-
       Saving...
-
-    }
-
-    @else {
-
+    } @else {
       {{ isEditMode ? 'Update Activity' : 'Save Activity' }}
-
     }
-
   </button>
-
-
 </mat-dialog-actions>

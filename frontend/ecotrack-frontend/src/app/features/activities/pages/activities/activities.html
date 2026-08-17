@@ -1,27 +1,18 @@
 <div class="page">
 
-    <section class="hero">
-
-        <div>
-
-            <h1>Activities</h1>
-
-            <p>
-
-                Track, analyse and improve your sustainable lifestyle.
-
-            </p>
-
+    <section class="welcome-card">
+        <div class="welcome-content">
+            <span class="eyebrow">ACTIVITIES</span>
+            <h1>Log Activities</h1>
+            <p>Track, analyse and improve your sustainable lifestyle.</p>
         </div>
-
         <button
             class="primary-btn"
+            type="button"
             (click)="openDialog()">
-
-            + Add Activity
-
+            <mat-icon>add</mat-icon>
+            Add Activity
         </button>
-
     </section>
 
     <app-activity-summary></app-activity-summary>

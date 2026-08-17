@@ -137,7 +137,7 @@ mat-nav-list a {
 
   border-radius: 11px;
 
-  color: #e7f4e9 !important;
+  color: rgba(255, 255, 255, 0.9) !important;
 
   font-size: 15px;
   font-weight: 650;
@@ -154,24 +154,21 @@ mat-nav-list a {
     transform .2s ease;
 }
 
-mat-nav-list a mat-icon {
+mat-nav-list a ::ng-deep .mat-mdc-list-item-icon {
   flex: 0 0 24px;
-
   width: 24px;
   height: 24px;
-
   font-size: 23px;
-
-  color: #b9dfc1;
+  color: rgba(255, 255, 255, 0.9) !important;
 }
 
-mat-nav-list a span {
+mat-nav-list a span,
+mat-nav-list a ::ng-deep .mdc-list-item__primary-text {
   min-width: 0;
-
   overflow: hidden;
-
   white-space: nowrap;
   text-overflow: ellipsis;
+  color: rgba(255, 255, 255, 0.9) !important;
 }
 
 /* ============================================================
@@ -179,12 +176,14 @@ mat-nav-list a span {
    ============================================================ */
 
 mat-nav-list a:hover {
-  color: #ffffff !important;
-
-  background:
-    rgba(255, 255, 255, .11);
-
+  background: rgba(255, 255, 255, 0.11);
   transform: translateX(2px);
+}
+
+mat-nav-list a:hover ::ng-deep .mdc-list-item__primary-text,
+mat-nav-list a:hover span,
+mat-nav-list a:hover ::ng-deep .mat-mdc-list-item-icon {
+  color: #ffffff !important;
 }
 
 /* ============================================================
@@ -192,21 +191,14 @@ mat-nav-list a:hover {
    ============================================================ */
 
 mat-nav-list a.active {
-  color: #ffffff !important;
-
-  background:
-    linear-gradient(
-      90deg,
-      rgba(255,255,255,.20),
-      rgba(255,255,255,.08)
-    );
-
-  box-shadow:
-    inset 3px 0 0 #b8e6bf;
+  background: linear-gradient(90deg, rgba(255,255,255,0.20), rgba(255,255,255,0.08));
+  box-shadow: inset 3px 0 0 #b8e6bf;
 }
 
-mat-nav-list a.active mat-icon {
-  color: #ffffff;
+mat-nav-list a.active ::ng-deep .mdc-list-item__primary-text,
+mat-nav-list a.active span,
+mat-nav-list a.active ::ng-deep .mat-mdc-list-item-icon {
+  color: #ffffff !important;
 }
 
 /* ============================================================

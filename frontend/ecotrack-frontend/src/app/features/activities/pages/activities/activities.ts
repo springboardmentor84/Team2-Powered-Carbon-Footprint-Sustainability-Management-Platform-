@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
 
 import { ActivitySummary } from '../../components/activity-summary/activity-summary';
 import { ActivityAnalytics } from '../../components/activity-analytics/activity-analytics';
@@ -17,7 +18,8 @@ import { AddActivityDialog } from '../../components/add-activity-dialog/add-acti
     MatDialogModule,
     ActivitySummary,
     ActivityAnalytics,
-    ActivityTableComponent
+    ActivityTableComponent,
+    MatIconModule
   ],
   templateUrl: './activities.html',
   styleUrl: './activities.css'

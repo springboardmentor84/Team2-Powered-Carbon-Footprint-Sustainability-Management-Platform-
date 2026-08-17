@@ -1,61 +1,28 @@
-<mat-card class="card">
-
-    <div class="header">
-
-        <div>
-
-            <h2>Activity Analytics</h2>
-
-            <p>Your sustainability overview</p>
-
-        </div>
-
-        <div class="progress-circle">
-
-            <div class="circle">
-
-                {{progress | number:'1.0-0'}}%
-
-            </div>
-
-        </div>
-
+<mat-card class="dashboard-card">
+  <div class="card-header">
+    <div>
+      <span class="card-label"><mat-icon>analytics</mat-icon> ACTIVITY ANALYTICS</span>
+      <h2>Your Sustainability Overview</h2>
+      <p>A quick glance at your carbon impact and activity breakdown.</p>
     </div>
+  </div>
 
-    <div class="grid">
-
-        <div class="box">
-
-            <h3>{{totalActivities}}</h3>
-
-            <span>Total Activities</span>
-
-        </div>
-
-        <div class="box">
-
-            <h3>{{carbonSaved}} kg</h3>
-
-            <span>Total Emissions</span>
-
-        </div>
-
-        <div class="box">
-
-            <h3>{{averageCarbon}} kg</h3>
-
-            <span>Average / Activity</span>
-
-        </div>
-
-        <div class="box">
-
-            <h3>{{bestCategory}}</h3>
-
-            <span>Top Category</span>
-
-        </div>
-
+  <div class="grid">
+    <div class="box">
+      <h3>{{totalActivities}}</h3>
+      <span>Total Activities</span>
     </div>
-
+    <div class="box">
+      <h3>{{carbonSaved}} kg</h3>
+      <span>Total Emissions</span>
+    </div>
+    <div class="box">
+      <h3>{{averageCarbon}} kg</h3>
+      <span>Average / Activity</span>
+    </div>
+    <div class="box">
+      <h3>{{bestCategory}}</h3>
+      <span>Top Category</span>
+    </div>
+  </div>
 </mat-card>
