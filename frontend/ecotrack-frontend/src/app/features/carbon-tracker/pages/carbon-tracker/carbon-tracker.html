@@ -1,95 +1,49 @@
 <div class="tracker-page">
 
-  <section class="page-hero">
-
-    <div>
-
-      <span class="eyebrow">
-        ECO TRACK
-      </span>
-
-      <h1>
-        Carbon Tracker
-      </h1>
-
+  <section class="welcome-card">
+    <div class="welcome-content">
+      <span class="eyebrow">ECO TRACK</span>
+      <h1>Carbon Tracker</h1>
       <p>
         Record your daily activities and understand
         how your lifestyle contributes to your carbon footprint.
       </p>
-
     </div>
-
     <div class="hero-icon">
-      🌱
+      <mat-icon style="font-size: 64px; width: 64px; height: 64px; opacity: 0.8; color: white;">eco</mat-icon>
     </div>
-
   </section>
 
+  <section class="stats-row">
 
-  <section class="summary-grid">
-
-    <div class="summary-card">
-
-      <span class="summary-icon">
-        🌍
-      </span>
-
-      <div>
-
-        <small>
-          TOTAL EMISSIONS
-        </small>
-
-        <strong>
-          {{ totalCarbon | number:'1.0-2' }}
-          kg
-        </strong>
-
+    <div class="stat-card">
+      <div class="stat-icon" style="background: #176b3a;">
+        <mat-icon>eco</mat-icon>
       </div>
-
+      <div class="stat-content">
+        <div class="stat-heading">TOTAL EMISSIONS</div>
+        <h2>{{ totalCarbon | number:'1.0-2' }} <small style="display:inline; font-size: 16px;">kg</small></h2>
+      </div>
     </div>
 
-
-    <div class="summary-card">
-
-      <span class="summary-icon">
-        📊
-      </span>
-
-      <div>
-
-        <small>
-          ACTIVITIES
-        </small>
-
-        <strong>
-          {{ activityCount }}
-        </strong>
-
+    <div class="stat-card">
+      <div class="stat-icon" style="background: #43A047;">
+        <mat-icon>list_alt</mat-icon>
       </div>
-
+      <div class="stat-content">
+        <div class="stat-heading">ACTIVITIES</div>
+        <h2>{{ activityCount }}</h2>
+      </div>
     </div>
 
-
-    <div class="summary-card">
-
-      <span class="summary-icon">
-        📉
-      </span>
-
-      <div>
-
-        <small>
-          AVERAGE / ACTIVITY
-        </small>
-
-        <strong>
-          {{ averageCarbon | number:'1.0-2' }}
-          kg
-        </strong>
-
+    <div class="stat-card">
+      <div class="stat-icon" style="background: #1565C0;">
+        <mat-icon>assessment</mat-icon>
       </div>
-
+      <div class="stat-content">
+        <div class="stat-heading">AVERAGE / ACTIVITY</div>
+        <h2>{{ averageCarbon | number:'1.0-2' }} <small style="display:inline; font-size: 16px;">kg</small></h2>
+      </div>
     </div>
 
   </section>
@@ -260,13 +214,10 @@
 
       <div
         class="empty-state"
-        *ngIf="
-          !loading &&
-          filteredActivities.length === 0
-        ">
+        *ngIf="!loading && !apiError && recentActivities.length === 0">
 
         <div>
-          🌱
+          <mat-icon style="font-size: 48px; width: 48px; height: 48px; color: #94a3b8;">eco</mat-icon>
         </div>
 
         <strong>
@@ -278,93 +229,130 @@
         </p>
 
       </div>
+      
+      <div
+        class="empty-state"
+        *ngIf="!loading && apiError">
+
+        <div>
+          <mat-icon style="font-size: 48px; width: 48px; height: 48px; color: #ef4444;">error_outline</mat-icon>
+        </div>
+
+        <strong style="color: #ef4444;">
+          Unable to load activities.
+        </strong>
+
+        <button class="save-btn" style="margin-top: 15px; width: auto; padding: 0 20px;" (click)="loadActivities()">
+          Retry
+        </button>
+
+      </div>
 
 
       <div
         class="activity-list"
-        *ngIf="
-          !loading &&
-          filteredActivities.length > 0
-        ">
+        *ngIf="!loading && !apiError && recentActivities.length > 0">
 
-        <div
-          class="activity-row"
-          *ngFor="
-            let activity of filteredActivities
-          ">
+        <div class="activity-list-scroll">
+          <div
+            class="activity-row"
+            *ngFor="let activity of recentActivities">
 
-          <div class="activity-symbol">
+            <div class="activity-symbol" [attr.data-category]="activity.category">
+              <mat-icon>{{ getCategoryIcon(activity.category) }}</mat-icon>
+            </div>
 
-            {{
-              getCategoryIcon(
-                activity.category
-              )
-            }}
+            <div class="activity-info">
+              <strong>
+                {{ activity.activity || activity.title || 'Carbon activity' }}
+              </strong>
+              <small>
+                {{ activity.category | titlecase }} · {{ activity.quantity }} {{ activity.unit }}
+              </small>
+            </div>
 
-          </div>
-
-
-          <div class="activity-info">
-
-            <strong>
-
-              {{
-                activity.activity ||
-                activity.title ||
-                'Carbon activity'
-              }}
-
-            </strong>
-
-            <small>
-
-              {{
-                activity.category
-                  | titlecase
-              }}
-
-              ·
-
-              {{
-                activity.quantity
-              }}
-              {{
-                activity.unit
-              }}
-
-            </small>
+            <div class="activity-emission">
+              <strong>
+                {{ activity.carbonEmission || activity.carbon || 0 | number:'1.0-2' }} kg
+              </strong>
+            </div>
 
           </div>
+        </div>
 
-
-          <div class="activity-emission">
-
-            <strong>
-              {{
-                activity.carbonEmission ||
-                activity.carbon ||
-                0
-                | number:'1.0-2'
-              }}
-              kg
-            </strong>
-
-            <button
-              type="button"
-              (click)="deleteActivity(activity.id)">
-
-              ×
-
-            </button>
-
-          </div>
-
+        <div class="view-all-container">
+          <a routerLink="/activities" class="view-link">View all activities →</a>
         </div>
 
       </div>
 
     </div>
 
+  </section>
+
+  <!-- CARBON INSIGHTS LOADING -->
+  <section class="insights-section" *ngIf="loading">
+    <h2 class="section-title">CARBON INSIGHTS</h2>
+    <div class="tracker-grid">
+      <div class="tracker-card skeleton-card">
+        <div class="skeleton-header"></div>
+        <div class="skeleton-chart"></div>
+        <div class="skeleton-row"></div>
+        <div class="skeleton-row"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CARBON INSIGHTS LOADED -->
+  <section class="insights-section" *ngIf="!loading && !apiError && categoryEmissions.length > 0">
+    <h2 class="section-title">CARBON INSIGHTS</h2>
+    <div class="tracker-grid">
+      <div class="tracker-card">
+        <div class="card-heading">
+          <div>
+            <span>EMISSIONS BY CATEGORY</span>
+            <h2>Category Breakdown</h2>
+          </div>
+          <div class="heading-icon"><mat-icon>pie_chart</mat-icon></div>
+        </div>
+        <div class="category-breakdown">
+          <div class="category-item" *ngFor="let cat of categoryEmissions">
+            <div class="activity-symbol" [attr.data-category]="cat.category">
+              <mat-icon>{{ getCategoryIcon(cat.category) }}</mat-icon>
+            </div>
+            <div class="category-info">
+              <strong>{{ cat.category | titlecase }}</strong>
+              <div class="progress-bar">
+                <div class="progress-fill" [style.width.%]="(cat.totalEmission / (totalCarbon || 1)) * 100" [attr.data-category]="cat.category"></div>
+              </div>
+            </div>
+            <div class="category-value">{{ cat.totalEmission | number:'1.0-2' }} kg</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CARBON INSIGHTS EMPTY -->
+  <section class="insights-section" *ngIf="!loading && !apiError && categoryEmissions.length === 0">
+    <h2 class="section-title">CARBON INSIGHTS</h2>
+    <div class="tracker-card empty-state" style="max-width: 600px;">
+      <div><mat-icon style="font-size: 48px; width: 48px; height: 48px; color: #94a3b8;">insights</mat-icon></div>
+      <strong>Carbon insights will appear here</strong>
+      <p>Log more activities to see your emission trends and category breakdown.</p>
+    </div>
+  </section>
+
+  <!-- CARBON INSIGHTS ERROR -->
+  <section class="insights-section" *ngIf="!loading && apiError">
+    <h2 class="section-title">CARBON INSIGHTS</h2>
+    <div class="tracker-card empty-state" style="max-width: 600px;">
+      <div><mat-icon style="font-size: 48px; width: 48px; height: 48px; color: #ef4444;">error_outline</mat-icon></div>
+      <strong style="color: #ef4444;">Unable to load carbon insights.</strong>
+      <button class="save-btn" style="margin-top: 15px; width: auto; padding: 0 20px;" (click)="loadActivities()">
+        Retry
+      </button>
+    </div>
   </section>
 
 </div>

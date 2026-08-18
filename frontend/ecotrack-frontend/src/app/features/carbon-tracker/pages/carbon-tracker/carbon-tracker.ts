@@ -7,10 +7,13 @@ import {
 
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { MatIconModule } from '@angular/material/icon';
 import { Subscription } from 'rxjs';
+import { RouterModule } from '@angular/router';
 
 import { ActivityService } from '../../../../core/services/activity.service';
 import { Activity } from '../../../../core/models/activity.model';
+import { DashboardService, CategoryEmission } from '../../../../core/services/dashboard/dashboard.service';
 
 @Component({
   selector: 'app-carbon-tracker',
@@ -18,7 +21,9 @@ import { Activity } from '../../../../core/models/activity.model';
 
   imports: [
     CommonModule,
-    FormsModule
+    FormsModule,
+    MatIconModule,
+    RouterModule
   ],
 
   templateUrl: './carbon-tracker.html',
@@ -30,11 +35,18 @@ export class CarbonTracker
   private readonly activityService =
     inject(ActivityService);
 
+  private readonly dashboardService =
+    inject(DashboardService);
+
+  private loadingSub?: Subscription;
+  private errorSub?: Subscription;
   private subscription?: Subscription;
 
   activities: Activity[] = [];
-
+  categoryEmissions: CategoryEmission[] = [];
+  
   loading = true;
+  apiError = false;
 
   saving = false;
 
@@ -59,8 +71,13 @@ export class CarbonTracker
   };
 
   ngOnInit(): void {
-
-    this.loadActivities();
+    this.loadingSub = this.activityService.loading$.subscribe(isLoading => {
+      this.loading = isLoading;
+    });
+    
+    this.errorSub = this.activityService.error$.subscribe(hasError => {
+      this.apiError = hasError;
+    });
 
     this.subscription =
       this.activityService.activities$
@@ -79,23 +96,37 @@ export class CarbonTracker
                   ).getTime()
               );
 
-          this.loading = false;
+          this.updateInsights();
         });
 
+    this.loadActivities();
+  }
+
+  updateInsights(): void {
+    const categoryMap = new Map<string, number>();
+    for (const act of this.activities) {
+      const cat = String(act.category).toUpperCase();
+      const em = Number(act.carbonEmission || act.carbon || 0);
+      categoryMap.set(cat, (categoryMap.get(cat) || 0) + em);
+    }
+    
+    this.categoryEmissions = Array.from(categoryMap.entries()).map(([category, totalEmission]) => ({
+      category,
+      totalEmission
+    })).sort((a, b) => b.totalEmission - a.totalEmission);
   }
 
   ngOnDestroy(): void {
-
     this.subscription?.unsubscribe();
-
+    this.loadingSub?.unsubscribe();
+    this.errorSub?.unsubscribe();
   }
 
   loadActivities(): void {
-
-    this.loading = true;
-
+    if (this.loading && this.activities.length > 0) {
+      return;
+    }
     this.activityService.loadActivities();
-
   }
 
   addActivity(): void {
@@ -172,32 +203,8 @@ export class CarbonTracker
 
   }
 
-  deleteActivity(
-    id: number
-  ): void {
-
-    if (!id) {
-      return;
-    }
-
-    this.activityService
-      .deleteActivity(id)
-      .subscribe({
-
-        error: error => {
-
-          console.error(
-            'Failed to delete activity:',
-            error
-          );
-
-          this.error =
-            'Unable to delete activity.';
-
-        }
-
-      });
-
+  get recentActivities(): Activity[] {
+    return this.activities;
   }
 
   get filteredActivities(): Activity[] {
@@ -262,25 +269,25 @@ export class CarbonTracker
     ) {
 
       case 'TRANSPORT':
-        return '🚗';
+        return 'directions_car';
 
       case 'FOOD':
-        return '🍽️';
+        return 'restaurant';
 
       case 'ELECTRICITY':
-        return '⚡';
+        return 'bolt';
 
       case 'WATER':
-        return '💧';
+        return 'water_drop';
 
       case 'WASTE':
-        return '♻️';
+        return 'delete_outline';
 
       case 'SHOPPING':
-        return '🛍️';
+        return 'shopping_bag';
 
       default:
-        return '🌱';
+        return 'eco';
 
     }
 

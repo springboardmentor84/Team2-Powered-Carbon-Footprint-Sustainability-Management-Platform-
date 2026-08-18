@@ -10,7 +10,8 @@ import {
   catchError,
   map,
   tap,
-  throwError
+  throwError,
+  finalize
 } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
@@ -30,11 +31,18 @@ export class ActivityService {
 
   private readonly http = inject(HttpClient);
 
+  private readonly loadingSubject = new BehaviorSubject<boolean>(false);
+
+  readonly loading$ = this.loadingSubject.asObservable();
+
   private readonly activitiesSubject =
     new BehaviorSubject<Activity[]>([]);
 
   readonly activities$ =
     this.activitiesSubject.asObservable();
+
+  private readonly errorSubject = new BehaviorSubject<boolean>(false);
+  readonly error$ = this.errorSubject.asObservable();
 
   private mapResponseToActivity(
     response: CarbonEntryResponse
@@ -68,6 +76,8 @@ export class ActivityService {
   // =========================================================
 
   loadActivities(): void {
+    this.loadingSubject.next(true);
+    this.errorSubject.next(false);
 
     this.http
       .get<CarbonEntryResponse[]>(
@@ -79,30 +89,19 @@ export class ActivityService {
             this.mapResponseToActivity(response)
           )
         ),
-        catchError((error: HttpErrorResponse) => {
-
-          console.error(
-            'Failed to load activities:',
-            error
-          );
-
-          return throwError(() => error);
-        })
+        finalize(() => this.loadingSubject.next(false))
       )
       .subscribe({
         next: activities => {
-
           this.activitiesSubject.next(activities);
-
         },
-
         error: error => {
-
           console.error(
             'Activity loading failed:',
             error
           );
-
+          this.errorSubject.next(true);
+          this.activitiesSubject.next([]);
         }
       });
   }
