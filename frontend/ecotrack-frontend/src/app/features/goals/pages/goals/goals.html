@@ -4,39 +4,25 @@
        HEADER
        ========================================================= -->
 
-  <section class="page-header">
-
-    <div class="header-copy">
-
-      <span class="eyebrow">
+  <section class="welcome-card">
+    <div class="welcome-content">
+      <span class="eyebrow" style="color: rgba(255,255,255,0.8); letter-spacing: 1.5px; font-weight: 700;">
         SUSTAINABILITY MANAGEMENT
       </span>
-
-      <h1>
+      <h1 style="color: white;">
         Sustainability Goals
       </h1>
-
-      <p>
+      <p style="color: rgba(255,255,255,0.9);">
         Set measurable carbon targets and see how your real activity
         history changes your goal progress and sustainability score.
       </p>
-
     </div>
-
-
-    <button
-      class="primary-button"
-      type="button"
-      (click)="openCreateGoal()">
-
-      <span class="material-symbols-outlined">
-        add
-      </span>
-
-      Create Goal
-
-    </button>
-
+    <div class="header-actions">
+      <button class="primary-button hero-button" type="button" (click)="openCreateGoal()">
+        <span class="material-symbols-outlined">add</span>
+        Create Goal
+      </button>
+    </div>
   </section>
 
 
@@ -175,22 +161,17 @@
     class="global-error"
     *ngIf="error">
 
-    <span class="material-symbols-outlined">
-      error_outline
-    </span>
-
-    <span>
-      {{ error }}
-    </span>
+    <div style="display: flex; align-items: center; gap: 10px;">
+      <span class="material-symbols-outlined">error_outline</span>
+      <span>{{ error }}</span>
+    </div>
 
     <button
+      class="primary-button error-retry-btn"
       type="button"
-      (click)="error = ''">
-
-      ×
-
+      (click)="loadGoals()">
+      Retry
     </button>
-
   </div>
 
 
@@ -198,23 +179,7 @@
        LOADING
        ========================================================= -->
 
-  <section
-    class="state-card"
-    *ngIf="loading">
-
-    <span class="material-symbols-outlined spin">
-      progress_activity
-    </span>
-
-    <h3>
-      Loading your goals
-    </h3>
-
-    <p>
-      Reading your goals and live carbon progress from the backend.
-    </p>
-
-  </section>
+  <!-- (Removed full-page loading state) -->
 
 
   <!-- =========================================================
@@ -225,7 +190,8 @@
     class="empty-card"
     *ngIf="
       !loading &&
-      !goals.length
+      goals.length === 0 &&
+      !error
     ">
 
     <div class="empty-icon">
@@ -271,98 +237,89 @@
 
   <section
     class="goals-section"
-    *ngIf="
-      !loading &&
-      goals.length
-    ">
+    *ngIf="loading || goals.length > 0">
 
     <div class="section-heading">
-
       <div>
-
-        <span class="eyebrow">
-          YOUR TARGETS
-        </span>
-
-        <h2>
-          Goal Progress
-        </h2>
-
+        <span class="eyebrow">YOUR TARGETS</span>
+        <h2>Goal Progress</h2>
       </div>
-
-      <span class="goal-count">
-
-        {{ goals.length }}
-
-        {{ goals.length === 1 ? 'Goal' : 'Goals' }}
-
+      <span class="goal-count" *ngIf="!loading">
+        {{ goals.length }} {{ goals.length === 1 ? 'Goal' : 'Goals' }}
       </span>
-
+      <span class="goal-count skeleton-bg" *ngIf="loading" style="width: 50px; height: 24px; color: transparent;">0</span>
     </div>
-
 
     <div class="goals-grid">
 
-      <article
-        class="goal-card"
-        *ngFor="
-          let goal of goals;
-          trackBy: trackByGoalId
-        ">
-
-
-        <!-- CARD HEADER -->
-
-        <div class="goal-card-top">
-
-          <div class="goal-heading">
-
-            <div class="goal-icon">
-
-              <span class="material-symbols-outlined">
-
-                {{ getGoalIcon(goal.title) }}
-
-              </span>
-
+      <!-- SKELETON CARDS -->
+      <ng-container *ngIf="loading">
+        <article class="goal-card skeleton-card" *ngFor="let i of [1,2,3]">
+          <div class="goal-card-top">
+            <div class="goal-heading">
+              <div class="goal-icon skeleton-bg"></div>
+              <div class="goal-heading-copy" style="gap: 6px; display: flex; flex-direction: column;">
+                <div class="skeleton-bg" style="width: 60px; height: 16px; border-radius: 4px;"></div>
+                <div class="skeleton-bg" style="width: 120px; height: 20px; border-radius: 4px;"></div>
+              </div>
             </div>
-
-
-            <div class="goal-heading-copy">
-
-              <span
-                class="status"
-                [class.active]="isActive(goal)"
-                [class.completed]="isCompleted(goal)"
-                [class.expired]="isExpired(goal)">
-
-                {{ getStatusLabel(goal) }}
-
-              </span>
-
-
-              <h3>
-                {{ goal.title }}
-              </h3>
-
-            </div>
-
           </div>
+          <div class="progress-block" style="margin-top: 24px;">
+            <div class="skeleton-bg" style="width: 100%; height: 8px; border-radius: 4px;"></div>
+          </div>
+          <div class="metric-grid" style="margin-top: 24px;">
+             <div class="metric"><div class="skeleton-bg" style="width: 40px; height: 14px;"></div><div class="skeleton-bg" style="width: 30px; height: 18px; margin-top: 4px;"></div></div>
+             <div class="metric"><div class="skeleton-bg" style="width: 40px; height: 14px;"></div><div class="skeleton-bg" style="width: 30px; height: 18px; margin-top: 4px;"></div></div>
+             <div class="metric"><div class="skeleton-bg" style="width: 40px; height: 14px;"></div><div class="skeleton-bg" style="width: 30px; height: 18px; margin-top: 4px;"></div></div>
+          </div>
+        </article>
+      </ng-container>
 
+      <ng-container *ngIf="!loading">
+        <article
+          class="goal-card"
+          *ngFor="
+            let goal of goals;
+            trackBy: trackByGoalId
+          ">
 
-          <button
-            class="icon-button"
-            type="button"
-            aria-label="Open goal"
-            (click)="openGoal(goal)">
+          <!-- CARD HEADER -->
+          <div class="goal-card-top">
+            <div class="goal-heading">
+              <div class="goal-icon">
+                <span class="material-symbols-outlined">{{ getGoalIcon(goal.title) }}</span>
+              </div>
+              <div class="goal-heading-copy">
+                <span
+                  class="status"
+                  [class.active]="isActive(goal)"
+                  [class.completed]="isCompleted(goal)"
+                  [class.expired]="isExpired(goal)">
+                  {{ getStatusLabel(goal) }}
+                </span>
+                <h3>{{ goal.title }}</h3>
+              </div>
+            </div>
 
-            <span class="material-symbols-outlined">
-              more_horiz
-            </span>
-
-          </button>
-
-        </div>
+            <!-- THREE DOT MENU -->
+            <div class="menu-container">
+              <button
+                class="icon-button"
+                type="button"
+                aria-label="Options"
+                (click)="toggleMenu(goal.id); $event.stopPropagation()">
+                <span class="material-symbols-outlined">more_horiz</span>
+              </button>
+              <div class="dropdown-menu" *ngIf="activeMenuId === goal.id">
+                <button (click)="openEditGoal(goal); $event.stopPropagation()">
+                  <span class="material-symbols-outlined">edit</span> Edit goal
+                </button>
+                <button class="danger" (click)="confirmDelete(goal); $event.stopPropagation()">
+                  <span class="material-symbols-outlined">delete</span> Delete goal
+                </button>
+              </div>
+            </div>
+          </div>
 
 
         <!-- PROGRESS -->
@@ -522,11 +479,9 @@
           </button>
 
         </div>
-
       </article>
-
+      </ng-container>
     </div>
-
   </section>
 
 
@@ -645,131 +600,90 @@
 
 
         <label>
-
           Goal title
-
           <input
             type="text"
             name="title"
+            #titleCtrl="ngModel"
             [(ngModel)]="form.title"
             placeholder="e.g. Reduce monthly transport emissions"
             required>
-
+          <div class="validation-error" *ngIf="titleCtrl.invalid && (titleCtrl.dirty || titleCtrl.touched)">
+            Goal title required.
+          </div>
         </label>
 
-
         <div class="form-grid">
-
-
           <label>
-
             Target carbon (kg)
-
             <input
               type="number"
               name="targetCarbon"
+              #targetCtrl="ngModel"
               [(ngModel)]="form.targetCarbon"
               min="1"
               step="0.1"
               required>
-
+            <div class="validation-error" *ngIf="targetCtrl.invalid && (targetCtrl.dirty || targetCtrl.touched)">
+              Target carbon must be greater than 0.
+            </div>
           </label>
 
-
           <label>
-
             Start date
-
             <input
               type="date"
               name="startDate"
+              #startCtrl="ngModel"
               [(ngModel)]="form.startDate"
               required>
-
+            <div class="validation-error" *ngIf="startCtrl.invalid && (startCtrl.dirty || startCtrl.touched)">
+              Start date required.
+            </div>
           </label>
 
-
           <label>
-
             End date
-
             <input
               type="date"
               name="endDate"
+              #endCtrl="ngModel"
               [(ngModel)]="form.endDate"
               required>
-
+            <div class="validation-error" *ngIf="endCtrl.invalid && (endCtrl.dirty || endCtrl.touched)">
+              End date required.
+            </div>
+            <div class="validation-error" *ngIf="form.startDate && form.endDate && form.endDate <= form.startDate">
+              End date must be after start date.
+            </div>
           </label>
-
-
         </div>
 
-
         <div class="form-note">
-
-          <span class="material-symbols-outlined">
-            database
-          </span>
-
+          <span class="material-symbols-outlined">database</span>
           <span>
-
             Saving this form creates or updates the goal in the
             backend database. Carbon progress is calculated from
             your activity history.
-
           </span>
-
         </div>
 
-
         <div class="modal-actions">
-
-          <button
-            class="secondary-button"
-            type="button"
-            (click)="closeGoalModal()">
-
+          <button class="secondary-button" type="button" (click)="closeGoalModal()">
             Cancel
-
           </button>
-
-
           <button
             class="primary-button"
             type="submit"
-            [disabled]="saving">
-
-            <span
-              class="material-symbols-outlined"
-              [class.spin]="saving">
-
-              {{
-                saving
-                  ? 'progress_activity'
-                  : 'check'
-              }}
-
+            [disabled]="saving || titleCtrl.invalid || targetCtrl.invalid || startCtrl.invalid || endCtrl.invalid || (form.startDate && form.endDate && form.endDate <= form.startDate)">
+            <span class="material-symbols-outlined" [class.spin]="saving">
+              {{ saving ? 'progress_activity' : 'check' }}
             </span>
-
-
-            {{
-              saving
-                ? 'Saving...'
-                : (
-                    editingGoalId
-                      ? 'Save Changes'
-                      : 'Create Goal'
-                  )
-            }}
-
+            {{ saving ? 'Saving...' : (editingGoalId ? 'Save Changes' : 'Create Goal') }}
           </button>
-
         </div>
-
       </form>
-
     </div>
-
   </div>
 
 
@@ -935,17 +849,28 @@
 
 
         <div>
-
-          <span>
-            Days remaining
-          </span>
-
-          <strong>
-            {{ getDaysRemaining(selectedGoal) }}
-          </strong>
-
+          <span>Days remaining</span>
+          <strong>{{ getDaysRemaining(selectedGoal) }}</strong>
         </div>
+      </div>
 
+      <div class="calculation-info">
+        <span class="eyebrow" style="margin-top: 24px;">HOW YOUR PROGRESS IS CALCULATED</span>
+        <div class="calc-box">
+          <p class="calc-formula">
+            Progress = (Current Carbon &divide; Target Carbon) &times; 100
+          </p>
+          <p class="calc-example">
+            Example: {{ getCurrentCarbon(selectedGoal) | number:'1.0-1' }} &divide; {{ getTargetCarbon(selectedGoal) | number:'1.0-1' }} &times; 100 = {{ (getCurrentCarbon(selectedGoal) / (getTargetCarbon(selectedGoal) || 1) * 100) | number:'1.0-1' }}%
+          </p>
+          <p class="calc-note">
+            <em>Note: Displayed progress is capped at 100% once the target has been reached.</em>
+          </p>
+        </div>
+        <div class="calc-definitions">
+          <p><strong>Current Carbon:</strong> Total carbon emissions from activities counted within this goal's applicable period.</p>
+          <p><strong>Remaining:</strong> Target &minus; current carbon, never below 0.</p>
+        </div>
       </div>
 
 
@@ -1012,16 +937,9 @@
       </div>
 
 
-      <h2>
-        Delete this goal?
-      </h2>
-
-
+      <h2>Delete sustainability goal?</h2>
       <p>
-
-        “{{ selectedGoal.title }}” will be removed from the
-        database. Your carbon activities will not be deleted.
-
+        Are you sure you want to delete "{{ selectedGoal.title }}"? This action cannot be undone.
       </p>
 
 
@@ -1054,7 +972,22 @@
       </div>
 
     </div>
-
   </div>
+
+  <!-- HOW GOAL PROGRESS WORKS (Info Card) -->
+  <section class="info-card" *ngIf="!loading">
+    <div class="info-icon">
+      <span class="material-symbols-outlined">info</span>
+    </div>
+    <div class="info-content">
+      <h3>HOW GOAL PROGRESS WORKS</h3>
+      <p>Your progress is calculated from your recorded carbon activity during the goal period.</p>
+      <div class="info-flow">
+        <div class="flow-item"><strong>Current carbon</strong><span>&darr;</span><small>Carbon emissions counted during the goal period</small></div>
+        <div class="flow-item"><strong>Progress</strong><span>&darr;</span><small>Current carbon compared with the target</small></div>
+        <div class="flow-item"><strong>Target reached</strong><span>&darr;</span><small>Goal progress reaches 100%</small></div>
+      </div>
+    </div>
+  </section>
 
 </div>

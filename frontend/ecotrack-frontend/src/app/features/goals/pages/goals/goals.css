@@ -2104,3 +2104,231 @@
   }
 
 }
+
+/* =========================================================
+   NEW REFINEMENTS (HERO, SKELETONS, MENU, INFO, ETC)
+   ========================================================= */
+
+.welcome-card {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 32px 40px;
+  border-radius: 20px;
+  color: white;
+  background: radial-gradient(circle at right top, rgba(255,255,255,0.1), transparent 40%), linear-gradient(135deg, #176b3a 0%, #228b4d 100%);
+  box-shadow: 0 4px 15px rgba(23, 107, 58, 0.2);
+  margin-bottom: 32px;
+}
+.welcome-content {
+  max-width: 60%;
+}
+.welcome-content h1 {
+  margin: 8px 0;
+  font-size: 32px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+.welcome-content p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.header-actions {
+  flex-shrink: 0;
+}
+.hero-button {
+  background: white !important;
+  color: #176b3a !important;
+  border: none !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1) !important;
+}
+.hero-button:hover {
+  background: #f0f5f2 !important;
+  transform: translateY(-2px);
+}
+
+.skeleton-bg {
+  background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite;
+}
+@keyframes skeleton-loading {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+.skeleton-card {
+  pointer-events: none;
+}
+
+.menu-container {
+  position: relative;
+}
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 8px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  padding: 8px;
+  min-width: 160px;
+  z-index: 100;
+  border: 1px solid rgba(0,0,0,0.05);
+}
+.dropdown-menu button {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border: none;
+  background: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #1e293b;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: left;
+}
+.dropdown-menu button:hover {
+  background: #f1f5f9;
+}
+.dropdown-menu button.danger {
+  color: #ef4444;
+}
+.dropdown-menu button.danger:hover {
+  background: #fef2f2;
+}
+
+.calculation-info {
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid #e2e8f0;
+}
+.calc-box {
+  background: #f8fafc;
+  border-radius: 12px;
+  padding: 16px;
+  margin: 12px 0;
+  border: 1px solid #e2e8f0;
+}
+.calc-formula {
+  font-family: monospace;
+  font-size: 13px;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0 0 8px 0;
+  background: #e2e8f0;
+  padding: 8px;
+  border-radius: 6px;
+  text-align: center;
+}
+.calc-example {
+  font-size: 13px;
+  color: #475569;
+  margin: 0 0 8px 0;
+  text-align: center;
+}
+.calc-note {
+  font-size: 12px;
+  color: #64748b;
+  margin: 0;
+  text-align: center;
+}
+.calc-definitions p {
+  font-size: 12px;
+  color: #475569;
+  margin: 4px 0;
+  line-height: 1.5;
+}
+
+.validation-error {
+  color: #ef4444;
+  font-size: 11px;
+  margin-top: 6px;
+  font-weight: 500;
+}
+
+.info-card {
+  margin-top: 40px;
+  background: white;
+  border-radius: 20px;
+  padding: 24px;
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  border: 1px solid rgba(0,0,0,0.05);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.03);
+}
+.info-icon {
+  width: 48px;
+  height: 48px;
+  background: #e0f2fe;
+  color: #0284c7;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+.info-content h3 {
+  margin: 0 0 8px 0;
+  font-size: 14px;
+  font-weight: 800;
+  color: #1e293b;
+}
+.info-content p {
+  margin: 0 0 20px 0;
+  font-size: 13px;
+  color: #64748b;
+}
+.info-flow {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+}
+.flow-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: #f8fafc;
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  text-align: center;
+}
+.flow-item strong {
+  font-size: 13px;
+  color: #1e293b;
+  margin-bottom: 8px;
+}
+.flow-item span {
+  font-size: 16px;
+  color: #94a3b8;
+  margin-bottom: 8px;
+}
+.flow-item small {
+  font-size: 11px;
+  color: #64748b;
+  line-height: 1.4;
+}
+
+@media (max-width: 768px) {
+  .welcome-card {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 24px;
+    gap: 20px;
+  }
+  .welcome-content {
+    max-width: 100%;
+  }
+  .info-flow {
+    flex-direction: column;
+    gap: 12px;
+  }
+}

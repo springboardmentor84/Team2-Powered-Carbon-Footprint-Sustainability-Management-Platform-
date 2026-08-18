@@ -91,9 +91,9 @@ export class Goals
   showGoalModal = false;
 
   showDetailsModal = false;
-
   showDeleteModal = false;
 
+  activeMenuId: number | null = null;
 
   editingGoalId:
     number | null = null;
@@ -102,9 +102,17 @@ export class Goals
   selectedGoal:
     GoalResponse | null = null;
 
-
   form: GoalForm =
     this.emptyForm();
+
+  // Menu Toggle
+  toggleMenu(id: number): void {
+    if (this.activeMenuId === id) {
+      this.activeMenuId = null;
+    } else {
+      this.activeMenuId = id;
+    }
+  }
 
 
   // =========================================================
@@ -819,52 +827,25 @@ export class Goals
   // =========================================================
 
   openCreateGoal(): void {
-
+    this.activeMenuId = null;
     this.editingGoalId = null;
-
-    this.form =
-      this.emptyForm();
-
+    this.form = this.emptyForm();
     this.showGoalModal = true;
-
     this.error = '';
-
   }
 
-
-  openEditGoal(
-    goal: GoalResponse
-  ): void {
-
-    this.editingGoalId =
-      goal.id;
-
-
+  openEditGoal(goal: GoalResponse): void {
+    this.activeMenuId = null;
+    this.editingGoalId = goal.id;
     this.form = {
-
-      title:
-        goal.title,
-
-      targetCarbon:
-        this.getTargetCarbon(goal),
-
-      startDate:
-        this.toInputDate(
-          new Date(goal.startDate)
-        ),
-
-      endDate:
-        this.toInputDate(
-          new Date(goal.endDate)
-        )
-
+      title: goal.title || '',
+      targetCarbon: this.getTargetCarbon(goal) || 1,
+      startDate: goal.startDate ? this.toInputDate(new Date(goal.startDate)) : '',
+      endDate: goal.endDate ? this.toInputDate(new Date(goal.endDate)) : ''
     };
-
-
     this.showDetailsModal = false;
-
     this.showGoalModal = true;
-
+    this.error = '';
   }
 
 
@@ -1105,16 +1086,13 @@ export class Goals
   confirmDelete(
     goal: GoalResponse
   ): void {
-
+    this.activeMenuId = null;
     this.selectedGoal =
       goal;
-
     this.showDetailsModal =
       false;
-
     this.showDeleteModal =
       true;
-
   }
 
 
