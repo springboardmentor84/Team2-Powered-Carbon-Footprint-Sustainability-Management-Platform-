@@ -57,7 +57,7 @@ export class ActivitySummary implements OnInit, OnDestroy {
       },
       {
         title: 'Total Emissions',
-        value: carbon.toFixed(1) + ' kg',
+        value: Number(carbon.toFixed(2)) + ' kg',
         subtitle: 'Carbon footprint',
         icon: 'eco',
         color: '#43A047'

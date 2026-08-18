@@ -273,7 +273,7 @@
 
             <div class="activity-emission">
               <strong>
-                {{ activity.carbonEmission || activity.carbon || 0 | number:'1.0-2' }} kg
+                {{ (activity.carbonEmission || activity.carbon || 0) | number:'1.0-2' }} kg
               </strong>
             </div>
 
@@ -352,6 +352,92 @@
       <button class="save-btn" style="margin-top: 15px; width: auto; padding: 0 20px;" (click)="loadActivities()">
         Retry
       </button>
+    </div>
+  </section>
+
+  <!-- HOW CARBON IS CALCULATED -->
+  <section class="insights-section" *ngIf="!loading && !apiError">
+    <h2 class="section-title">HOW CARBON IS CALCULATED</h2>
+    <div class="tracker-card info-card">
+      <div class="card-heading" style="margin-bottom: 8px;">
+        <div>
+          <span>EXPLANATION</span>
+          <h2>Calculation Metrics</h2>
+        </div>
+        <div class="heading-icon"><mat-icon>functions</mat-icon></div>
+      </div>
+      <p class="info-subtitle">Understand how your carbon footprint and activity metrics are calculated.</p>
+      
+      <div class="formula-grid">
+        
+        <!-- Formula 1: Individual Activity -->
+        <div class="formula-block">
+          <div class="formula-header">
+            <mat-icon>calculate</mat-icon>
+            <strong>Individual Activity</strong>
+          </div>
+          <div class="formula-math">
+            Quantity &times; Emission Factor<br>
+            = Carbon Emission
+          </div>
+          <p class="formula-example">
+            Example: Carbon emission for each activity is calculated from its quantity and the emission factor associated with that selected activity/category.
+          </p>
+        </div>
+
+        <!-- Formula 2: Total Emissions -->
+        <div class="formula-block">
+          <div class="formula-header">
+            <mat-icon>functions</mat-icon>
+            <strong>Total Emissions</strong>
+          </div>
+          <div class="formula-math">
+            &Sigma; Individual Carbon Emissions<br>
+            = Total Emissions
+          </div>
+          <p class="formula-example" *ngIf="activities.length > 0">
+            Example: Summing all your recorded activities results in <strong>{{ totalCarbon | number:'1.0-2' }} kg CO₂</strong>.
+          </p>
+          <p class="formula-example" *ngIf="activities.length === 0">
+            Example: Summing all your recorded activities results in your Total Emissions.
+          </p>
+        </div>
+
+        <!-- Formula 3: Average / Activity -->
+        <div class="formula-block">
+          <div class="formula-header">
+            <mat-icon>analytics</mat-icon>
+            <strong>Average Carbon Emission</strong>
+          </div>
+          <div class="formula-math">
+            Total Emissions &divide; Activities<br>
+            = Average / Activity
+          </div>
+          <p class="formula-example" *ngIf="activityCount > 0">
+            Example: {{ totalCarbon | number:'1.0-2' }} kg &divide; {{ activityCount }} activities = <strong>{{ averageCarbon | number:'1.0-2' }} kg/activity</strong>.
+          </p>
+          <p class="formula-example" *ngIf="activityCount === 0">
+            Example: Total Emissions divided by total recorded activities.
+          </p>
+        </div>
+
+        <!-- Formula 4: Category Breakdown -->
+        <div class="formula-block">
+          <div class="formula-header">
+            <mat-icon>pie_chart</mat-icon>
+            <strong>Category Emissions</strong>
+          </div>
+          <div class="formula-math">
+            &Sigma; Emissions within Category<br>
+            = Category Emissions
+          </div>
+          <p class="formula-example">
+            Example: <span *ngIf="categoryEmissions.length > 0"><strong>{{ categoryEmissions[0].category | titlecase }}</strong> = sum of all {{ categoryEmissions[0].category | titlecase }} activity emissions. </span>
+            The sum of all categories corresponds to Total Emissions.
+          </p>
+        </div>
+
+      </div>
     </div>
   </section>
 

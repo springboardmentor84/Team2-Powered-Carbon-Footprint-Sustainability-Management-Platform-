@@ -228,35 +228,19 @@ export class CarbonTracker
   }
 
   get totalCarbon(): number {
-
-    return this.activities.reduce(
-      (total, activity) =>
-        total +
-        Number(
-          activity.carbonEmission ||
-          activity.carbon ||
-          0
-        ),
-      0
-    );
-
+    return this.activityService.getCarbonSaved();
   }
 
   get activityCount(): number {
-
-    return this.activities.length;
-
+    return this.activityService.getActivityCount();
   }
 
   get averageCarbon(): number {
-
-    if (!this.activities.length) {
+    const count = this.activityCount;
+    if (count === 0) {
       return 0;
     }
-
-    return this.totalCarbon /
-      this.activities.length;
-
+    return this.totalCarbon / count;
   }
 
   getCategoryIcon(

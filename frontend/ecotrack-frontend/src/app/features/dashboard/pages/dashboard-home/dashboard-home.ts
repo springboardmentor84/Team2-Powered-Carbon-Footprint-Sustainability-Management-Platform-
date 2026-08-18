@@ -333,8 +333,12 @@ export class DashboardHome implements OnInit, AfterViewInit, OnDestroy {
 
     this.dashboardSubscription = this.dashboardService.getSummary().subscribe({
       next: summary => {
-        this.stats[0].value = `${summary.totalCarbonEmission.toFixed(1)} kg`;
-        this.stats[1].value = summary.totalEntries.toString();
+        // Guarantee consistent source of truth
+        const totalCarbon = this.activityService.getCarbonSaved();
+        const activities = this.activityService.getActivityCount();
+        
+        this.stats[0].value = `${Number(totalCarbon.toFixed(2))} kg`;
+        this.stats[1].value = activities.toString();
         this.stats = [...this.stats];
         this.cdr.detectChanges();
       },

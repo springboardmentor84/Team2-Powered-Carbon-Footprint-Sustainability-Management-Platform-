@@ -33,45 +33,28 @@ export class ActivityAnalytics {
   }
 
   get carbonSaved() {
-
-    return this.activityService.getCarbonSaved().toFixed(1);
-
+    return Number(this.activityService.getCarbonSaved().toFixed(2));
   }
 
   get averageCarbon() {
-
     if (this.activities.length === 0) {
-
-      return '0.0';
-
+      return 0;
     }
-
     const total = this.activityService.getCarbonSaved();
-
-    return (total / this.activities.length).toFixed(1);
-
+    return Number((total / this.activities.length).toFixed(2));
   }
 
   get bestCategory() {
-
     if (this.activities.length === 0) {
-
       return '-';
-
     }
-
     const map: any = {};
-
     this.activities.forEach(activity => {
-
-      map[activity.category] = (map[activity.category] || 0) + activity.carbon;
-
+      map[activity.category] = (map[activity.category] || 0) + Number(activity.carbonEmission || activity.carbon || 0);
     });
-
     return Object.keys(map).reduce((a, b) =>
       map[a] > map[b] ? a : b
     );
-
   }
 
   get progress() {
