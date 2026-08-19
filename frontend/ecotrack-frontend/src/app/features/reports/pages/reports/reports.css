@@ -1,253 +1,106 @@
 .page {
-  width: 100%;
-  max-width: 100%;
-  min-width: 0;
-
-  padding: 30px;
-
-  display: flex;
-  flex-direction: column;
-  gap: 28px;
-
-  animation: fadePage 0.8s ease;
-
-  box-sizing: border-box;
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
 }
-
-
-/* ============================================================
-   PAGE ANIMATION
-   ============================================================ */
-
-@keyframes fadePage {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-
-/* ============================================================
-   REPORT HERO
-   ECOTRACK GREEN THEME
-   ============================================================ */
 
 .hero {
-  width: 100%;
-  max-width: 100%;
-
+  background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
+  border-radius: 16px;
+  padding: 32px 40px;
+  color: white;
   display: flex;
   justify-content: space-between;
   align-items: center;
-
-  gap: 24px;
-
-  padding: 30px;
-
-  border-radius: 22px;
-
-  background:
-    linear-gradient(
-      135deg,
-      #176b3a 0%,
-      #2e7d32 55%,
-      #43a047 100%
-    );
-
-  color: #ffffff;
-
-  box-shadow:
-    0 12px 28px rgba(23, 107, 58, 0.18);
-
-  box-sizing: border-box;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
-
-
-/* ============================================================
-   HERO TEXT
-   ============================================================ */
 
 .hero h1 {
-  margin: 0;
-
-  font-size: 34px;
-
-  font-weight: 800;
-
-  line-height: 1.2;
-
-  color: #ffffff;
+  margin: 0 0 8px 0;
+  font-size: 28px;
+  font-weight: 700;
 }
-
 
 .hero p {
-  margin: 10px 0 0;
-
-  font-size: 15px;
-
-  line-height: 1.6;
-
-  color: rgba(255, 255, 255, 0.92);
-
-  max-width: 650px;
+  margin: 0;
+  font-size: 16px;
+  opacity: 0.9;
+  max-width: 600px;
 }
-
-
-/* ============================================================
-   PRIMARY BUTTON
-   ============================================================ */
 
 .primary-btn {
-  flex: 0 0 auto;
-
-  min-height: 48px;
-
-  padding: 14px 26px;
-
+  background: white;
+  color: #1b5e20;
   border: none;
-
-  border-radius: 12px;
-
-  background: #ffffff;
-
-  color: #176b3a;
-
-  font-weight: 800;
-
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 600;
   font-size: 15px;
-
   cursor: pointer;
-
-  transition:
-    transform 0.25s ease,
-    box-shadow 0.25s ease,
-    background 0.25s ease;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
-
 
 .primary-btn:hover {
-  transform: translateY(-3px);
-
-  background: #f1f8f3;
-
-  box-shadow:
-    0 8px 20px rgba(0, 0, 0, 0.18);
-}
-
-
-.primary-btn:active {
   transform: translateY(-1px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.12);
 }
 
-
-/* ============================================================
-   TABLET
-   ============================================================ */
-
-@media (max-width: 1000px) {
-
-  .page {
-    padding: 24px;
-  }
-
-  .hero {
-    padding: 26px;
-  }
-
-  .hero h1 {
-    font-size: 30px;
-  }
-
+.filters-card {
+  background: white;
+  border-radius: 12px;
+  padding: 16px 24px;
+  margin-bottom: 24px;
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  border: 1px solid #e2e8f0;
 }
 
+.filter-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
 
-/* ============================================================
-   MOBILE
-   ============================================================ */
+.filter-group label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #4a5568;
+}
+
+.filter-select, .filter-input {
+  padding: 8px 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  background: #f8fafc;
+  color: #1e293b;
+  font-size: 14px;
+  min-width: 150px;
+}
+
+.filter-select:focus, .filter-input:focus {
+  outline: none;
+  border-color: #2e7d32;
+}
+
+.custom-dates span {
+  color: #64748b;
+  font-size: 14px;
+}
 
 @media (max-width: 768px) {
-
-  .page {
-    width: 100%;
-    max-width: 100%;
-
-    padding: 18px;
-
-    gap: 20px;
-
-    overflow-x: hidden;
-  }
-
-
   .hero {
-    width: 100%;
-    max-width: 100%;
-
     flex-direction: column;
-
-    align-items: stretch;
-
     text-align: center;
-
-    gap: 20px;
-
-    padding: 24px 20px;
-
-    border-radius: 18px;
+    gap: 24px;
+    padding: 24px;
   }
-
-
-  .hero h1 {
-    font-size: 26px;
+  
+  .filters-card {
+    flex-direction: column;
+    align-items: stretch;
   }
-
-
-  .hero p {
-    max-width: 100%;
-
-    font-size: 14px;
-  }
-
-
-  .primary-btn {
-    width: 100%;
-
-    min-height: 48px;
-  }
-
-}
-
-
-/* ============================================================
-   SMALL MOBILE
-   ============================================================ */
-
-@media (max-width: 480px) {
-
-  .page {
-    padding: 14px;
-  }
-
-
-  .hero {
-    padding: 20px 16px;
-
-    border-radius: 16px;
-  }
-
-
-  .hero h1 {
-    font-size: 23px;
-  }
-
-
-  .hero p {
-    font-size: 13px;
-  }
-
 }

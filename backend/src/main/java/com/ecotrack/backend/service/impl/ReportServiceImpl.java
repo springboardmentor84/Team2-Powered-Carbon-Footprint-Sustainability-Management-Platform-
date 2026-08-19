@@ -8,6 +8,10 @@ import com.ecotrack.backend.entity.CarbonEntry;
 import com.ecotrack.backend.entity.Goal;
 import com.ecotrack.backend.entity.User;
 import com.ecotrack.backend.exception.custom.ResourceNotFoundException;
+import com.ecotrack.backend.dto.request.GenerateReportRequest;
+import com.ecotrack.backend.dto.response.GeneratedReportResponse;
+import com.ecotrack.backend.entity.GeneratedReport;
+import com.ecotrack.backend.repository.GeneratedReportRepository;
 import com.ecotrack.backend.repository.CarbonEntryRepository;
 import com.ecotrack.backend.repository.GoalRepository;
 import com.ecotrack.backend.repository.UserRepository;
@@ -20,6 +24,7 @@ import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.ByteArrayOutputStream;
 import java.math.BigDecimal;
@@ -33,11 +38,13 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class ReportServiceImpl implements ReportService {
 
     private final UserRepository userRepository;
     private final CarbonEntryRepository carbonEntryRepository;
     private final GoalRepository goalRepository;
+    private final GeneratedReportRepository generatedReportRepository;
 
     @Override
     public ReportSummaryResponse getReportSummary(String email, LocalDate startDate, LocalDate endDate) {
@@ -154,6 +161,77 @@ public class ReportServiceImpl implements ReportService {
 
         document.close();
         return out.toByteArray();
+    }
+
+    @Override
+    public GeneratedReportResponse generateAndSaveReport(String email, GenerateReportRequest request) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        validateDates(request.getStartDate(), request.getEndDate());
+
+        List<CarbonEntry> entries = getCarbonEntries(email, request.getStartDate(), request.getEndDate());
+        Double totalCarbon = entries.stream().mapToDouble(CarbonEntry::getCarbonEmission).sum();
+        
+        byte[] fileBytes;
+        if ("CSV".equalsIgnoreCase(request.getFormat())) {
+            fileBytes = generateCsvReport(email, request.getStartDate(), request.getEndDate());
+        } else {
+            fileBytes = generatePdfReport(email, request.getStartDate(), request.getEndDate());
+        }
+
+        GeneratedReport report = GeneratedReport.builder()
+                .user(user)
+                .reportPeriod(request.getReportPeriod())
+                .startDate(request.getStartDate())
+                .endDate(request.getEndDate())
+                .totalEmissions(roundToTwoDecimals(totalCarbon))
+                .totalActivities(entries.size())
+                .format(request.getFormat() != null ? request.getFormat().toUpperCase() : "PDF")
+                .downloads(0)
+                .fileData(fileBytes)
+                .build();
+
+        GeneratedReport savedReport = generatedReportRepository.save(report);
+        return mapToGeneratedReportResponse(savedReport);
+    }
+
+    @Override
+    public List<GeneratedReportResponse> getReportHistory(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        return generatedReportRepository.findByUserOrderByGeneratedAtDesc(user).stream()
+                .map(this::mapToGeneratedReportResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public byte[] downloadReport(String email, Long reportId) {
+        GeneratedReport report = generatedReportRepository.findById(reportId)
+                .orElseThrow(() -> new ResourceNotFoundException("Report not found"));
+
+        if (!report.getUser().getEmail().equals(email)) {
+            throw new ResourceNotFoundException("Report not found");
+        }
+
+        report.setDownloads(report.getDownloads() + 1);
+        generatedReportRepository.save(report);
+        
+        return report.getFileData();
+    }
+
+    private GeneratedReportResponse mapToGeneratedReportResponse(GeneratedReport report) {
+        return GeneratedReportResponse.builder()
+                .id(report.getId())
+                .reportPeriod(report.getReportPeriod())
+                .startDate(report.getStartDate())
+                .endDate(report.getEndDate())
+                .totalEmissions(report.getTotalEmissions())
+                .totalActivities(report.getTotalActivities())
+                .format(report.getFormat())
+                .downloads(report.getDownloads())
+                .generatedAt(report.getGeneratedAt())
+                .build();
     }
 
     private void validateDates(LocalDate startDate, LocalDate endDate) {

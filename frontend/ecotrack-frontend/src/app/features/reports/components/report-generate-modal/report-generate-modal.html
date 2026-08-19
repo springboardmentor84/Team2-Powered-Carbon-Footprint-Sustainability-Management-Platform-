@@ -1,0 +1,45 @@
+<div class="modal-container">
+  <h2 mat-dialog-title>Generate Sustainability Report</h2>
+  
+  <mat-dialog-content>
+    <div class="form-group">
+      <label>Report Period</label>
+      <select [(ngModel)]="period" class="form-control">
+        <option value="This Month">This Month</option>
+        <option value="Last Month">Last Month</option>
+        <option value="Last 3 Months">Last 3 Months</option>
+        <option value="This Year">This Year</option>
+        <option value="Custom Date Range">Custom Date Range</option>
+      </select>
+    </div>
+
+    <div class="form-group date-range" *ngIf="period === 'Custom Date Range'">
+      <div>
+        <label>Start Date</label>
+        <input type="date" [(ngModel)]="customStartDate" class="form-control">
+      </div>
+      <div>
+        <label>End Date</label>
+        <input type="date" [(ngModel)]="customEndDate" class="form-control">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Report Format</label>
+      <select [(ngModel)]="format" class="form-control">
+        <option value="PDF">PDF (Sustainability Report)</option>
+        <option value="CSV">CSV (Raw Data Export)</option>
+      </select>
+    </div>
+
+    <div class="info-card">
+      <h4>How your report is calculated</h4>
+      <p>EcoTrack uses your recorded activities for the selected period. Each activity's carbon emission is calculated using its quantity and emission factor. These emissions are then aggregated by date and category to generate your report, charts and sustainability metrics.</p>
+    </div>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button class="secondary-btn" (click)="onCancel()">Cancel</button>
+    <button class="primary-btn" (click)="onGenerate()" [disabled]="period === 'Custom Date Range' && (!customStartDate || !customEndDate)">Generate Report</button>
+  </mat-dialog-actions>
+</div>

@@ -1,36 +1,49 @@
-
 <div class="page">
-
     <section class="hero">
-
         <div>
-
-            <h1>
-
-                Sustainability Reports
-
-            </h1>
-
-            <p>
-
-                View your environmental performance, generate reports and monitor sustainability trends.
-
-            </p>
-
+            <h1>Sustainability Reports</h1>
+            <p>View your environmental performance, generate reports and monitor sustainability trends.</p>
         </div>
-
-        <button class="primary-btn">
-
+        <button class="primary-btn" (click)="openGenerateModal()">
             Generate Report
-
         </button>
-
     </section>
 
-    <app-reports-summary></app-reports-summary>
+    <div class="filters-card">
+        <div class="filter-group">
+            <label>Period</label>
+            <select [(ngModel)]="periodFilter" class="filter-select">
+                <option *ngFor="let p of periods" [value]="p">{{p}}</option>
+            </select>
+        </div>
+        
+        <div class="filter-group custom-dates" *ngIf="periodFilter === 'Custom'">
+            <input type="date" [(ngModel)]="customStartDate" class="filter-input">
+            <span>to</span>
+            <input type="date" [(ngModel)]="customEndDate" class="filter-input">
+        </div>
 
-    <app-reports-charts></app-reports-charts>
+        <div class="filter-group">
+            <label>Category</label>
+            <select [(ngModel)]="categoryFilter" class="filter-select">
+                <option *ngFor="let c of categories" [value]="c">{{c}}</option>
+            </select>
+        </div>
+    </div>
+
+    <app-reports-summary 
+        [periodFilter]="periodFilter" 
+        [categoryFilter]="categoryFilter"
+        [customStartDate]="customStartDate"
+        [customEndDate]="customEndDate">
+    </app-reports-summary>
+
+    <app-reports-charts 
+        [periodFilter]="periodFilter" 
+        [categoryFilter]="categoryFilter"
+        [customStartDate]="customStartDate"
+        [customEndDate]="customEndDate">
+    </app-reports-charts>
 
     <app-reports-history></app-reports-history>
-
 </div>

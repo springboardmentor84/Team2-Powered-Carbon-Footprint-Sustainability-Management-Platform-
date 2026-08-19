@@ -1,53 +1,55 @@
-<mat-card class="card">
+<div class="history-container">
+    <h3>Report History</h3>
+    
+    <div class="table-responsive">
+        <table *ngIf="!loading && reports.length > 0; else emptyOrLoadingState">
+            <thead>
+                <tr>
+                    <th>Report Period</th>
+                    <th>Generated</th>
+                    <th>Format</th>
+                    <th>Emissions</th>
+                    <th>Activities</th>
+                    <th>Downloads</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let report of reports">
+                    <td class="primary-col">{{ report.reportPeriod }}</td>
+                    <td>{{ report.generatedAt | date:'mediumDate' }}</td>
+                    <td><span class="badge">{{ report.format }}</span></td>
+                    <td class="font-weight-500 text-green">{{ report.totalEmissions }} kg</td>
+                    <td>{{ report.totalActivities }}</td>
+                    <td>{{ report.downloads }}</td>
+                    <td>
+                        <button mat-icon-button [matMenuTriggerFor]="menu">
+                            <mat-icon>more_vert</mat-icon>
+                        </button>
+                        <mat-menu #menu="matMenu">
+                            <button mat-menu-item (click)="viewDetails(report)">
+                                <mat-icon>visibility</mat-icon>
+                                <span>View Details</span>
+                            </button>
+                            <button mat-menu-item (click)="download(report)">
+                                <mat-icon>download</mat-icon>
+                                <span>Download</span>
+                            </button>
+                        </mat-menu>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
 
-    <h2>
-
-        Report History
-
-    </h2>
-
-    <table>
-
-        <thead>
-
-            <tr>
-
-                <th>Month</th>
-
-                <th>Total Emissions</th>
-
-                <th>Score</th>
-
-                <th>Status</th>
-
-            </tr>
-
-        </thead>
-
-        <tbody>
-
-            <tr *ngFor="let report of reports">
-
-                <td>{{report.month}}</td>
-
-                <td>{{report.carbon}}</td>
-
-                <td>{{report.score}}</td>
-
-                <td>
-
-                    <span class="badge">
-
-                        {{report.status}}
-
-                    </span>
-
-                </td>
-
-            </tr>
-
-        </tbody>
-
-    </table>
-
-</mat-card>
+<ng-template #emptyOrLoadingState>
+    <div class="empty-state" *ngIf="!loading">
+        <mat-icon class="empty-icon">description</mat-icon>
+        <h4>No reports generated yet.</h4>
+        <p>Generate your first sustainability report to see it here.</p>
+    </div>
+    <div class="loading-state" *ngIf="loading">
+        <p>Loading report history...</p>
+    </div>
+</ng-template>

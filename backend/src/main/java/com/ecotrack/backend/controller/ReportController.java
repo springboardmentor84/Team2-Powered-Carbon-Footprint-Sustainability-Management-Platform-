@@ -1,5 +1,7 @@
 package com.ecotrack.backend.controller;
 
+import com.ecotrack.backend.dto.request.GenerateReportRequest;
+import com.ecotrack.backend.dto.response.GeneratedReportResponse;
 import com.ecotrack.backend.dto.response.ReportSummaryResponse;
 import com.ecotrack.backend.service.interfaces.ReportService;
 import lombok.RequiredArgsConstructor;
@@ -8,9 +10,11 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
 
 import java.security.Principal;
 import java.time.LocalDate;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/reports")
@@ -61,5 +65,40 @@ public class ReportController {
         return ResponseEntity.ok()
                 .headers(headers)
                 .body(pdfBytes);
+    }
+    @PostMapping("/generate")
+    public ResponseEntity<GeneratedReportResponse> generateReport(
+            Principal principal,
+            @Valid @RequestBody GenerateReportRequest request) {
+        GeneratedReportResponse response = reportService.generateAndSaveReport(principal.getName(), request);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/history")
+    public ResponseEntity<List<GeneratedReportResponse>> getReportHistory(Principal principal) {
+        List<GeneratedReportResponse> history = reportService.getReportHistory(principal.getName());
+        return ResponseEntity.ok(history);
+    }
+
+    @GetMapping("/{id}/download")
+    public ResponseEntity<byte[]> downloadGeneratedReport(
+            Principal principal,
+            @PathVariable Long id) {
+        
+        List<GeneratedReportResponse> history = reportService.getReportHistory(principal.getName());
+        GeneratedReportResponse report = history.stream().filter(r -> r.getId().equals(id)).findFirst().orElse(null);
+        if (report == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        byte[] fileBytes = reportService.downloadReport(principal.getName(), id);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=ecotrack_report_" + report.getReportPeriod().replace(" ", "_") + "." + report.getFormat().toLowerCase());
+        headers.set(HttpHeaders.CONTENT_TYPE, "CSV".equalsIgnoreCase(report.getFormat()) ? "text/csv" : MediaType.APPLICATION_PDF_VALUE);
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(fileBytes);
     }
 }

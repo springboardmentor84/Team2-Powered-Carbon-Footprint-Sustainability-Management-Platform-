@@ -1,0 +1,42 @@
+<div class="modal-container">
+  <h2 mat-dialog-title>Report Details</h2>
+  
+  <mat-dialog-content>
+    <div class="details-grid">
+      <div class="detail-item">
+        <label>Report Period</label>
+        <div class="value">{{ data.report.reportPeriod }}</div>
+      </div>
+      
+      <div class="detail-item">
+        <label>Total Emissions</label>
+        <div class="value emissions">{{ data.report.totalEmissions }} kg</div>
+      </div>
+      
+      <div class="detail-item">
+        <label>Total Activities</label>
+        <div class="value">{{ data.report.totalActivities }}</div>
+      </div>
+      
+      <div class="detail-item">
+        <label>Format</label>
+        <div class="value">{{ data.report.format }}</div>
+      </div>
+      
+      <div class="detail-item">
+        <label>Generated On</label>
+        <div class="value">{{ data.report.generatedAt | date:'mediumDate' }}</div>
+      </div>
+      
+      <div class="detail-item">
+        <label>Downloads</label>
+        <div class="value">{{ data.report.downloads }}</div>
+      </div>
+    </div>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button class="secondary-btn" (click)="onClose()">Close</button>
+    <button class="primary-btn" (click)="onDownload()">Download {{ data.report.format }}</button>
+  </mat-dialog-actions>
+</div>
