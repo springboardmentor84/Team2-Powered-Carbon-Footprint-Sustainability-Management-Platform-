@@ -1,0 +1,156 @@
+<div class="page">
+    <section class="welcome-card">
+        <div class="welcome-content">
+            <span class="eyebrow">GAMIFICATION</span>
+            <h1>🏆 Achievements</h1>
+            <p>Track your sustainability progress and earn rewards for positive environmental actions.</p>
+        </div>
+    </section>
+
+    <!-- LOADING STATE -->
+    <div *ngIf="loading" class="loading-state">
+        <mat-spinner diameter="40"></mat-spinner>
+        <p>Loading achievements...</p>
+    </div>
+
+    <!-- ERROR STATE -->
+    <div *ngIf="!loading && error" class="error-state">
+        <mat-icon>error_outline</mat-icon>
+        <p>Failed to load achievements data.</p>
+        <button class="retry-btn" (click)="loadData()">Retry</button>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div *ngIf="!loading && !error && summary" class="gamification-content">
+        <div class="main-grid">
+            
+            <!-- LEFT COLUMN -->
+            <div class="left-col">
+                <!-- ECOPOINTS CARD -->
+                <mat-card class="dashboard-card ecopoints-card">
+                    <div class="card-header">
+                        <h2>EcoPoints</h2>
+                        <div class="points-value">
+                            <mat-icon>stars</mat-icon>
+                            <span>{{ summary.ecoPoints | number }}</span>
+                        </div>
+                    </div>
+                    <div class="level-info">
+                        <div class="level-header">
+                            <span class="level-badge">Level {{ summary.currentLevel }}</span>
+                            <span class="level-name">{{ summary.levelName }}</span>
+                        </div>
+                        <div class="progress-container">
+                            <div class="progress-bar-bg">
+                                <div class="progress-bar-fill" [style.width.%]="summary.progressPercentage"></div>
+                            </div>
+                            <div class="progress-text" *ngIf="summary.currentLevel < 6">
+                                {{ summary.pointsToNextLevel | number }} points to Level {{ summary.currentLevel + 1 }}
+                            </div>
+                            <div class="progress-text" *ngIf="summary.currentLevel >= 6">
+                                Maximum Level Reached!
+                            </div>
+                        </div>
+                    </div>
+                </mat-card>
+
+                <!-- CHALLENGES PREVIEW -->
+                <mat-card class="dashboard-card challenges-card">
+                    <div class="card-header">
+                        <h2>Active Challenges</h2>
+                    </div>
+                    <div class="challenges-list">
+                        <div class="challenge-item" *ngFor="let challenge of summary.activeChallenges">
+                            <div class="challenge-title">{{ challenge.title }}</div>
+                            <div class="challenge-desc">{{ challenge.description }}</div>
+                            <div class="challenge-progress-container">
+                                <div class="challenge-stats">
+                                    <span>Progress: {{ challenge.progress }} / {{ challenge.target }} {{ challenge.unit }}</span>
+                                </div>
+                                <div class="progress-bar-bg small">
+                                    <div class="progress-bar-fill" [style.width.%]="(challenge.progress / challenge.target) * 100"></div>
+                                </div>
+                            </div>
+                            <div class="challenge-reward">
+                                <mat-icon>stars</mat-icon> Reward: +{{ challenge.rewardPoints }} EcoPoints
+                            </div>
+                        </div>
+                        <div class="empty-state-small" *ngIf="summary.activeChallenges.length === 0">
+                            No active challenges right now.
+                        </div>
+                    </div>
+                </mat-card>
+            </div>
+
+            <!-- RIGHT COLUMN -->
+            <div class="right-col">
+                <!-- BADGES CARD -->
+                <mat-card class="dashboard-card badges-card">
+                    <div class="card-header">
+                        <h2>Badges</h2>
+                    </div>
+                    <div class="badges-list">
+                        <!-- EARNED BADGES -->
+                        <div class="badge-item earned" *ngFor="let badge of summary.earnedBadges">
+                            <div class="badge-icon-wrapper">
+                                <span class="badge-icon">{{ badge.icon }}</span>
+                            </div>
+                            <div class="badge-details">
+                                <span class="badge-name">{{ badge.name }}</span>
+                                <span class="badge-desc">{{ badge.description }}</span>
+                            </div>
+                            <mat-icon class="status-icon unlocked">check_circle</mat-icon>
+                        </div>
+                        
+                        <!-- LOCKED BADGES -->
+                        <div class="badge-item locked" *ngFor="let badge of summary.lockedBadges">
+                            <div class="badge-icon-wrapper">
+                                <span class="badge-icon">{{ badge.icon }}</span>
+                            </div>
+                            <div class="badge-details">
+                                <span class="badge-name">{{ badge.name }}</span>
+                                <span class="badge-desc">Unlock at {{ badge.pointsRequired }} points</span>
+                            </div>
+                            <mat-icon class="status-icon locked-icon">lock</mat-icon>
+                        </div>
+
+                        <div class="empty-state-small" *ngIf="summary.earnedBadges.length === 0 && summary.lockedBadges.length === 0">
+                            No badges available.
+                        </div>
+                    </div>
+                </mat-card>
+            </div>
+        </div>
+
+        <!-- REWARDS SECTION -->
+        <div class="rewards-section">
+            <h2 class="section-title">Available Rewards</h2>
+            <div class="rewards-grid">
+                <mat-card class="reward-card" *ngFor="let reward of summary.availableRewards" 
+                          [class.disabled]="summary.ecoPoints < reward.pointsRequired">
+                    <div class="reward-icon">{{ reward.icon || '🎁' }}</div>
+                    <div class="reward-content">
+                        <h3>{{ reward.name }}</h3>
+                        <p>{{ reward.description }}</p>
+                    </div>
+                    <div class="reward-action">
+                        <div class="reward-cost">
+                            <mat-icon>stars</mat-icon>
+                            <span>{{ reward.pointsRequired }}</span>
+                        </div>
+                        <button mat-flat-button color="primary" 
+                                [disabled]="summary.ecoPoints < reward.pointsRequired || redeemingRewardId === reward.id"
+                                (click)="redeemReward(reward)">
+                            <span *ngIf="redeemingRewardId !== reward.id">Redeem</span>
+                            <span *ngIf="redeemingRewardId === reward.id">Redeeming...</span>
+                        </button>
+                    </div>
+                </mat-card>
+
+                <div class="empty-state-small full-width" *ngIf="summary.availableRewards.length === 0">
+                    No rewards available at the moment. Check back later!
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

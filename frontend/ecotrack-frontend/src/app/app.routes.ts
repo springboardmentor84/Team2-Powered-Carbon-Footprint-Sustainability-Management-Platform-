@@ -16,6 +16,8 @@ import { Goals } from './features/goals/pages/goals/goals';
 import { Reports } from './features/reports/pages/reports/reports';
 import { Analytics } from './features/analytics/pages/analytics/analytics';
 import { Leaderboard } from './features/leaderboard/pages/leaderboard/leaderboard';
+import { AchievementsComponent } from './features/achievements/pages/achievements/achievements.component';
+import { ChallengesComponent } from './features/challenges/pages/challenges/challenges.component';
 import { Notifications } from './features/notifications/pages/notifications/notifications';
 import { Profile } from './features/profile/pages/profile/profile';
 import { Settings } from './features/settings/pages/settings/settings';
@@ -54,6 +56,8 @@ export const routes: Routes = [
       { path: 'reports', component: Reports },
       { path: 'analytics', component: Analytics },
       { path: 'leaderboard', component: Leaderboard },
+      { path: 'achievements', component: AchievementsComponent },
+      { path: 'challenges', component: ChallengesComponent },
       { path: 'notifications', component: Notifications },
       { path: 'profile', component: Profile },
       { path: 'settings', component: Settings },

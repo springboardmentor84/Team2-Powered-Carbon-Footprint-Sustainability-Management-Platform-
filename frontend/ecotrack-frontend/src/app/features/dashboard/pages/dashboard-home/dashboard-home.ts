@@ -32,6 +32,9 @@ import {
   DashboardSummary
 } from '../../../../core/services/dashboard/dashboard.service';
 
+import { AnalyticsService } from '../../../../core/services/analytics.service';
+import { AnalyticsResponse } from '../../../../core/models/analytics.model';
+
 import {
   GoalService,
   GoalResponse
@@ -129,6 +132,9 @@ export class DashboardHome
   private readonly dialog =
     inject(MatDialog);
 
+  private readonly analyticsService =
+    inject(AnalyticsService);
+
 
   // =========================================================
   // SUBSCRIPTIONS
@@ -143,6 +149,8 @@ export class DashboardHome
   private goalChangedSubscription?: Subscription;
 
   private goalProgressSubscription?: Subscription;
+
+  private analyticsSubscription?: Subscription;
 
 
   // =========================================================
@@ -168,6 +176,8 @@ export class DashboardHome
   goals: GoalResponse[] = [];
 
   goalProgress = 0;
+
+  analyticsData?: AnalyticsResponse | null = null;
 
 
   // =========================================================
@@ -251,6 +261,8 @@ export class DashboardHome
 
     this.loadGoals();
 
+    this.loadAnalytics();
+
 
     // ---------------------------------------------------------
     // Refresh goals only when goalChanged$ emits
@@ -302,6 +314,8 @@ export class DashboardHome
     this.goalChangedSubscription?.unsubscribe();
 
     this.goalProgressSubscription?.unsubscribe();
+
+    this.analyticsSubscription?.unsubscribe();
 
     this.chart?.destroy();
 
@@ -355,11 +369,7 @@ export class DashboardHome
 
 
             // Sustainability score comes from activities
-            this.stats[2].value =
-              String(
-                this.activityService
-                  .getSustainabilityScore()
-              );
+            this.stats[2].value = '0';
 
 
             // Goal progress is loaded separately
@@ -431,9 +441,7 @@ export class DashboardHome
       activities.length;
 
 
-    const sustainabilityScore =
-      this.activityService
-        .getSustainabilityScore();
+    const sustainabilityScore = 0;
 
 
     this.stats[0].value =
@@ -782,6 +790,22 @@ export class DashboardHome
 
     this.updateChart();
 
+  }
+
+
+  // =========================================================
+  // LOAD ANALYTICS DATA FOR CHART
+  // =========================================================
+
+  private loadAnalytics(): void {
+    this.analyticsSubscription = this.analyticsService.getAnalytics().subscribe({
+      next: (data) => {
+        this.analyticsData = data;
+      },
+      error: (err) => {
+        console.error('[DASHBOARD] Analytics load failed:', err);
+      }
+    });
   }
 
 

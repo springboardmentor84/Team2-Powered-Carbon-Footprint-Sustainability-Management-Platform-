@@ -20,3 +20,8 @@ backend/HELP.md
 
 # macOS
 .DS_Store
+# Local Developer Configuration
+application-local.properties
+.env
+.env.*
+*.local

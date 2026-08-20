@@ -1,7 +1,8 @@
 .page {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  padding: 20px 24px 32px;
+  gap: 20px;
 }
 
 .welcome-card {
@@ -37,9 +38,9 @@
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
-  margin-bottom: 24px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 20px;
 }
 
 .box {
@@ -53,7 +54,6 @@
   align-items: center;
   justify-content: center;
   transition: transform 0.2s, box-shadow 0.2s;
-  height: 100%;
 }
 
 .box:hover {
@@ -113,8 +113,9 @@
 
 .charts-row {
   display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: 24px;
+  grid-template-columns: minmax(0, 2fr) minmax(320px, 1fr);
+  gap: 20px;
+  align-items: stretch;
 }
 
 .dashboard-card {
@@ -157,6 +158,9 @@
 
 .component-wrapper {
   flex-grow: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 .category-list {
@@ -206,7 +210,7 @@
 }
 
 .insights-section {
-  margin-top: 8px;
+  margin-top: 20px;
 }
 
 .section-title {
@@ -320,7 +324,7 @@
 
 @media (max-width: 768px) {
   .grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
   
   .insights-grid {

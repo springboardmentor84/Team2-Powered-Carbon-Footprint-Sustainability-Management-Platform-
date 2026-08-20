@@ -11,9 +11,9 @@ public class CloudinaryTest {
     @Test
     public void testUpload() throws Exception {
         Map<String, String> config = new HashMap<>();
-        config.put("cloud_name", "fakecloudname123"); // FAKE CLOUD NAME
-        config.put("api_key", "439172672988712"); // REAL KEY
-        config.put("api_secret", "ivDQR-Ao72Mc0TQV1ObcyktN4RA"); // REAL SECRET
+        config.put("cloud_name", "YOUR_CLOUD_NAME"); // FAKE CLOUD NAME
+        config.put("api_key", "YOUR_API_KEY"); // FAKE KEY
+        config.put("api_secret", "YOUR_API_SECRET"); // FAKE SECRET
         
         Cloudinary cloudinary = new Cloudinary(config);
         String publicId = UUID.randomUUID().toString();

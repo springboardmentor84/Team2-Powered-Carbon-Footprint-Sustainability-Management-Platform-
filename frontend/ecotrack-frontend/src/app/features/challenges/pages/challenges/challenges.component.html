@@ -1,0 +1,129 @@
+<div class="page">
+    <section class="welcome-card">
+        <div class="welcome-content">
+            <span class="eyebrow">COMMUNITY</span>
+            <h1>🌍 Challenges</h1>
+            <p>Join community challenges, track your progress, and compete for top spots on the leaderboard!</p>
+        </div>
+    </section>
+
+    <!-- LOADING STATE -->
+    <div *ngIf="loading" class="loading-state">
+        <mat-spinner diameter="40"></mat-spinner>
+        <p>Loading challenges...</p>
+    </div>
+
+    <!-- ERROR STATE -->
+    <div *ngIf="!loading && error" class="error-state">
+        <mat-icon>error_outline</mat-icon>
+        <p>Failed to load challenges.</p>
+        <button class="retry-btn" (click)="loadData()">Retry</button>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div *ngIf="!loading && !error" class="challenges-content">
+        <mat-tab-group>
+            <!-- MY CHALLENGES TAB -->
+            <mat-tab label="My Active Challenges">
+                <div class="tab-content">
+                    <div class="empty-state-small" *ngIf="myChallenges.length === 0">
+                        You haven't joined any challenges yet. Check the Available Challenges tab!
+                    </div>
+
+                    <div class="my-challenges-grid" *ngIf="myChallenges.length > 0">
+                        <mat-card class="challenge-card" *ngFor="let mc of myChallenges">
+                            <div class="card-header">
+                                <h2>{{ mc.participation.challengeTitle }}</h2>
+                                <span class="status-badge" [ngClass]="mc.progress?.challengeStatus?.toLowerCase() || 'loading'">
+                                    {{ mc.progress?.challengeStatus?.replace('_', ' ') || 'Loading...' }}
+                                </span>
+                            </div>
+
+                            <div class="card-body">
+                                <div *ngIf="mc.loading" class="mini-loading">
+                                    <mat-spinner diameter="20"></mat-spinner> Loading details...
+                                </div>
+
+                                <div *ngIf="!mc.loading && mc.progress">
+                                    <div class="progress-stats">
+                                        <span>{{ mc.progress.currentProgress }} / {{ mc.progress.target }} {{ mc.progress.unit }}</span>
+                                        <span>{{ mc.progress.completionPercentage }}%</span>
+                                    </div>
+                                    <div class="progress-bar-bg">
+                                        <div class="progress-bar-fill" [style.width.%]="mc.progress.completionPercentage"></div>
+                                    </div>
+                                    
+                                    <div class="reward-info" *ngIf="mc.progress.challengeStatus === 'COMPLETED'">
+                                        <mat-icon>stars</mat-icon> Reward Granted!
+                                    </div>
+
+                                    <div class="leaderboard-snippet" *ngIf="mc.leaderboard.length > 0">
+                                        <h4>Top Participants</h4>
+                                        <div class="lb-entry" *ngFor="let entry of mc.leaderboard">
+                                            <span class="lb-rank">#{{ entry.rank }}</span>
+                                            <span class="lb-name">{{ entry.userName }}</span>
+                                            <span class="lb-score">{{ entry.progress }} {{ entry.unit }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card-actions">
+                                <button mat-stroked-button color="warn" 
+                                        [disabled]="leavingChallengeId === mc.participation.challengeId"
+                                        (click)="leaveChallenge(mc.participation.challengeId)">
+                                    Leave Challenge
+                                </button>
+                            </div>
+                        </mat-card>
+                    </div>
+                </div>
+            </mat-tab>
+
+            <!-- AVAILABLE CHALLENGES TAB -->
+            <mat-tab label="Available Challenges">
+                <div class="tab-content">
+                    <div class="empty-state-small" *ngIf="availableChallenges.length === 0">
+                        No available challenges right now. You might have joined all of them!
+                    </div>
+
+                    <div class="available-challenges-grid" *ngIf="availableChallenges.length > 0">
+                        <mat-card class="challenge-card available" *ngFor="let challenge of availableChallenges">
+                            <div class="card-header">
+                                <div class="header-content">
+                                    <span class="category-eyebrow">{{ challenge.category.replace('_', ' ') }}</span>
+                                    <h2>{{ challenge.title }}</h2>
+                                </div>
+                                <div class="reward-badge">
+                                    <mat-icon>stars</mat-icon>
+                                    {{ challenge.rewardPoints }}
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <p class="desc">{{ challenge.description }}</p>
+                                <div class="challenge-meta">
+                                    <div class="meta-item">
+                                        <mat-icon>flag</mat-icon>
+                                        <span>Target: {{ challenge.target }} {{ challenge.unit }}</span>
+                                    </div>
+                                    <div class="meta-item">
+                                        <mat-icon>date_range</mat-icon>
+                                        <span>Ends: {{ challenge.endDate | date:'mediumDate' }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-actions end">
+                                <button mat-flat-button color="primary" 
+                                        [disabled]="joiningChallengeId === challenge.id"
+                                        (click)="joinChallenge(challenge)">
+                                    <span *ngIf="joiningChallengeId !== challenge.id">Join Challenge</span>
+                                    <span *ngIf="joiningChallengeId === challenge.id">Joining...</span>
+                                </button>
+                            </div>
+                        </mat-card>
+                    </div>
+                </div>
+            </mat-tab>
+        </mat-tab-group>
+    </div>
+</div>

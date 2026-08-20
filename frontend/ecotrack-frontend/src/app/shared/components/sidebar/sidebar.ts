@@ -58,6 +58,10 @@ export class Sidebar implements OnInit, OnDestroy {
 
   { title:'Leaderboard', icon:'leaderboard', route:'/dashboard/leaderboard' },
 
+  { title:'Achievements', icon:'emoji_events', route:'/dashboard/achievements' },
+
+  { title:'Challenges', icon:'public', route:'/dashboard/challenges' },
+
   { title:'Notifications', icon:'notifications', route:'/dashboard/notifications' },
 
   { title:'Profile', icon:'person', route:'/dashboard/profile' },

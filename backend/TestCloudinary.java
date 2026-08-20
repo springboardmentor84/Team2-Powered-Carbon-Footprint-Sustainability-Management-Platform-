@@ -6,9 +6,9 @@ import java.util.HashMap;
 public class TestCloudinary {
     public static void main(String[] args) throws Exception {
         Map<String, String> config = new HashMap<>();
-        config.put("cloud_name", "ddszr1sdv");
-        config.put("api_key", "439172672988712");
-        config.put("api_secret", "ivDQR-Ao72Mc0TQV1ObcyktN4RA");
+        config.put("cloud_name", "YOUR_CLOUD_NAME");
+        config.put("api_key", "YOUR_API_KEY");
+        config.put("api_secret", "YOUR_API_SECRET");
         Cloudinary cloudinary = new Cloudinary(config);
         
         System.out.println("Uploading a test image...");
