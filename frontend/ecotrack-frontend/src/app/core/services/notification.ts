@@ -6,7 +6,6 @@ import { API_ENDPOINTS } from '../constants/api.constants';
 
 export interface NotificationResponse {
   id: number;
-  type: string;
   title: string;
   message: string;
   isRead: boolean;
@@ -18,10 +17,17 @@ export interface NotificationResponse {
 })
 export class NotificationService {
   private http = inject(HttpClient);
+  private apiUrl = `${environment.apiUrl}${API_ENDPOINTS.NOTIFICATIONS.BASE}`;
 
   getNotifications(): Observable<NotificationResponse[]> {
-    return this.http.get<NotificationResponse[]>(
-      `${environment.apiUrl}${API_ENDPOINTS.NOTIFICATIONS.BASE}`
-    );
+    return this.http.get<NotificationResponse[]>(this.apiUrl);
+  }
+
+  markAsRead(id: number): Observable<NotificationResponse> {
+    return this.http.put<NotificationResponse>(`${this.apiUrl}/${id}/read`, {});
+  }
+
+  deleteNotification(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 }

@@ -17,9 +17,15 @@
                 <mat-icon matListItemIcon>
                     {{item.icon}}
                 </mat-icon>
-                <span *ngIf="!isCollapsed">
+                <span *ngIf="!isCollapsed" class="title-text">
                     {{item.title}}
                 </span>
+                
+                <span *ngIf="item.title === 'Notifications' && unreadCount > 0 && !isCollapsed" class="unread-badge">
+                    {{ unreadCount }}
+                </span>
+                
+                <span *ngIf="item.title === 'Notifications' && unreadCount > 0 && isCollapsed" class="unread-dot"></span>
             </a>
         }
 

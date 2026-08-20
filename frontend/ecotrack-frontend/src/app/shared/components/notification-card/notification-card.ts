@@ -6,7 +6,6 @@ import { NotificationService, NotificationResponse } from '../../../core/service
 
 interface NotificationItem {
   id: number;
-  type: string;
   icon: string;
   color: string;
   title: string;
@@ -36,9 +35,8 @@ export class NotificationCard implements OnInit {
       next: (notifications) => {
         this.notificationList = notifications.map(n => ({
           id: n.id,
-          type: n.type,
-          icon: this.getIconForType(n.type),
-          color: this.getColorForType(n.type),
+          icon: this.getIconForTitle(n.title),
+          color: this.getColorForTitle(n.title),
           title: n.title,
           message: n.message,
           time: new Date(n.createdAt).toLocaleDateString(),
@@ -49,17 +47,19 @@ export class NotificationCard implements OnInit {
     });
   }
 
-  private getIconForType(type: string): string {
-    if (type === 'GOAL') return '🏆';
-    if (type === 'ACTIVITY') return '✅';
-    if (type === 'SYSTEM') return '📢';
+  private getIconForTitle(title: string): string {
+    if (title.toLowerCase().includes('goal')) return '🏆';
+    if (title.toLowerCase().includes('challenge')) return '🌍';
+    if (title.toLowerCase().includes('badge')) return '🏅';
+    if (title.toLowerCase().includes('reward')) return '🎁';
     return '🔔';
   }
 
-  private getColorForType(type: string): string {
-    if (type === 'GOAL') return '#2E7D32';
-    if (type === 'ACTIVITY') return '#43A047';
-    if (type === 'SYSTEM') return '#1565C0';
+  private getColorForTitle(title: string): string {
+    if (title.toLowerCase().includes('goal')) return '#2E7D32';
+    if (title.toLowerCase().includes('challenge')) return '#1565C0';
+    if (title.toLowerCase().includes('badge')) return '#F57F17';
+    if (title.toLowerCase().includes('reward')) return '#C2185B';
     return '#757575';
   }
 

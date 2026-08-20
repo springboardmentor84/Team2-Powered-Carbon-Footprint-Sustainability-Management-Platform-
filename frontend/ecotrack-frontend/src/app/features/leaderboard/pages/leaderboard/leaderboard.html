@@ -1,1 +1,100 @@
-<p>leaderboard works!</p>
+<div class="page">
+    <section class="welcome-card">
+        <div class="welcome-content">
+            <span class="eyebrow">RANKINGS</span>
+            <h1>🏆 Global Leaderboard</h1>
+            <p>See how your sustainability impact compares to the rest of the community.</p>
+        </div>
+    </section>
+
+    <!-- LOADING STATE -->
+    <div *ngIf="loading" class="loading-state">
+        <mat-spinner diameter="40"></mat-spinner>
+        <p>Loading leaderboard rankings...</p>
+    </div>
+
+    <!-- ERROR STATE -->
+    <div *ngIf="!loading && error" class="error-state">
+        <mat-icon>error_outline</mat-icon>
+        <p>Failed to load leaderboard data.</p>
+        <button class="retry-btn" (click)="loadData()">Retry</button>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div *ngIf="!loading && !error" class="leaderboard-container">
+        
+        <!-- CURRENT USER RANK BANNER -->
+        <mat-card class="my-rank-card" *ngIf="myRank">
+            <div class="rank-badge my-rank">
+                <span>#{{ myRank.rank }}</span>
+            </div>
+            <div class="user-info">
+                <img *ngIf="myRank.profileImage" [src]="myRank.profileImage" alt="Profile" class="avatar">
+                <div *ngIf="!myRank.profileImage" class="avatar placeholder">
+                    <mat-icon>person</mat-icon>
+                </div>
+                <div class="details">
+                    <h3>You ({{ myRank.fullName }})</h3>
+                    <div class="stats">
+                        <span class="stat"><mat-icon>eco</mat-icon> {{ myRank.ecoPoints }} pts</span>
+                        <span class="stat"><mat-icon>military_tech</mat-icon> {{ myRank.badgeCount }} badges</span>
+                    </div>
+                </div>
+            </div>
+        </mat-card>
+
+        <!-- PODIUM (Top 3) -->
+        <div class="podium-container" *ngIf="leaderboard.length >= 3">
+            <div class="podium-item second">
+                <div class="rank-circle silver">2</div>
+                <img *ngIf="leaderboard[1].profileImage" [src]="leaderboard[1].profileImage" class="avatar large">
+                <div *ngIf="!leaderboard[1].profileImage" class="avatar large placeholder"><mat-icon>person</mat-icon></div>
+                <h4>{{ leaderboard[1].fullName }}</h4>
+                <p>{{ leaderboard[1].ecoPoints }} pts</p>
+                <div class="podium-block silver-block"></div>
+            </div>
+            
+            <div class="podium-item first">
+                <mat-icon class="crown">emoji_events</mat-icon>
+                <div class="rank-circle gold">1</div>
+                <img *ngIf="leaderboard[0].profileImage" [src]="leaderboard[0].profileImage" class="avatar large gold-border">
+                <div *ngIf="!leaderboard[0].profileImage" class="avatar large placeholder gold-border"><mat-icon>person</mat-icon></div>
+                <h4>{{ leaderboard[0].fullName }}</h4>
+                <p>{{ leaderboard[0].ecoPoints }} pts</p>
+                <div class="podium-block gold-block"></div>
+            </div>
+
+            <div class="podium-item third">
+                <div class="rank-circle bronze">3</div>
+                <img *ngIf="leaderboard[2].profileImage" [src]="leaderboard[2].profileImage" class="avatar large">
+                <div *ngIf="!leaderboard[2].profileImage" class="avatar large placeholder"><mat-icon>person</mat-icon></div>
+                <h4>{{ leaderboard[2].fullName }}</h4>
+                <p>{{ leaderboard[2].ecoPoints }} pts</p>
+                <div class="podium-block bronze-block"></div>
+            </div>
+        </div>
+
+        <!-- LIST (Rank 4+) -->
+        <div class="list-container">
+            <mat-card class="list-item" *ngFor="let user of leaderboard; let i = index" [ngClass]="{'hidden': i < 3 && leaderboard.length >= 3}">
+                <ng-container *ngIf="!(i < 3 && leaderboard.length >= 3)">
+                    <div class="rank-number">
+                        #{{ user.rank }}
+                    </div>
+                    
+                    <div class="user-info">
+                        <img *ngIf="user.profileImage" [src]="user.profileImage" class="avatar small">
+                        <div *ngIf="!user.profileImage" class="avatar small placeholder"><mat-icon>person</mat-icon></div>
+                        <span class="name">{{ user.fullName }}</span>
+                    </div>
+
+                    <div class="user-stats">
+                        <span class="stat-badge"><mat-icon>military_tech</mat-icon> {{ user.badgeCount }}</span>
+                        <span class="points">{{ user.ecoPoints }} pts</span>
+                    </div>
+                </ng-container>
+            </mat-card>
+        </div>
+
+    </div>
+</div>

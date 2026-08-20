@@ -1,9 +1,82 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { NotificationService, NotificationResponse } from '../../../../core/services/notification';
 
 @Component({
   selector: 'app-notifications',
-  imports: [],
+  standalone: true,
+  imports: [
+    CommonModule,
+    MatCardModule,
+    MatIconModule,
+    MatButtonModule,
+    MatProgressSpinnerModule,
+    MatSnackBarModule
+  ],
   templateUrl: './notifications.html',
-  styleUrl: './notifications.css',
+  styleUrls: ['./notifications.css']
 })
-export class Notifications {}
+export class Notifications implements OnInit {
+  private readonly notificationService = inject(NotificationService);
+  private readonly snackBar = inject(MatSnackBar);
+
+  notifications: NotificationResponse[] = [];
+  loading = true;
+  error = false;
+
+  ngOnInit(): void {
+    this.loadNotifications();
+  }
+
+  loadNotifications(): void {
+    this.loading = true;
+    this.error = false;
+    this.notificationService.getNotifications().subscribe({
+      next: (data) => {
+        this.notifications = data;
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error('Failed to load notifications', err);
+        this.error = true;
+        this.loading = false;
+      }
+    });
+  }
+
+  markAsRead(notification: NotificationResponse): void {
+    if (notification.isRead) return;
+    
+    // Optimistic update
+    notification.isRead = true;
+    
+    this.notificationService.markAsRead(notification.id).subscribe({
+      error: (err) => {
+        console.error('Failed to mark as read', err);
+        notification.isRead = false; // Revert
+        this.snackBar.open('Failed to update status', 'Close', { duration: 3000 });
+      }
+    });
+  }
+
+  deleteNotification(id: number): void {
+    const prevList = [...this.notifications];
+    this.notifications = this.notifications.filter(n => n.id !== id);
+    
+    this.notificationService.deleteNotification(id).subscribe({
+      next: () => {
+        this.snackBar.open('Notification deleted', 'Close', { duration: 3000 });
+      },
+      error: (err) => {
+        console.error('Failed to delete notification', err);
+        this.notifications = prevList; // Revert
+        this.snackBar.open('Failed to delete notification', 'Close', { duration: 3000 });
+      }
+    });
+  }
+}

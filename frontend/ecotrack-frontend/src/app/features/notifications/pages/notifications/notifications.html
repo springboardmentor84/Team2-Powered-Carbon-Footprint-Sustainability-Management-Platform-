@@ -1,1 +1,61 @@
-<p>notifications works!</p>
+<div class="page">
+    <section class="welcome-card">
+        <div class="welcome-content">
+            <span class="eyebrow">UPDATES</span>
+            <h1>🔔 Notifications</h1>
+            <p>Stay informed about your progress, rewards, and challenge completions.</p>
+        </div>
+    </section>
+
+    <!-- LOADING STATE -->
+    <div *ngIf="loading" class="loading-state">
+        <mat-spinner diameter="40"></mat-spinner>
+        <p>Loading notifications...</p>
+    </div>
+
+    <!-- ERROR STATE -->
+    <div *ngIf="!loading && error" class="error-state">
+        <mat-icon>error_outline</mat-icon>
+        <p>Failed to load notifications.</p>
+        <button class="retry-btn" (click)="loadNotifications()">Retry</button>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div *ngIf="!loading && !error" class="notifications-container">
+        
+        <div class="empty-state" *ngIf="notifications.length === 0">
+            <mat-icon class="empty-icon">notifications_off</mat-icon>
+            <h2>You're all caught up!</h2>
+            <p>You have no notifications right now.</p>
+        </div>
+
+        <div class="notification-list" *ngIf="notifications.length > 0">
+            <mat-card class="notification-item" 
+                      *ngFor="let notification of notifications"
+                      [ngClass]="{'unread': !notification.isRead}"
+                      (click)="markAsRead(notification)">
+                
+                <div class="notification-icon-wrapper">
+                    <mat-icon *ngIf="!notification.isRead" class="unread-dot">fiber_manual_record</mat-icon>
+                    <mat-icon class="main-icon">notifications</mat-icon>
+                </div>
+                
+                <div class="notification-content">
+                    <div class="notification-header">
+                        <h3>{{ notification.title }}</h3>
+                        <span class="timestamp">{{ notification.createdAt | date:'short' }}</span>
+                    </div>
+                    <p class="notification-message">{{ notification.message }}</p>
+                </div>
+
+                <div class="notification-actions">
+                    <button mat-icon-button color="warn" 
+                            (click)="deleteNotification(notification.id); $event.stopPropagation()"
+                            aria-label="Delete notification">
+                        <mat-icon>delete</mat-icon>
+                    </button>
+                </div>
+            </mat-card>
+        </div>
+    </div>
+</div>

@@ -28,6 +28,7 @@ export const API_ENDPOINTS = {
   },
 
   LEADERBOARD: {
+    BASE: '/api/v1/leaderboard',
     ME: '/api/v1/leaderboard/me'
   },
 

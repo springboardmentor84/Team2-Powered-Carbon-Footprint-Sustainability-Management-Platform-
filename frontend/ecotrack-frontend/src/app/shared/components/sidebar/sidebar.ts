@@ -8,6 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { LayoutService } from '../../../core/services/layout/layout.service';
+import { NotificationService } from '../../../core/services/notification';
 
 @Component({
   selector: 'app-sidebar',
@@ -26,14 +27,30 @@ import { LayoutService } from '../../../core/services/layout/layout.service';
 })
 export class Sidebar implements OnInit, OnDestroy {
   private layoutService = inject(LayoutService);
+  private notificationService = inject(NotificationService);
   private cdr = inject(ChangeDetectorRef);
   private sub?: Subscription;
 
   isCollapsed = false;
+  unreadCount = 0;
 
   ngOnInit() {
     this.sub = this.layoutService.isSidebarCollapsed$.subscribe(collapsed => {
       this.isCollapsed = collapsed;
+      this.cdr.markForCheck();
+    });
+
+    this.loadUnreadCount();
+    
+    // Check every 30 seconds
+    setInterval(() => {
+      this.loadUnreadCount();
+    }, 30000);
+  }
+
+  loadUnreadCount() {
+    this.notificationService.getNotifications().subscribe(notifications => {
+      this.unreadCount = notifications.filter(n => !n.isRead).length;
       this.cdr.markForCheck();
     });
   }
