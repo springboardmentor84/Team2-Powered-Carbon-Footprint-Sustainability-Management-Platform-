@@ -1,8 +1,11 @@
 import { Injectable, inject } from '@angular/core';
+
 import { HttpClient } from '@angular/common/http';
+
 import { Observable } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
+
 import {
   TOKEN_KEY,
   USER_KEY
@@ -19,8 +22,13 @@ export interface LoginRequest {
 
 export interface LoginResponse {
   token: string;
+  tokenType?: string;
+  expiresIn?: number;
+
+  id?: number;
   email: string;
   fullName: string;
+  role?: string;
 }
 
 
@@ -32,7 +40,10 @@ export interface RegisterRequest {
 
 
 export interface RegisterResponse {
-  message: string;
+  id?: number;
+  fullName?: string;
+  email?: string;
+  message?: string;
 }
 
 
@@ -41,14 +52,16 @@ export interface RegisterResponse {
 })
 export class AuthService {
 
-  private http = inject(HttpClient);
+  private readonly http =
+    inject(HttpClient);
 
-  private readonly API = environment.apiUrl;
+  private readonly API =
+    environment.apiUrl;
 
 
-  // ============================
+  // =========================================================
   // LOGIN
-  // ============================
+  // =========================================================
 
   login(
     request: LoginRequest
@@ -58,13 +71,12 @@ export class AuthService {
       `${this.API}${API_ENDPOINTS.AUTH.LOGIN}`,
       request
     );
-
   }
 
 
-  // ============================
+  // =========================================================
   // SIGNUP
-  // ============================
+  // =========================================================
 
   register(
     request: RegisterRequest
@@ -74,21 +86,32 @@ export class AuthService {
       `${this.API}${API_ENDPOINTS.AUTH.SIGNUP}`,
       request
     );
-
   }
 
 
-  // ============================
+  // =========================================================
   // TOKEN
-  // ============================
+  // =========================================================
 
-  saveToken(token: string): void {
+  saveToken(
+    token: string
+  ): void {
+
+    // Always remove Bearer before saving.
+    // Interceptor adds "Bearer " when making requests.
+    const cleanToken =
+      token
+        .replace(/^Bearer\s+/i, '')
+        .trim();
 
     localStorage.setItem(
       TOKEN_KEY,
-      token
+      cleanToken
     );
 
+    console.log(
+      '[AUTH] Token saved successfully'
+    );
   }
 
 
@@ -97,21 +120,27 @@ export class AuthService {
     return localStorage.getItem(
       TOKEN_KEY
     );
-
   }
 
 
-  // ============================
-  // USER
-  // ============================
+  hasToken(): boolean {
 
-  saveUser(user: LoginResponse): void {
+    return !!this.getToken();
+  }
+
+
+  // =========================================================
+  // USER
+  // =========================================================
+
+  saveUser(
+    user: LoginResponse
+  ): void {
 
     localStorage.setItem(
       USER_KEY,
       JSON.stringify(user)
     );
-
   }
 
 
@@ -120,22 +149,34 @@ export class AuthService {
     const data =
       localStorage.getItem(USER_KEY);
 
-    return data
-      ? JSON.parse(data)
-      : null;
+    if (!data) {
+      return null;
+    }
 
+    try {
+
+      return JSON.parse(data);
+
+    } catch {
+
+      return null;
+
+    }
   }
 
 
-  // ============================
+  // =========================================================
   // LOGOUT
-  // ============================
+  // =========================================================
 
   logout(): void {
 
     localStorage.removeItem(TOKEN_KEY);
+
     localStorage.removeItem(USER_KEY);
 
+    console.log(
+      '[AUTH] User logged out and token removed'
+    );
   }
-
 }

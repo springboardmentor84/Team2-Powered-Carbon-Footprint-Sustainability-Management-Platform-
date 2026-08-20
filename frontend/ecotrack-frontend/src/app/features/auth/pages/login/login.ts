@@ -82,24 +82,59 @@ export class Login {
       password: this.password
     }).subscribe({
 
-      next: (response: LoginResponse) => {
+     next: (response: LoginResponse) => {
 
-        this.isLoading = false;
+  this.isLoading = false;
 
-        this.authService.saveToken(response.token);
-        this.authService.saveUser(response);
+  console.log(
+    '[LOGIN] Backend response:',
+    response
+  );
 
-        this.snackBar.open(
-          'Login Successful!',
-          'Close',
-          {
-            duration: 3000,
-            panelClass: ['snack-success']
-          }
-        );
+  if (!response.token) {
 
-        this.router.navigate(['/dashboard']);
-      },
+    this.snackBar.open(
+      'Login succeeded but no JWT token was received.',
+      'Close',
+      {
+        duration: 4000,
+        panelClass: ['snack-error']
+      }
+    );
+
+    return;
+  }
+
+  // Clear any old invalid token first
+  this.authService.logout();
+
+  // Save fresh JWT
+  this.authService.saveToken(
+    response.token
+  );
+
+  this.authService.saveUser(
+    response
+  );
+
+  console.log(
+    '[LOGIN] Fresh JWT saved. Token exists:',
+    !!this.authService.getToken()
+  );
+
+  this.snackBar.open(
+    'Login Successful!',
+    'Close',
+    {
+      duration: 3000,
+      panelClass: ['snack-success']
+    }
+  );
+
+  this.router.navigate(
+    ['/dashboard']
+  );
+},
 
       error: (err: any) => {
 
