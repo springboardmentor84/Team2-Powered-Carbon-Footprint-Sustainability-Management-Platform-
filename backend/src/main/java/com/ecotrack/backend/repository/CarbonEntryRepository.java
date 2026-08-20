@@ -37,4 +37,7 @@ public interface CarbonEntryRepository extends JpaRepository<CarbonEntry, Long> 
     List<CarbonEntry> findByUser_EmailAndCreatedAtBetween(String email, LocalDateTime startDate, LocalDateTime endDate);
 
     List<CarbonEntry> findByUser_EmailAndCreatedAtBetweenOrderByCreatedAtDesc(String email, LocalDateTime startDate, LocalDateTime endDate);
+
+    @Query(value = "SELECT EXTRACT(MONTH FROM created_at) AS month, SUM(carbon_emission) FROM carbon_entries WHERE user_id = (SELECT id FROM users WHERE email = :email) AND EXTRACT(YEAR FROM created_at) = :year GROUP BY EXTRACT(MONTH FROM created_at)", nativeQuery = true)
+    List<Object[]> findMonthlyEmissionsByUserEmailAndYear(@Param("email") String email, @Param("year") int year);
 }

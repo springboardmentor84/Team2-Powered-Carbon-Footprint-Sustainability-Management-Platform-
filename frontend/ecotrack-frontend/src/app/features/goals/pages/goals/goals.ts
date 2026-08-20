@@ -467,10 +467,7 @@ export class Goals
    */
 
   get sustainabilityScore(): number {
-
-    return this.activityService
-      .getSustainabilityScore();
-
+    return 0; // Deprecated
   }
 
 

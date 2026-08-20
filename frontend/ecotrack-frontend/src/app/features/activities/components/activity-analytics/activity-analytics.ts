@@ -1,9 +1,11 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
-import { ActivityService } from '../../../../core/services/activity.service';
+import { AnalyticsService } from '../../../../core/services/analytics.service';
+import { AnalyticsResponse } from '../../../../core/models/analytics.model';
 
 @Component({
   selector: 'app-activity-analytics',
@@ -11,58 +13,29 @@ import { ActivityService } from '../../../../core/services/activity.service';
   imports: [
     CommonModule,
     MatCardModule,
-    MatIconModule
+    MatIconModule,
+    MatProgressSpinnerModule
   ],
   templateUrl: './activity-analytics.html',
   styleUrl: './activity-analytics.css'
 })
-export class ActivityAnalytics {
+export class ActivityAnalytics implements OnInit {
 
-  private activityService = inject(ActivityService);
+  private analyticsService = inject(AnalyticsService);
 
-  get activities() {
+  analyticsData: AnalyticsResponse | null = null;
+  loading = true;
 
-    return this.activityService.getActivities();
-
-  }
-
-  get totalActivities() {
-
-    return this.activities.length;
-
-  }
-
-  get carbonSaved() {
-    return Number(this.activityService.getCarbonSaved().toFixed(2));
-  }
-
-  get averageCarbon() {
-    if (this.activities.length === 0) {
-      return 0;
-    }
-    const total = this.activityService.getCarbonSaved();
-    return Number((total / this.activities.length).toFixed(2));
-  }
-
-  get bestCategory() {
-    if (this.activities.length === 0) {
-      return '-';
-    }
-    const map: any = {};
-    this.activities.forEach(activity => {
-      map[activity.category] = (map[activity.category] || 0) + Number(activity.carbonEmission || activity.carbon || 0);
+  ngOnInit() {
+    this.analyticsService.getAnalytics().subscribe({
+      next: (data) => {
+        this.analyticsData = data;
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error('Failed to load analytics', err);
+        this.loading = false;
+      }
     });
-    return Object.keys(map).reduce((a, b) =>
-      map[a] > map[b] ? a : b
-    );
   }
-
-  get progress() {
-
-    const value = this.activityService.getCarbonSaved();
-
-    return Math.min((value / 100) * 100, 100);
-
-  }
-
 }

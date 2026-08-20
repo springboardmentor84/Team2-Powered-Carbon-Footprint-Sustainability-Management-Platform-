@@ -2,10 +2,11 @@ import { Component, inject, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
-import { Subscription } from 'rxjs';
+import { Subscription, forkJoin } from 'rxjs';
 
 import { ActivityService } from '../../../../core/services/activity.service';
 import { DashboardService } from '../../../../core/services/dashboard/dashboard.service';
+import { AnalyticsService } from '../../../../core/services/analytics.service';
 
 @Component({
   selector: 'app-activity-summary',
@@ -22,42 +23,50 @@ export class ActivitySummary implements OnInit, OnDestroy {
 
   private activityService = inject(ActivityService);
   private dashboardService = inject(DashboardService);
+  private analyticsService = inject(AnalyticsService);
   
-  private streakSub?: Subscription;
+  private sub?: Subscription;
   private backendStreak = 0;
+  private averageEmissions = 0;
+  private totalActivities = 0;
+  private totalEmissions = 0;
 
   ngOnInit() {
-    this.streakSub = this.dashboardService.getSummary().subscribe({
-      next: (summary) => {
+    this.sub = forkJoin({
+      summary: this.dashboardService.getSummary(),
+      analytics: this.analyticsService.getAnalytics()
+    }).subscribe({
+      next: ({ summary, analytics }) => {
         if (summary && summary.currentStreak !== undefined) {
           this.backendStreak = summary.currentStreak;
+        }
+        if (analytics) {
+          this.averageEmissions = analytics.averageEmissions;
+          this.totalActivities = analytics.totalActivities;
+          this.totalEmissions = analytics.totalEmissions;
         }
       }
     });
   }
 
   ngOnDestroy() {
-    if (this.streakSub) {
-      this.streakSub.unsubscribe();
+    if (this.sub) {
+      this.sub.unsubscribe();
     }
   }
 
   get cards() {
-    const activities = this.activityService.getActivities();
-    const carbon = this.activityService.getCarbonSaved();
-    const score = this.activityService.getSustainabilityScore();
-
     return [
       {
         title: 'Total Activities',
-        value: activities.length,
+        value: this.totalActivities,
         subtitle: 'All time logs',
         icon: 'task_alt',
         color: '#2E7D32'
       },
       {
         title: 'Total Emissions',
-        value: Number(carbon.toFixed(2)) + ' kg',
+        value: Number(this.totalEmissions.toFixed(2)) + ' kg',
         subtitle: 'Carbon footprint',
         icon: 'eco',
         color: '#43A047'
@@ -70,10 +79,10 @@ export class ActivitySummary implements OnInit, OnDestroy {
         color: '#FB8C00'
       },
       {
-        title: 'Weekly Score',
-        value: score + '%',
-        subtitle: 'Sustainability index',
-        icon: 'leaderboard',
+        title: 'Avg Emissions',
+        value: this.averageEmissions + ' kg',
+        subtitle: 'Per activity',
+        icon: 'data_usage',
         color: '#1565C0'
       }
     ];

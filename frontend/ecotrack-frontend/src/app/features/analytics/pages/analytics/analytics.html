@@ -1,1 +1,138 @@
-<p>analytics works!</p>
+<div class="page">
+    <section class="welcome-card">
+        <div class="welcome-content">
+            <span class="eyebrow">ANALYTICS</span>
+            <h1>Carbon Analytics</h1>
+            <p>Deep dive into your environmental impact and monitor long-term trends.</p>
+        </div>
+    </section>
+
+    <!-- LOADING STATE -->
+    <div *ngIf="loading" class="loading-state">
+        <mat-spinner diameter="40"></mat-spinner>
+        <p>Loading analytics data...</p>
+    </div>
+
+    <!-- ERROR STATE -->
+    <div *ngIf="!loading && error" class="error-state">
+        <mat-icon>error_outline</mat-icon>
+        <p>Failed to load analytics data.</p>
+        <button class="retry-btn" (click)="loadAnalytics()">Retry</button>
+    </div>
+
+    <!-- EMPTY STATE -->
+    <div *ngIf="!loading && !error && isEmpty" class="empty-state">
+        <mat-icon>eco</mat-icon>
+        <h3>No carbon activity data yet</h3>
+        <p>Start logging activities to see your environmental trends and category insights.</p>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div *ngIf="!loading && !error && analyticsData && !isEmpty" class="analytics-content">
+        <!-- KPI ROW -->
+        <div class="grid">
+            <mat-card class="box">
+                <mat-icon class="icon activities-icon">task_alt</mat-icon>
+                <div class="box-content">
+                    <h3>{{ analyticsData.totalActivities }}</h3>
+                    <span>Total Activities</span>
+                </div>
+            </mat-card>
+            <mat-card class="box">
+                <mat-icon class="icon emissions-icon">co2</mat-icon>
+                <div class="box-content">
+                    <h3>{{ analyticsData.totalEmissions | number:'1.0-2' }} <small>kg</small></h3>
+                    <span>Total Emissions</span>
+                </div>
+            </mat-card>
+            <mat-card class="box">
+                <mat-icon class="icon avg-icon">data_usage</mat-icon>
+                <div class="box-content">
+                    <h3>{{ analyticsData.averageEmissions | number:'1.0-2' }} <small>kg</small></h3>
+                    <span>Average / Activity</span>
+                </div>
+            </mat-card>
+            <mat-card class="box">
+                <mat-icon class="icon category-icon">category</mat-icon>
+                <div class="box-content">
+                    <h3>{{ analyticsData.topCategory | titlecase }}</h3>
+                    <span>Top Category</span>
+                </div>
+            </mat-card>
+        </div>
+
+        <!-- CHARTS ROW -->
+        <div class="charts-row">
+            <!-- MONTHLY EMISSIONS CHART -->
+            <mat-card class="dashboard-card monthly-card">
+                <div class="card-header">
+                    <div>
+                        <span class="card-label"><mat-icon>calendar_month</mat-icon> MONTHLY OVERVIEW</span>
+                        <h2>Monthly Emissions</h2>
+                    </div>
+                </div>
+                <div class="component-wrapper">
+                    <app-monthly-chart [analyticsData]="analyticsData"></app-monthly-chart>
+                </div>
+            </mat-card>
+
+            <!-- CATEGORY BREAKDOWN -->
+            <mat-card class="dashboard-card category-card">
+                <div class="card-header">
+                    <div>
+                        <span class="card-label"><mat-icon>pie_chart</mat-icon> BREAKDOWN</span>
+                        <h2>Emissions by Category</h2>
+                    </div>
+                </div>
+                <div class="category-list">
+                    <div class="category-item" *ngFor="let cat of analyticsData.categoryBreakdown || []">
+                        <div class="cat-header">
+                            <span class="cat-name">{{ cat.category | titlecase }}</span>
+                            <span class="cat-value">{{ cat.totalEmission | number:'1.0-2' }} kg</span>
+                        </div>
+                        <div class="cat-progress-bg">
+                            <div class="cat-progress-fill" [style.width.%]="(cat.totalEmission / analyticsData.totalEmissions) * 100"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="empty-chart" *ngIf="!analyticsData.categoryBreakdown || analyticsData.categoryBreakdown.length === 0">
+                    <mat-icon>info</mat-icon>
+                    <span>No data to display</span>
+                </div>
+            </mat-card>
+        </div>
+
+        <!-- CARBON INSIGHTS SECTION -->
+        <div class="insights-section">
+            <h2 class="section-title">Carbon Insights</h2>
+            <div class="insights-grid">
+                <mat-card class="insight-card">
+                    <div class="insight-header">
+                        <mat-icon class="insight-icon">emoji_objects</mat-icon>
+                        <span>Top Emission Source</span>
+                    </div>
+                    <div class="insight-value">{{ analyticsData.topCategory | titlecase }}</div>
+                    <div class="insight-desc">Most of your carbon footprint comes from this category.</div>
+                </mat-card>
+                
+                <mat-card class="insight-card">
+                    <div class="insight-header">
+                        <mat-icon class="insight-icon">pie_chart_outline</mat-icon>
+                        <span>Top Category Share</span>
+                    </div>
+                    <div class="insight-value">{{ topCategoryShare | number:'1.0-1' }}%</div>
+                    <div class="insight-desc">Percentage of total emissions from your top category.</div>
+                </mat-card>
+                
+                <mat-card class="insight-card">
+                    <div class="insight-header">
+                        <mat-icon class="insight-icon">trending_flat</mat-icon>
+                        <span>Average Impact</span>
+                    </div>
+                    <div class="insight-value">{{ analyticsData.averageEmissions | number:'1.0-2' }} kg</div>
+                    <div class="insight-desc">Your average carbon emission per logged activity.</div>
+                </mat-card>
+            </div>
+        </div>
+    </div>
+</div>

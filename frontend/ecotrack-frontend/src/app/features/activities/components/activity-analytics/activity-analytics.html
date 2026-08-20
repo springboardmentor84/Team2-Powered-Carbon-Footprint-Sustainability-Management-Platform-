@@ -7,21 +7,26 @@
     </div>
   </div>
 
-  <div class="grid">
+  <div *ngIf="loading" class="loading-state">
+    <mat-spinner diameter="30"></mat-spinner>
+    <p>Loading analytics...</p>
+  </div>
+
+  <div class="grid" *ngIf="!loading && analyticsData">
     <div class="box">
-      <h3>{{totalActivities}}</h3>
+      <h3>{{analyticsData.totalActivities}}</h3>
       <span>Total Activities</span>
     </div>
     <div class="box">
-      <h3>{{carbonSaved}} kg</h3>
+      <h3>{{analyticsData.totalEmissions}} kg</h3>
       <span>Total Emissions</span>
     </div>
     <div class="box">
-      <h3>{{averageCarbon}} kg</h3>
+      <h3>{{analyticsData.averageEmissions}} kg</h3>
       <span>Average / Activity</span>
     </div>
     <div class="box">
-      <h3>{{bestCategory}}</h3>
+      <h3>{{analyticsData.topCategory | titlecase}}</h3>
       <span>Top Category</span>
     </div>
   </div>

@@ -343,58 +343,5 @@ export class ActivityService {
     return this.activitiesSubject.value.length;
   }
 
-  getSustainabilityScore(): number {
-
-    const activities =
-      this.activitiesSubject.value;
-
-    if (!activities.length) {
-      return 0;
-    }
-
-    let score = 0;
-
-    activities.forEach(item => {
-
-      switch (
-        String(item.category || '').toUpperCase()
-      ) {
-
-        case 'TRANSPORT':
-          score += 6;
-          break;
-
-        case 'FOOD':
-          score += 3;
-          break;
-
-        case 'ELECTRICITY':
-          score += 5;
-          break;
-
-        case 'WATER':
-          score += 4;
-          break;
-
-        case 'WASTE':
-          score += 4;
-          break;
-
-        case 'SHOPPING':
-          score += 3;
-          break;
-
-        default:
-          score += 2;
-      }
-
-    });
-
-    return Math.min(
-      Math.round(score),
-      100
-    );
-  }
-
   // getGoalProgress method removed as progress is fetched dynamically from the backend
 }
