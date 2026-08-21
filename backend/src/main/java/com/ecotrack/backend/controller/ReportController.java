@@ -93,8 +93,11 @@ public class ReportController {
 
         byte[] fileBytes = reportService.downloadReport(principal.getName(), id);
 
+        String safePeriod = (report.getReportPeriod() != null) ? report.getReportPeriod().replace(" ", "_") : "custom";
+        String safeFormat = (report.getFormat() != null) ? report.getFormat().toLowerCase() : "pdf";
+        
         HttpHeaders headers = new HttpHeaders();
-        headers.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=ecotrack_report_" + report.getReportPeriod().replace(" ", "_") + "." + report.getFormat().toLowerCase());
+        headers.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=ecotrack_report_" + safePeriod + "." + safeFormat);
         headers.set(HttpHeaders.CONTENT_TYPE, "CSV".equalsIgnoreCase(report.getFormat()) ? "text/csv" : MediaType.APPLICATION_PDF_VALUE);
 
         return ResponseEntity.ok()

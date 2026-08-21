@@ -122,7 +122,7 @@ public class GamificationServiceImpl implements GamificationService {
     @Override
     @Transactional
     public void redeemReward(String email, Long rewardId) {
-        User user = userRepository.findByEmail(email)
+        User user = userRepository.findByEmailForUpdate(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
         Reward reward = rewardRepository.findById(rewardId)

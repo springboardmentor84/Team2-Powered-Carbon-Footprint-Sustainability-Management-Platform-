@@ -13,5 +13,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     boolean existsByEmail(String email);
 
+    @org.springframework.data.jpa.repository.Lock(jakarta.persistence.LockModeType.PESSIMISTIC_WRITE)
+    @org.springframework.data.jpa.repository.Query("SELECT u FROM User u WHERE u.email = :email")
+    Optional<User> findByEmailForUpdate(String email);
+
     java.util.List<User> findAllByOrderByEcoPointsDesc();
 }
