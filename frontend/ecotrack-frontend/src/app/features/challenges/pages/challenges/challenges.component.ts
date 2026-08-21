@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
@@ -8,6 +8,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ChallengeService } from '../../../../core/services/challenge.service';
 import { Challenge, ChallengeParticipation, ChallengeProgress, ChallengeLeaderboardEntry } from '../../../../core/models/challenge.model';
+import { finalize } from 'rxjs/operators';
 
 interface MyChallengeDetails {
   participation: ChallengeParticipation;
@@ -34,6 +35,7 @@ interface MyChallengeDetails {
 export class ChallengesComponent implements OnInit {
   private readonly challengeService = inject(ChallengeService);
   private readonly snackBar = inject(MatSnackBar);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   allChallenges: Challenge[] = [];
   availableChallenges: Challenge[] = [];
@@ -51,9 +53,18 @@ export class ChallengesComponent implements OnInit {
   loadData(): void {
     this.loading = true;
     this.error = false;
+    this.cdr.detectChanges();
 
     // Load all challenges and my participations
-    this.challengeService.getAllChallenges().subscribe({
+    this.challengeService.getAllChallenges()
+    .pipe(finalize(() => {
+      // we only set loading = false in loadMyParticipations later, but we need it here if error
+      if(this.error) {
+        this.loading = false;
+        this.cdr.detectChanges();
+      }
+    }))
+    .subscribe({
       next: (challenges) => {
         this.allChallenges = challenges;
         this.loadMyParticipations();
@@ -61,13 +72,18 @@ export class ChallengesComponent implements OnInit {
       error: (err) => {
         console.error('Failed to load challenges', err);
         this.error = true;
-        this.loading = false;
+        this.cdr.detectChanges();
       }
     });
   }
 
   loadMyParticipations(): void {
-    this.challengeService.getMyChallenges().subscribe({
+    this.challengeService.getMyChallenges()
+    .pipe(finalize(() => {
+      this.loading = false;
+      this.cdr.detectChanges();
+    }))
+    .subscribe({
       next: (participations) => {
         const joinedIds = participations.map(p => p.challengeId);
         
@@ -84,7 +100,7 @@ export class ChallengesComponent implements OnInit {
           loading: true
         }));
 
-        this.loading = false;
+        this.cdr.detectChanges();
 
         // Load progress and leaderboard for each joined challenge
         this.myChallenges.forEach(mc => {
@@ -94,13 +110,14 @@ export class ChallengesComponent implements OnInit {
       error: (err) => {
         console.error('Failed to load participations', err);
         this.error = true;
-        this.loading = false;
+        this.cdr.detectChanges();
       }
     });
   }
 
   loadChallengeDetails(mc: MyChallengeDetails): void {
     mc.loading = true;
+    this.cdr.detectChanges();
     
     // Load progress
     this.challengeService.getChallengeProgress(mc.participation.challengeId).subscribe({
@@ -111,16 +128,19 @@ export class ChallengesComponent implements OnInit {
           next: (leaderboard) => {
             mc.leaderboard = leaderboard.slice(0, 3); // Top 3
             mc.loading = false;
+            this.cdr.detectChanges();
           },
           error: (err) => {
             console.error('Failed to load leaderboard', err);
             mc.loading = false;
+            this.cdr.detectChanges();
           }
         });
       },
       error: (err) => {
         console.error('Failed to load progress', err);
         mc.loading = false;
+        this.cdr.detectChanges();
       }
     });
   }
@@ -128,6 +148,7 @@ export class ChallengesComponent implements OnInit {
   joinChallenge(challenge: Challenge): void {
     if (this.joiningChallengeId) return;
     this.joiningChallengeId = challenge.id;
+    this.cdr.detectChanges();
 
     this.challengeService.joinChallenge(challenge.id).subscribe({
       next: () => {
@@ -139,6 +160,7 @@ export class ChallengesComponent implements OnInit {
         console.error('Failed to join challenge', err);
         this.snackBar.open(err.error?.message || 'Failed to join challenge.', 'Close', { duration: 3000 });
         this.joiningChallengeId = null;
+        this.cdr.detectChanges();
       }
     });
   }
@@ -146,6 +168,7 @@ export class ChallengesComponent implements OnInit {
   leaveChallenge(challengeId: number): void {
     if (this.leavingChallengeId) return;
     this.leavingChallengeId = challengeId;
+    this.cdr.detectChanges();
 
     this.challengeService.leaveChallenge(challengeId).subscribe({
       next: () => {
@@ -157,6 +180,7 @@ export class ChallengesComponent implements OnInit {
         console.error('Failed to leave challenge', err);
         this.snackBar.open('Failed to leave challenge.', 'Close', { duration: 3000 });
         this.leavingChallengeId = null;
+        this.cdr.detectChanges();
       }
     });
   }
