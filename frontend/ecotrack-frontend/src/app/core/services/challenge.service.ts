@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { API_ENDPOINTS } from '../constants/api.constants';
 import { Challenge, ChallengeParticipation, ChallengeProgress, ChallengeLeaderboardEntry } from '../models/challenge.model';
 
 @Injectable({
@@ -9,7 +10,7 @@ import { Challenge, ChallengeParticipation, ChallengeProgress, ChallengeLeaderbo
 })
 export class ChallengeService {
   private readonly http = inject(HttpClient);
-  private readonly apiUrl = `${environment.apiUrl}/challenges`;
+  private readonly apiUrl = `${environment.apiUrl}${API_ENDPOINTS.CHALLENGES.BASE}`;
 
   // General Challenge Endpoints
   getAllChallenges(): Observable<Challenge[]> {

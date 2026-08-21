@@ -36,10 +36,18 @@ export const API_ENDPOINTS = {
     BASE: '/api/v1/badges'
   },
 
- GOALS: {
-  BASE: '...',
-  BY_ID: (id: number) => `.../${id}`
-},
+  GOALS: {
+    BASE: '/api/v1/goals',
+    BY_ID: (id: number) => `/api/v1/goals/${id}`
+  },
+
+  GAMIFICATION: {
+    BASE: '/api/v1/gamification'
+  },
+
+  CHALLENGES: {
+    BASE: '/api/v1/challenges'
+  },
 
   NOTIFICATIONS: {
     BASE: '/api/v1/notifications'
