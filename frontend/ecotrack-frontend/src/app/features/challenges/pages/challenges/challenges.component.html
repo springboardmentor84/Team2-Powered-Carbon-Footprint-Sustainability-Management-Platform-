@@ -9,7 +9,9 @@
 
     <!-- LOADING STATE -->
     <div *ngIf="loading" class="loading-state">
-        <mat-spinner diameter="40"></mat-spinner>
+        <div class="eco-loader">
+            <span></span><span></span><span></span><span></span>
+        </div>
         <p>Loading challenges...</p>
     </div>
 
@@ -41,7 +43,7 @@
 
                             <div class="card-body">
                                 <div *ngIf="mc.loading" class="mini-loading">
-                                    <mat-spinner diameter="20"></mat-spinner> Loading details...
+                                    <div class="eco-loader" style="transform:scale(0.6);margin:0"><span></span><span></span><span></span></div> Loading details...
                                 </div>
 
                                 <div *ngIf="!mc.loading && mc.progress">

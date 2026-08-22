@@ -1,0 +1,383 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  padding: 20px 24px 32px;
+  gap: 20px;
+}
+
+/* ============================================================
+   HEADER BANNER — matches EcoTrack green theme
+   ============================================================ */
+
+.welcome-card {
+  background: linear-gradient(135deg, #1b5e20, #2e7d32);
+  color: white;
+  padding: 32px;
+  border-radius: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 12px rgba(46, 125, 50, 0.2);
+}
+
+.welcome-content .eyebrow {
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  opacity: 0.9;
+  text-transform: uppercase;
+}
+
+.welcome-content h1 {
+  margin: 8px 0;
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.welcome-content p {
+  margin: 0;
+  opacity: 0.9;
+  font-size: 1rem;
+  max-width: 560px;
+}
+
+.welcome-graphic .hero-icon {
+  font-size: 80px;
+  width: 80px;
+  height: 80px;
+  opacity: 0.2;
+  color: white;
+}
+
+/* ============================================================
+   INFO STRIP
+   ============================================================ */
+
+.info-strip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #e8f5e9;
+  border: 1px solid #a5d6a7;
+  border-radius: 12px;
+  padding: 14px 18px;
+  font-size: 0.9rem;
+  color: #1b5e20;
+}
+
+.info-strip mat-icon {
+  color: #2e7d32;
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.info-strip span {
+  flex: 1;
+}
+
+.refresh-btn {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: white;
+  border: 1px solid #2e7d32;
+  color: #2e7d32;
+  border-radius: 8px;
+  padding: 6px 14px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  white-space: nowrap;
+}
+
+.refresh-btn:hover {
+  background: #2e7d32;
+  color: white;
+}
+
+.refresh-btn mat-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+}
+
+/* ============================================================
+   CARDS GRID
+   ============================================================ */
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+/* ============================================================
+   RECOMMENDATION CARD
+   ============================================================ */
+
+.rec-card {
+  border-radius: 16px;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  padding: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  background: white;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.rec-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(46, 125, 50, 0.12);
+}
+
+/* TOP BAR */
+.card-top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: #f8fdf8;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.category-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #e8f5e9;
+  color: #2e7d32;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.category-badge mat-icon {
+  font-size: 15px;
+  width: 15px;
+  height: 15px;
+}
+
+.priority-badge {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+
+.priority-badge mat-icon {
+  font-size: 13px;
+  width: 13px;
+  height: 13px;
+}
+
+.priority-high {
+  background: #ffebee;
+  color: #c62828;
+}
+
+.priority-medium {
+  background: #fff8e1;
+  color: #e65100;
+}
+
+.priority-low {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+/* CARD BODY */
+.card-body {
+  padding: 20px 20px 16px;
+  flex: 1;
+}
+
+.rec-title {
+  margin: 0 0 10px 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  line-height: 1.3;
+}
+
+.rec-text {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #555;
+  line-height: 1.6;
+}
+
+/* REASON BOX */
+.reason-box {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 12px 16px;
+  background: #f1f8e9;
+  border-top: 1px solid rgba(0, 0, 0, 0.04);
+  font-size: 0.82rem;
+  color: #33691e;
+  line-height: 1.4;
+}
+
+.reason-icon {
+  font-size: 15px;
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+  margin-top: 1px;
+  color: #558b2f;
+}
+
+/* ============================================================
+   BOTTOM NOTE
+   ============================================================ */
+
+.bottom-note {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 18px;
+  background: #e8f5e9;
+  border: 1px solid #a5d6a7;
+  border-radius: 12px;
+  font-size: 0.88rem;
+  color: #1b5e20;
+}
+
+.bottom-note mat-icon {
+  color: #2e7d32;
+  flex-shrink: 0;
+}
+
+/* ============================================================
+   STATES
+   ============================================================ */
+
+.loading-state,
+.error-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 64px 24px;
+  text-align: center;
+  color: #666;
+  background: white;
+  border-radius: 16px;
+  border: 1px dashed rgba(0, 0, 0, 0.1);
+}
+
+.loading-state p {
+  margin-top: 16px;
+  font-size: 1rem;
+  color: #777;
+}
+
+.error-state mat-icon {
+  font-size: 48px;
+  width: 48px;
+  height: 48px;
+  color: #ef9a9a;
+  margin-bottom: 12px;
+}
+
+.error-detail {
+  font-size: 0.85rem;
+  color: #999;
+  margin: 4px 0 0;
+  max-width: 400px;
+}
+
+.retry-btn {
+  margin-top: 16px;
+  padding: 8px 20px;
+  background: #2e7d32;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: background 0.2s;
+}
+
+.retry-btn:hover {
+  background: #1b5e20;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 64px 24px;
+  text-align: center;
+  color: #666;
+  background: white;
+  border-radius: 16px;
+  border: 1px dashed rgba(0, 0, 0, 0.1);
+}
+
+.empty-icon {
+  font-size: 56px;
+  width: 56px;
+  height: 56px;
+  color: #a5d6a7;
+  margin-bottom: 16px;
+}
+
+.empty-state h2 {
+  margin: 0 0 8px;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #333;
+}
+
+.empty-state p {
+  margin: 0;
+  font-size: 0.95rem;
+  max-width: 400px;
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+
+@media (max-width: 768px) {
+  .welcome-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .welcome-graphic {
+    display: none;
+  }
+
+  .cards-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .info-strip {
+    flex-wrap: wrap;
+  }
+
+  .refresh-btn {
+    margin-left: 0;
+    width: 100%;
+    justify-content: center;
+  }
+}
