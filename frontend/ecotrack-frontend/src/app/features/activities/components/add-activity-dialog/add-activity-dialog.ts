@@ -119,7 +119,8 @@ export class AddActivityDialog {
     'litre',
     'minutes',
     'hours',
-    'units'
+    'units',
+    'activity'
   ];
 
 
@@ -157,9 +158,9 @@ export class AddActivityDialog {
 
 
   save(): void {
+    if (this.saving) return;
 
     this.errorMessage = '';
-
 
     // -----------------------------
     // VALIDATION

@@ -18,9 +18,16 @@ public interface CarbonEntryRepository extends JpaRepository<CarbonEntry, Long> 
     @Query("SELECT SUM(c.carbonEmission) FROM CarbonEntry c WHERE c.user.email = :email")
     Double sumCarbonEmissionByUser_Email(@Param("email") String email);
 
+    @Query("SELECT SUM(c.carbonEmission) FROM CarbonEntry c")
+    Double sumGlobalCarbonEmission();
+
     @Query("SELECT new com.ecotrack.backend.dto.response.CategoryEmissionResponse(c.category, SUM(c.carbonEmission)) " +
            "FROM CarbonEntry c WHERE c.user.email = :email GROUP BY c.category")
     List<CategoryEmissionResponse> findCategoryEmissionsByUser_Email(@Param("email") String email);
+
+    @Query("SELECT new com.ecotrack.backend.dto.response.CategoryEmissionResponse(c.category, SUM(c.carbonEmission)) " +
+           "FROM CarbonEntry c GROUP BY c.category")
+    List<CategoryEmissionResponse> findGlobalCategoryEmissions();
 
     @Query("SELECT SUM(c.carbonEmission) FROM CarbonEntry c WHERE c.user.email = :email " +
            "AND c.createdAt >= :startDate AND c.createdAt <= :endDate")
@@ -31,6 +38,8 @@ public interface CarbonEntryRepository extends JpaRepository<CarbonEntry, Long> 
     );
 
     List<CarbonEntry> findTop5ByUser_EmailOrderByCreatedAtDesc(String email);
+
+    List<CarbonEntry> findTop5ByOrderByCreatedAtDesc();
 
     List<CarbonEntry> findByUser_EmailOrderByCreatedAtDesc(String email);
 

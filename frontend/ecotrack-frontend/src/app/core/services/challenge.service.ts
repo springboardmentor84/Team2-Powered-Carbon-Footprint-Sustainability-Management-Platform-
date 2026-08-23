@@ -1,9 +1,25 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { API_ENDPOINTS } from '../constants/api.constants';
 import { Challenge, ChallengeParticipation, ChallengeProgress, ChallengeLeaderboardEntry } from '../models/challenge.model';
+
+export interface AdminChallengeDetails {
+  id: number;
+  title: string;
+  description: string;
+  category: string;
+  target: number;
+  reward: number;
+  startDate: string;
+  endDate: string;
+  createdBy: string;
+  createdAt: string;
+  participantCount: number;
+  completionCount: number;
+  status: string;
+}
 
 @Injectable({
   providedIn: 'root'
@@ -13,12 +29,34 @@ export class ChallengeService {
   private readonly apiUrl = `${environment.apiUrl}${API_ENDPOINTS.CHALLENGES.BASE}`;
 
   // General Challenge Endpoints
-  getAllChallenges(): Observable<Challenge[]> {
-    return this.http.get<Challenge[]>(this.apiUrl);
+  getAllChallenges(
+    search?: string,
+    category?: string,
+    startDate?: string,
+    endDate?: string,
+    page: number = 0,
+    size: number = 100,
+    sort: string = 'startDate,desc'
+  ): Observable<any> {
+    let params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', size.toString())
+      .set('sort', sort);
+      
+    if (search) params = params.set('search', search);
+    if (category) params = params.set('category', category);
+    if (startDate) params = params.set('startDate', startDate);
+    if (endDate) params = params.set('endDate', endDate);
+
+    return this.http.get<any>(this.apiUrl, { params });
   }
 
-  getChallengeById(id: number): Observable<Challenge> {
-    return this.http.get<Challenge>(`${this.apiUrl}/${id}`);
+  getChallengeById(id: number): Observable<AdminChallengeDetails> {
+    return this.http.get<AdminChallengeDetails>(`${this.apiUrl}/${id}`);
+  }
+
+  createChallenge(data: any): Observable<Challenge> {
+    return this.http.post<Challenge>(this.apiUrl, data);
   }
 
   // Participation Endpoints

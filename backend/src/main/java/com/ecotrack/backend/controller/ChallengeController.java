@@ -28,7 +28,7 @@ public class ChallengeController {
     private final ChallengeService challengeService;
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ChallengeResponse> createChallenge(
             @Valid @RequestBody ChallengeRequest request,
             Principal principal) {
@@ -38,20 +38,23 @@ public class ChallengeController {
 
     @GetMapping
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public ResponseEntity<List<ChallengeResponse>> getAllChallenges() {
-        List<ChallengeResponse> responses = challengeService.getAllChallenges();
-        return ResponseEntity.ok(responses);
+    public ResponseEntity<org.springframework.data.domain.Page<ChallengeResponse>> getAllChallenges(
+            @org.springframework.web.bind.annotation.RequestParam(required = false) String search,
+            @org.springframework.web.bind.annotation.RequestParam(required = false) com.ecotrack.backend.enums.ChallengeCategory category,
+            @org.springframework.web.bind.annotation.RequestParam(required = false) @org.springframework.format.annotation.DateTimeFormat(iso = org.springframework.format.annotation.DateTimeFormat.ISO.DATE_TIME) java.time.LocalDateTime startDate,
+            @org.springframework.web.bind.annotation.RequestParam(required = false) @org.springframework.format.annotation.DateTimeFormat(iso = org.springframework.format.annotation.DateTimeFormat.ISO.DATE_TIME) java.time.LocalDateTime endDate,
+            org.springframework.data.domain.Pageable pageable) {
+        return ResponseEntity.ok(challengeService.getAllChallenges(search, category, startDate, endDate, pageable));
     }
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public ResponseEntity<ChallengeResponse> getChallengeById(@PathVariable Long id) {
-        ChallengeResponse response = challengeService.getChallengeById(id);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<com.ecotrack.backend.dto.response.AdminChallengeDetailsResponse> getChallengeById(@PathVariable Long id) {
+        return ResponseEntity.ok(challengeService.getChallengeDetailsById(id));
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ChallengeResponse> updateChallenge(
             @PathVariable Long id,
             @Valid @RequestBody ChallengeRequest request,
@@ -61,7 +64,7 @@ public class ChallengeController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteChallenge(
             @PathVariable Long id,
             Principal principal) {

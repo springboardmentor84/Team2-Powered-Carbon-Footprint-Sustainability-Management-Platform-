@@ -18,4 +18,8 @@ public interface GoalRepository extends JpaRepository<Goal, Long> {
     Optional<Goal> findByIdAndUser(Long id, User user);
 
     void deleteByIdAndUser(Long id, User user);
+
+    long countByStatus(com.ecotrack.backend.enums.GoalStatus status);
+    
+    List<Goal> findTop5ByOrderByCreatedAtDesc();
 }

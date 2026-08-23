@@ -29,34 +29,36 @@ export class Sidebar implements OnInit, OnDestroy {
   private layoutService = inject(LayoutService);
   private notificationService = inject(NotificationService);
   private cdr = inject(ChangeDetectorRef);
-  private sub?: Subscription;
+  private sub = new Subscription();
 
   isCollapsed = false;
   unreadCount = 0;
 
   ngOnInit() {
-    this.sub = this.layoutService.isSidebarCollapsed$.subscribe(collapsed => {
+    this.sub.add(this.layoutService.isSidebarCollapsed$.subscribe(collapsed => {
       this.isCollapsed = collapsed;
       this.cdr.markForCheck();
-    });
+    }));
+
+    this.sub.add(this.notificationService.unreadCount$.subscribe(count => {
+      this.unreadCount = count;
+      this.cdr.markForCheck();
+    }));
 
     this.loadUnreadCount();
     
-    // Check every 30 seconds
+    // Check every 30 seconds to fetch fresh notifications (which updates unreadCount$)
     setInterval(() => {
       this.loadUnreadCount();
     }, 30000);
   }
 
   loadUnreadCount() {
-    this.notificationService.getNotifications().subscribe(notifications => {
-      this.unreadCount = notifications.filter(n => !n.isRead).length;
-      this.cdr.markForCheck();
-    });
+    this.notificationService.getNotifications().subscribe();
   }
 
   ngOnDestroy() {
-    this.sub?.unsubscribe();
+    this.sub.unsubscribe();
   }
 
  menu = [

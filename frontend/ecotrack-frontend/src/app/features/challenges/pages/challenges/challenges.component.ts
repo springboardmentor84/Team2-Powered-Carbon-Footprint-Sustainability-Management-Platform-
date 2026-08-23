@@ -14,6 +14,7 @@ interface MyChallengeDetails {
   participation: ChallengeParticipation;
   progress: ChallengeProgress | null;
   leaderboard: ChallengeLeaderboardEntry[];
+  challengeInfo?: Challenge;
   loading: boolean;
 }
 
@@ -65,8 +66,9 @@ export class ChallengesComponent implements OnInit {
       }
     }))
     .subscribe({
-      next: (challenges) => {
-        this.allChallenges = challenges;
+      next: (response: any) => {
+        // Backend returns Page<ChallengeResponse> with content array
+        this.allChallenges = response.content || response;
         this.loadMyParticipations();
       },
       error: (err) => {
@@ -97,6 +99,7 @@ export class ChallengesComponent implements OnInit {
           participation: p,
           progress: null,
           leaderboard: [],
+          challengeInfo: this.allChallenges.find(c => c.id === p.challengeId),
           loading: true
         }));
 

@@ -1,0 +1,162 @@
+<div class="admin-users-container">
+  <div class="header-section">
+    <div class="header-content">
+      <div>
+        <h2>User Management</h2>
+        <p>Manage all users within the EcoTrack platform.</p>
+      </div>
+      <div class="export-actions">
+        <button class="btn-secondary" (click)="exportCSV()"><span class="material-icons">download</span> CSV</button>
+        <button class="btn-secondary" (click)="exportPDF()"><span class="material-icons">picture_as_pdf</span> PDF</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="filters-section" [formGroup]="filterForm">
+    <div class="filter-group">
+      <input type="text" formControlName="search" placeholder="Search by name or email..." class="filter-input search-input">
+      <select formControlName="role" class="filter-input">
+        <option value="">All Roles</option>
+        <option value="USER">User</option>
+        <option value="ADMIN">Admin</option>
+      </select>
+      <select formControlName="active" class="filter-input">
+        <option value="">All Statuses</option>
+        <option value="true">Active</option>
+        <option value="false">Inactive</option>
+      </select>
+    </div>
+  </div>
+
+  <div *ngIf="loading()" class="loading-state">
+    <div class="spinner"></div>
+    <p>Loading users...</p>
+  </div>
+
+  <div *ngIf="error()" class="error-state">
+    <p>{{ error() }}</p>
+    <button (click)="loadUsers()" class="btn-retry">Retry</button>
+  </div>
+
+  <div *ngIf="!loading() && !error()" class="users-table-container">
+    <table class="users-table">
+      <thead>
+        <tr>
+          <th style="text-align: center; width: 60px;">ID</th>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Role</th>
+          <th style="text-align: right;"><a (click)="changeSort('ecoPoints,' + (currentSort().includes('desc') ? 'asc' : 'desc'))" style="cursor: pointer;">Eco Points</a></th>
+          <th>Status</th>
+          <th><a (click)="changeSort('createdAt,' + (currentSort().includes('desc') ? 'asc' : 'desc'))" style="cursor: pointer;">Joined</a></th>
+          <th style="text-align: center;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of users()">
+          <td style="text-align: center;">#{{ user.id }}</td>
+          <td>
+            <div class="user-info">
+              <span class="user-name">{{ user.fullName }}</span>
+            </div>
+          </td>
+          <td>{{ user.email }}</td>
+          <td>
+            <span class="badge role-badge" [ngClass]="user.role.toLowerCase()">
+              {{ user.role }}
+            </span>
+          </td>
+          <td style="text-align: right; font-weight: 500;">{{ user.ecoPoints | number }}</td>
+          <td>
+            <span class="badge status-badge" [ngClass]="user.active ? 'active' : 'inactive'">
+              {{ user.active ? 'Active' : 'Inactive' }}
+            </span>
+          </td>
+          <td>{{ user.createdAt | date:'mediumDate' }}</td>
+          <td style="text-align: center;">
+            <button class="btn-icon view-btn" (click)="viewUserDetails(user.id)" title="View Details" aria-label="View Details">
+              <span class="material-icons">visibility</span>
+            </button>
+          </td>
+        </tr>
+        
+        <tr *ngIf="users().length === 0">
+          <td colspan="8" class="empty-state">
+            No users found matching the filters.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="pagination-controls" *ngIf="totalPages() > 1">
+      <button [disabled]="currentPage() === 0" (click)="changePage(currentPage() - 1)">Previous</button>
+      <span>Page {{ currentPage() + 1 }} of {{ totalPages() }}</span>
+      <button [disabled]="currentPage() >= totalPages() - 1" (click)="changePage(currentPage() + 1)">Next</button>
+    </div>
+  </div>
+
+  <!-- User Details Modal -->
+  <div class="modal-overlay" *ngIf="showDetailsModal()">
+    <div class="modal-content">
+      <div class="modal-header" style="display: flex; justify-content: space-between; align-items: flex-start;">
+        <div style="display: flex; gap: 1rem; align-items: center;">
+          <img *ngIf="selectedUserDetails()?.profileImage" 
+               [src]="selectedUserDetails()?.profileImage" 
+               alt="Profile Avatar" 
+               style="width: 48px; height: 48px; border-radius: 50%; object-fit: cover;">
+          <div *ngIf="!selectedUserDetails()?.profileImage" 
+               style="width: 48px; height: 48px; border-radius: 50%; background-color: #cbd5e1; display: flex; align-items: center; justify-content: center; font-size: 20px; color: #475569; font-weight: bold;">
+            {{ selectedUserDetails()?.fullName?.charAt(0) || 'U' }}
+          </div>
+          <div>
+            <h3 style="margin: 0; padding-bottom: 0.2rem;">{{ selectedUserDetails()?.fullName }}</h3>
+            <span style="font-size: 0.85rem; color: #64748b;">{{ selectedUserDetails()?.email }}</span>
+          </div>
+        </div>
+        <button class="btn-close" (click)="closeDetailsModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div *ngIf="loadingDetails()" class="loading-state">
+          <div class="spinner"></div>
+          <p>Loading details...</p>
+        </div>
+        
+        <div *ngIf="selectedUserDetails() as details">
+          <div class="details-grid">
+            <div class="detail-card">
+              <h4><span class="material-icons">person</span> Profile</h4>
+              <div class="detail-row"><span class="label">Name:</span> <span class="value">{{ details.fullName }}</span></div>
+              <div class="detail-row"><span class="label">Email:</span> <span class="value">{{ details.email }}</span></div>
+              <div class="detail-row"><span class="label">Role:</span> <span class="badge role-badge" [ngClass]="details.role.toLowerCase()">{{ details.role }}</span></div>
+              <div class="detail-row"><span class="label">Status:</span> <span class="badge status-badge" [ngClass]="details.active ? 'active' : 'inactive'">{{ details.active ? 'Active' : 'Inactive' }}</span></div>
+              <div class="detail-row"><span class="label">Joined:</span> <span class="value">{{ details.createdAt | date:'mediumDate' }}</span></div>
+            </div>
+            
+            <div class="detail-card">
+              <h4><span class="material-icons">emoji_events</span> Challenges</h4>
+              <div class="detail-row"><span class="label">Total Participations:</span> <span class="value">{{ details.totalParticipations }}</span></div>
+              <div class="detail-row"><span class="label">Active:</span> <span class="value">{{ details.activeChallenges }}</span></div>
+              <div class="detail-row"><span class="label">Completed:</span> <span class="value">{{ details.completedChallenges }}</span></div>
+              <div class="detail-row"><span class="label">Expired:</span> <span class="value">{{ details.expiredChallenges }}</span></div>
+            </div>
+            
+            <div class="detail-card highlight-card">
+              <h4><span class="material-icons">stars</span> Rewards</h4>
+              <div class="detail-row"><span class="label">EcoPoints Balance:</span> <strong class="value highlight">{{ details.ecoPoints | number }}</strong></div>
+              <div class="detail-row"><span class="label">Reward Activities:</span> <span class="value">{{ details.rewardActivities }}</span></div>
+              <div class="detail-row"><span class="label">Total Earned:</span> <span class="value">{{ details.totalRewardedPoints | number }}</span></div>
+            </div>
+
+            <div class="detail-card">
+              <h4><span class="material-icons">eco</span> Carbon & Goals</h4>
+              <div class="detail-row"><span class="label">Carbon Entries:</span> <span class="value">{{ details.totalCarbonEntries }}</span></div>
+              <div class="detail-row"><span class="label">Total Emissions:</span> <strong class="value">{{ details.totalCarbonEmissions | number:'1.0-2' }} kg</strong></div>
+              <div class="detail-row"><span class="label">Active Goals:</span> <span class="value">{{ details.activeGoals }}</span></div>
+              <div class="detail-row"><span class="label">Completed Goals:</span> <span class="value">{{ details.completedGoals }}</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

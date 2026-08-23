@@ -58,15 +58,24 @@ export class Notifications implements OnInit {
 
   markAsRead(notification: NotificationResponse): void {
     if (notification.isRead) return;
+    if ((notification as any).isUpdating) return;
+    
+    (notification as any).isUpdating = true;
     
     // Optimistic update
     notification.isRead = true;
+    this.notificationService.decrementUnreadCount();
     this.cdr.detectChanges();
     
     this.notificationService.markAsRead(notification.id).subscribe({
+      next: () => {
+        (notification as any).isUpdating = false;
+      },
       error: (err) => {
         console.error('Failed to mark as read', err);
         notification.isRead = false; // Revert
+        (notification as any).isUpdating = false;
+        this.notificationService.incrementUnreadCount();
         this.cdr.detectChanges();
         this.snackBar.open('Failed to update status', 'Close', { duration: 3000 });
       }
@@ -75,7 +84,13 @@ export class Notifications implements OnInit {
 
   deleteNotification(id: number): void {
     const prevList = [...this.notifications];
+    const notification = this.notifications.find(n => n.id === id);
+    const wasUnread = notification ? !notification.isRead : false;
+    
     this.notifications = this.notifications.filter(n => n.id !== id);
+    if (wasUnread) {
+        this.notificationService.decrementUnreadCount();
+    }
     this.cdr.detectChanges();
     
     this.notificationService.deleteNotification(id).subscribe({
@@ -85,9 +100,23 @@ export class Notifications implements OnInit {
       error: (err) => {
         console.error('Failed to delete notification', err);
         this.notifications = prevList; // Revert
+        if (wasUnread) {
+            this.notificationService.incrementUnreadCount();
+        }
         this.cdr.detectChanges();
         this.snackBar.open('Failed to delete notification', 'Close', { duration: 3000 });
       }
     });
+  }
+
+  getIconForNotification(title: string): string {
+    if (!title) return 'notifications';
+    const t = title.toLowerCase();
+    if (t.includes('reward')) return 'card_giftcard';
+    if (t.includes('badge')) return 'military_tech';
+    if (t.includes('challenge')) return 'emoji_events';
+    if (t.includes('eco point') || t.includes('points')) return 'stars';
+    if (t.includes('goal')) return 'flag';
+    return 'notifications';
   }
 }

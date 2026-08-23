@@ -36,3 +36,10 @@ export interface GamificationSummary {
   availableRewards: Reward[];
   activeChallenges: ChallengePreview[];
 }
+
+export interface RewardTransaction {
+  id: number;
+  points: number;
+  reason: string;
+  createdAt: string;
+}

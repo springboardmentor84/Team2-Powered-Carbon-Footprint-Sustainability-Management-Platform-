@@ -7,6 +7,69 @@
         </div>
     </section>
 
+    <!-- INFO SECTION -->
+    <section class="info-section">
+        <h2>🔔 What will I be notified about?</h2>
+        <p class="info-subtitle">We'll notify you when something important happens in your sustainability journey.</p>
+        
+        <div class="info-grid">
+            <div class="info-card">
+                <div class="info-icon-wrapper" style="color: #1565C0; background: #e3f2fd;">
+                    <mat-icon>emoji_events</mat-icon>
+                </div>
+                <div class="info-text">
+                    <strong>🏆 Challenge completed</strong>
+                    <span>"Congratulations! You completed the Green Campus Walk challenge and earned 50 Eco Points."</span>
+                </div>
+            </div>
+            
+            <div class="info-card">
+                <div class="info-icon-wrapper" style="color: #F57F17; background: #fff8e1;">
+                    <mat-icon>military_tech</mat-icon>
+                </div>
+                <div class="info-text">
+                    <strong>🏅 Badge unlocked</strong>
+                    <span>"Congratulations! You unlocked the Eco Champion badge."</span>
+                </div>
+            </div>
+            
+            <div class="info-card">
+                <div class="info-icon-wrapper" style="color: #FBC02D; background: #fffde7;">
+                    <mat-icon>stars</mat-icon>
+                </div>
+                <div class="info-text">
+                    <strong>⭐ EcoPoint milestone reached</strong>
+                    <span>"You reached 500 Eco Points. Keep going!"</span>
+                </div>
+            </div>
+            
+            <div class="info-card">
+                <div class="info-icon-wrapper" style="color: #2E7D32; background: #e8f5e9;">
+                    <mat-icon>flag</mat-icon>
+                </div>
+                <div class="info-text">
+                    <strong>🎯 Goal completed</strong>
+                    <span>"Great job! You completed your carbon reduction goal."</span>
+                </div>
+            </div>
+            
+            <div class="info-card">
+                <div class="info-icon-wrapper" style="color: #4CAF50; background: #e8f5e9;">
+                    <mat-icon>eco</mat-icon>
+                </div>
+                <div class="info-text">
+                    <strong>🌱 Important achievement</strong>
+                    <span>"Amazing! You reached a new sustainability milestone."</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-note">
+            <mat-icon>info</mat-icon>
+            <p>Normal activities such as walking, cycling, driving, or electricity usage do not generate a notification every time. Notifications are sent when an important achievement or milestone occurs.</p>
+        </div>
+    </section>
+
     <!-- LOADING STATE -->
     <div *ngIf="loading" class="loading-state">
         <div class="eco-loader blue">
@@ -39,7 +102,7 @@
                 
                 <div class="notification-icon-wrapper">
                     <mat-icon *ngIf="!notification.isRead" class="unread-dot">fiber_manual_record</mat-icon>
-                    <mat-icon class="main-icon">notifications</mat-icon>
+                    <mat-icon class="main-icon">{{ getIconForNotification(notification.title) }}</mat-icon>
                 </div>
                 
                 <div class="notification-content">

@@ -6,14 +6,17 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { GamificationService } from '../../../../core/services/gamification.service';
-import { GamificationSummary, Reward } from '../../../../core/models/gamification.model';
+import { GamificationSummary, Reward, RewardTransaction } from '../../../../core/models/gamification.model';
 import { finalize } from 'rxjs/operators';
+import { forkJoin } from 'rxjs';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-achievements',
   standalone: true,
   imports: [
     CommonModule,
+    RouterModule,
     MatCardModule,
     MatIconModule,
     MatButtonModule,
@@ -29,9 +32,20 @@ export class AchievementsComponent implements OnInit {
   private readonly cdr = inject(ChangeDetectorRef);
 
   summary: GamificationSummary | null = null;
+  rewardHistory: RewardTransaction[] = [];
   loading = true;
   error = false;
   redeemingRewardId: number | null = null;
+
+  // Exact levels mapped from GamificationServiceImpl
+  readonly LEVELS = [
+    { level: 1, name: 'Eco Beginner', minPoints: 0, icon: 'seedling' },
+    { level: 2, name: 'Green Contributor', minPoints: 500, icon: 'eco' },
+    { level: 3, name: 'Sustainability Advocate', minPoints: 1000, icon: 'nature_people' },
+    { level: 4, name: 'Earth Protector', minPoints: 2000, icon: 'public' },
+    { level: 5, name: 'Eco Champion', minPoints: 3500, icon: 'verified' },
+    { level: 6, name: 'Carbon Master', minPoints: 5000, icon: 'diamond' }
+  ];
 
   ngOnInit(): void {
     this.loadData();
@@ -40,14 +54,19 @@ export class AchievementsComponent implements OnInit {
   loadData(): void {
     this.loading = true;
     this.error = false;
-    this.gamificationService.getGamificationSummary()
+    
+    forkJoin({
+      summary: this.gamificationService.getGamificationSummary(),
+      history: this.gamificationService.getRewardHistory()
+    })
     .pipe(finalize(() => {
       this.loading = false;
       this.cdr.detectChanges();
     }))
     .subscribe({
       next: (data) => {
-        this.summary = data;
+        this.summary = data.summary;
+        this.rewardHistory = data.history;
         this.cdr.detectChanges();
       },
       error: (err) => {

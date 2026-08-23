@@ -45,6 +45,10 @@ export const API_ENDPOINTS = {
     BASE: '/api/v1/gamification'
   },
 
+  REWARDS: {
+    BASE: '/api/v1/rewards'
+  },
+
   CHALLENGES: {
     BASE: '/api/v1/challenges'
   },

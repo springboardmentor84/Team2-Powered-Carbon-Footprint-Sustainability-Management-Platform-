@@ -131,9 +131,11 @@ export class Login {
     }
   );
 
-  this.router.navigate(
-    ['/dashboard']
-  );
+  if (response.role === 'ADMIN') {
+    this.router.navigate(['/admin/dashboard']);
+  } else {
+    this.router.navigate(['/dashboard']);
+  }
 },
 
       error: (err: any) => {
