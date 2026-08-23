@@ -1,0 +1,162 @@
+<div class="admin-users-container">
+  <div class="header-section">
+    <div class="header-content">
+      <div>
+        <h2>User Management</h2>
+        <p>Manage all users within the EcoTrack platform.</p>
+      </div>
+      <div class="export-actions">
+        <button class="btn-secondary" (click)="exportCSV()"><span class="material-icons">download</span> CSV</button>
+        <button class="btn-secondary" (click)="exportPDF()"><span class="material-icons">picture_as_pdf</span> PDF</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="filters-section" [formGroup]="filterForm">
+    <div class="filter-group">
+      <input type="text" formControlName="search" placeholder="Search by name or email..." class="filter-input search-input">
+      <select formControlName="role" class="filter-input">
+        <option value="">All Roles</option>
+        <option value="USER">User</option>
+        <option value="ADMIN">Admin</option>
+      </select>
+      <select formControlName="active" class="filter-input">
+        <option value="">All Statuses</option>
+        <option value="true">Active</option>
+        <option value="false">Inactive</option>
+      </select>
+    </div>
+  </div>
+
+  <div *ngIf="loading()" class="loading-state">
+    <div class="spinner"></div>
+    <p>Loading users...</p>
+  </div>
+
+  <div *ngIf="error()" class="error-state">
+    <p>{{ error() }}</p>
+    <button (click)="loadUsers()" class="btn-retry">Retry</button>
+  </div>
+
+  <div *ngIf="!loading() && !error()" class="users-table-container">
+    <table class="users-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Role</th>
+          <th><a (click)="changeSort('ecoPoints,' + (currentSort().includes('desc') ? 'asc' : 'desc'))" style="cursor: pointer;">Eco Points</a></th>
+          <th>Status</th>
+          <th><a (click)="changeSort('createdAt,' + (currentSort().includes('desc') ? 'asc' : 'desc'))" style="cursor: pointer;">Joined</a></th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of users()">
+          <td>#{{ user.id }}</td>
+          <td>
+            <div class="user-info">
+              <span class="user-name">{{ user.fullName }}</span>
+            </div>
+          </td>
+          <td>{{ user.email }}</td>
+          <td>
+            <span class="badge role-badge" [ngClass]="user.role.toLowerCase()">
+              {{ user.role }}
+            </span>
+          </td>
+          <td>{{ user.ecoPoints | number }}</td>
+          <td>
+            <span class="badge status-badge" [ngClass]="user.active ? 'active' : 'inactive'">
+              {{ user.active ? 'Active' : 'Inactive' }}
+            </span>
+          </td>
+          <td>{{ user.createdAt | date:'mediumDate' }}</td>
+          <td>
+            <button class="btn-icon" (click)="viewUserDetails(user.id)" title="View Details">
+              <span class="material-icons">visibility</span>
+            </button>
+          </td>
+        </tr>
+        
+        <tr *ngIf="users().length === 0">
+          <td colspan="8" class="empty-state">
+            No users found matching the filters.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="pagination-controls" *ngIf="totalPages() > 1">
+      <button [disabled]="currentPage() === 0" (click)="changePage(currentPage() - 1)">Previous</button>
+      <span>Page {{ currentPage() + 1 }} of {{ totalPages() }}</span>
+      <button [disabled]="currentPage() >= totalPages() - 1" (click)="changePage(currentPage() + 1)">Next</button>
+    </div>
+  </div>
+
+  <!-- User Details Modal -->
+  <div class="modal-overlay" *ngIf="showDetailsModal()">
+    <div class="modal-content">
+      <div class="modal-header" style="display: flex; justify-content: space-between; align-items: flex-start;">
+        <div style="display: flex; gap: 1rem; align-items: center;">
+          <img *ngIf="selectedUserDetails()?.profileImage" 
+               [src]="selectedUserDetails()?.profileImage" 
+               alt="Profile Avatar" 
+               style="width: 48px; height: 48px; border-radius: 50%; object-fit: cover;">
+          <div *ngIf="!selectedUserDetails()?.profileImage" 
+               style="width: 48px; height: 48px; border-radius: 50%; background-color: #cbd5e1; display: flex; align-items: center; justify-content: center; font-size: 20px; color: #475569; font-weight: bold;">
+            {{ selectedUserDetails()?.fullName?.charAt(0) || 'U' }}
+          </div>
+          <div>
+            <h3 style="margin: 0; padding-bottom: 0.2rem;">{{ selectedUserDetails()?.fullName }}</h3>
+            <span style="font-size: 0.85rem; color: #64748b;">{{ selectedUserDetails()?.email }}</span>
+          </div>
+        </div>
+        <button class="btn-close" (click)="closeDetailsModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div *ngIf="loadingDetails()" class="loading-state">
+          <div class="spinner"></div>
+          <p>Loading details...</p>
+        </div>
+        
+        <div *ngIf="selectedUserDetails() as details">
+          <div class="details-grid">
+            <div class="detail-card">
+              <h4>Profile</h4>
+              <p><strong>Name:</strong> {{ details.fullName }}</p>
+              <p><strong>Email:</strong> {{ details.email }}</p>
+              <p><strong>Role:</strong> {{ details.role }}</p>
+              <p><strong>Status:</strong> {{ details.active ? 'Active' : 'Inactive' }}</p>
+              <p><strong>Joined:</strong> {{ details.createdAt | date:'medium' }}</p>
+            </div>
+            
+            <div class="detail-card">
+              <h4>Challenges</h4>
+              <p><strong>Total Participations:</strong> {{ details.totalParticipations }}</p>
+              <p><strong>Active Challenges:</strong> {{ details.activeChallenges }}</p>
+              <p><strong>Completed Challenges:</strong> {{ details.completedChallenges }}</p>
+              <p><strong>Expired Challenges:</strong> {{ details.expiredChallenges }}</p>
+            </div>
+            
+            <div class="detail-card">
+              <h4>Rewards</h4>
+              <p><strong>EcoPoints Balance:</strong> {{ details.ecoPoints | number }}</p>
+              <p><strong>Reward Activities:</strong> {{ details.rewardActivities }}</p>
+              <p><strong>Total Rewarded Points:</strong> {{ details.totalRewardedPoints | number }}</p>
+            </div>
+
+            <div class="detail-card">
+              <h4>Carbon & Goals</h4>
+              <p><strong>Carbon Entries:</strong> {{ details.totalCarbonEntries }}</p>
+              <p><strong>Total Emissions:</strong> {{ details.totalCarbonEmissions | number:'1.0-2' }} kg</p>
+              <p><strong>Active Goals:</strong> {{ details.activeGoals }}</p>
+              <p><strong>Completed Goals:</strong> {{ details.completedGoals }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

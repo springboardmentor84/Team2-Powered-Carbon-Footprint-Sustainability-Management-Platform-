@@ -24,6 +24,8 @@ public class ChallengeServiceImpl implements ChallengeService {
 
     private final ChallengeRepository challengeRepository;
     private final UserRepository userRepository;
+    private final com.ecotrack.backend.repository.ChallengeParticipationRepository challengeParticipationRepository;
+    private final com.ecotrack.backend.service.interfaces.ChallengeParticipationService challengeParticipationService;
 
     @Override
     @Transactional
@@ -56,9 +58,55 @@ public class ChallengeServiceImpl implements ChallengeService {
     }
 
     @Override
+    public org.springframework.data.domain.Page<ChallengeResponse> getAllChallenges(String search, com.ecotrack.backend.enums.ChallengeCategory category, java.time.LocalDateTime startDate, java.time.LocalDateTime endDate, org.springframework.data.domain.Pageable pageable) {
+        return challengeRepository.findFilteredChallenges(search, category, startDate, endDate, pageable)
+                .map(this::mapToResponse);
+    }
+
+    @Override
     public ChallengeResponse getChallengeById(Long id) {
         Challenge challenge = getChallengeByIdInternal(id);
         return mapToResponse(challenge);
+    }
+
+    @Override
+    public com.ecotrack.backend.dto.response.AdminChallengeDetailsResponse getChallengeDetailsById(Long id) {
+        Challenge challenge = getChallengeByIdInternal(id);
+        
+        List<com.ecotrack.backend.entity.ChallengeParticipation> participations = challengeParticipationRepository.findByChallengeIdAndStatus(id, com.ecotrack.backend.enums.ChallengeParticipationStatus.JOINED);
+        long participantCount = participations.size();
+        
+        long completionCount = 0;
+        for (com.ecotrack.backend.entity.ChallengeParticipation p : participations) {
+            com.ecotrack.backend.dto.response.ChallengeProgressResponse progress = challengeParticipationService.calculateProgressReadOnly(challenge, p.getUser(), p);
+            if ("COMPLETED".equals(progress.getChallengeStatus())) {
+                completionCount++;
+            }
+        }
+        
+        String status = "ACTIVE";
+        java.time.LocalDate today = java.time.LocalDate.now();
+        if (challenge.getStartDate().isAfter(today)) {
+            status = "UPCOMING";
+        } else if (challenge.getEndDate().isBefore(today)) {
+            status = "COMPLETED";
+        }
+        
+        return com.ecotrack.backend.dto.response.AdminChallengeDetailsResponse.builder()
+                .id(challenge.getId())
+                .title(challenge.getTitle())
+                .description(challenge.getDescription())
+                .category(challenge.getCategory().name())
+                .target(challenge.getTarget())
+                .reward(challenge.getRewardPoints())
+                .startDate(challenge.getStartDate())
+                .endDate(challenge.getEndDate())
+                .createdBy(challenge.getCreatedBy().getFullName())
+                .createdAt(challenge.getCreatedAt())
+                .participantCount(participantCount)
+                .completionCount(completionCount)
+                .status(status)
+                .build();
     }
 
     @Override

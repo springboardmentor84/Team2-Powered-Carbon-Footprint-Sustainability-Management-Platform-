@@ -9,7 +9,6 @@ import { ForgotPassword } from './features/auth/pages/forgot-password/forgot-pas
 import { ResetPassword } from './features/auth/pages/reset-password/reset-password';
 
 import { DashboardLayout } from './shared/layouts/dashboard-layout/dashboard-layout';
-
 import { DashboardHome } from './features/dashboard/pages/dashboard-home/dashboard-home';
 import { Activities } from './features/activities/pages/activities/activities';
 import { Goals } from './features/goals/pages/goals/goals';
@@ -25,6 +24,16 @@ import { CarbonTracker } from './features/carbon-tracker/pages/carbon-tracker/ca
 import { AiAssistant } from './features/ai-assistant/pages/ai-assistant/ai-assistant';
 
 import { AuthLayout } from './shared/layouts/auth-layout/auth-layout';
+
+import { AdminLayout } from './shared/layouts/admin-layout/admin-layout';
+import { AdminDashboard } from './features/admin/pages/admin-dashboard/admin-dashboard';
+
+import { AdminUsers } from './features/admin/pages/admin-users/admin-users';
+import { AdminChallenges } from './features/admin/pages/admin-challenges/admin-challenges';
+import { AdminSettings } from './features/admin/pages/admin-settings/admin-settings';
+
+import { authGuard } from './core/guards/auth-guard';
+import { adminGuard } from './core/guards/admin.guard';
 
 export const routes: Routes = [
 
@@ -48,9 +57,9 @@ export const routes: Routes = [
   {
     path: 'dashboard',
     component: DashboardLayout,
+    canActivate: [authGuard],
     children: [
       { path: '', component: DashboardHome },
-
       { path: 'activities', component: Activities },
       { path: 'goals', component: Goals },
       { path: 'reports', component: Reports },
@@ -63,6 +72,19 @@ export const routes: Routes = [
       { path: 'settings', component: Settings },
       { path: 'carbon-tracker', component: CarbonTracker },
       { path: 'ai-assistant', component: AiAssistant }
+    ]
+  },
+
+  {
+    path: 'admin',
+    component: AdminLayout,
+    canActivate: [adminGuard],
+    children: [
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+      { path: 'dashboard', component: AdminDashboard },
+      { path: 'users', component: AdminUsers },
+      { path: 'challenges', component: AdminChallenges },
+      { path: 'settings', component: AdminSettings }
     ]
   },
 

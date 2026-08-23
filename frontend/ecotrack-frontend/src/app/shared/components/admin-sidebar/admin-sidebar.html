@@ -1,0 +1,34 @@
+<div class="admin-sidebar">
+  <div class="sidebar-header">
+    <div class="logo">
+      <span class="material-icons">admin_panel_settings</span>
+      <span>EcoTrack Admin</span>
+    </div>
+  </div>
+
+  <nav class="sidebar-nav">
+    <a routerLink="/admin/dashboard" routerLinkActive="active" class="nav-item">
+      <span class="material-icons">dashboard</span>
+      <span class="nav-label">Dashboard</span>
+    </a>
+    <a routerLink="/admin/users" routerLinkActive="active" class="nav-item">
+      <span class="material-icons">group</span>
+      <span class="nav-label">User Management</span>
+    </a>
+    <a routerLink="/admin/challenges" routerLinkActive="active" class="nav-item">
+      <span class="material-icons">emoji_events</span>
+      <span class="nav-label">Challenges</span>
+    </a>
+    <a routerLink="/admin/settings" routerLinkActive="active" class="nav-item">
+      <span class="material-icons">settings</span>
+      <span class="nav-label">Settings</span>
+    </a>
+  </nav>
+
+  <div class="sidebar-footer">
+    <button class="logout-btn" (click)="logout()">
+      <span class="material-icons">logout</span>
+      <span>Logout</span>
+    </button>
+  </div>
+</div>

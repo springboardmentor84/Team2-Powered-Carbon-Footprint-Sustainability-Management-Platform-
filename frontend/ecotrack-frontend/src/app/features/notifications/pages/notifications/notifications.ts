@@ -90,4 +90,15 @@ export class Notifications implements OnInit {
       }
     });
   }
+
+  getIconForNotification(title: string): string {
+    if (!title) return 'notifications';
+    const t = title.toLowerCase();
+    if (t.includes('reward')) return 'card_giftcard';
+    if (t.includes('badge')) return 'military_tech';
+    if (t.includes('challenge')) return 'emoji_events';
+    if (t.includes('eco point') || t.includes('points')) return 'stars';
+    if (t.includes('goal')) return 'flag';
+    return 'notifications';
+  }
 }

@@ -138,8 +138,14 @@ public class ChallengeParticipationServiceImpl implements ChallengeParticipation
         double progress = 0.0;
         for (CarbonEntry entry : entries) {
             if (matchesChallengeCategory(entry, challenge.getCategory())) {
-                if (entry.getUnit() != null && entry.getUnit().equalsIgnoreCase(challenge.getUnit())) {
-                    progress += entry.getQuantity();
+                if (entry.getUnit() != null) {
+                    String eUnit = entry.getUnit().toLowerCase();
+                    String cUnit = challenge.getUnit().toLowerCase();
+                    if (eUnit.equals(cUnit) || 
+                       (eUnit.equals("activity") && cUnit.equals("activities")) ||
+                       (eUnit.equals("activities") && cUnit.equals("activity"))) {
+                        progress += entry.getQuantity();
+                    }
                 }
             }
         }
@@ -181,7 +187,7 @@ public class ChallengeParticipationServiceImpl implements ChallengeParticipation
         
         switch (challengeCategory) {
             case CYCLE_TO_WORK:
-                return entry.getCategory() == CarbonCategory.TRANSPORT && (activity.contains("bike") || activity.contains("cycle"));
+                return entry.getCategory() == CarbonCategory.TRANSPORT && (activity.contains("bike") || activity.contains("cycl"));
             case ENERGY_SAVING:
                 return entry.getCategory() == CarbonCategory.ELECTRICITY;
             case WATER_CONSERVATION:
@@ -189,7 +195,7 @@ public class ChallengeParticipationServiceImpl implements ChallengeParticipation
             case ZERO_WASTE:
                 return entry.getCategory() == CarbonCategory.WASTE;
             case PLASTIC_FREE:
-                return entry.getCategory() == CarbonCategory.WASTE && (activity.contains("plastic") || activity.contains("single-use"));
+                return (entry.getCategory() == CarbonCategory.WASTE || entry.getCategory() == CarbonCategory.OTHER) && (activity.contains("plastic") || activity.contains("single-use"));
             case TREE_PLANTATION:
                 return entry.getCategory() == CarbonCategory.OTHER && (activity.contains("tree") || activity.contains("plant"));
             default:

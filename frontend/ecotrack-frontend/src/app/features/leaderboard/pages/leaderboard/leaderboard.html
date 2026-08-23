@@ -7,6 +7,23 @@
         </div>
     </section>
 
+    <!-- INFO CARD -->
+    <mat-card class="info-card" style="margin-bottom: 24px; padding: 16px; background-color: var(--surface-color); border-radius: 12px; border: 1px solid var(--border-color);">
+        <div style="display: flex; gap: 12px; align-items: flex-start;">
+            <mat-icon style="color: var(--primary-color);">info</mat-icon>
+            <div>
+                <h3 style="margin: 0 0 4px 0; font-size: 16px;">How ranking works</h3>
+                <p style="margin: 0 0 8px 0; color: var(--text-secondary); font-size: 14px;">
+                    Users are ranked by their total EcoPoints. Higher EcoPoints result in a higher leaderboard position.
+                </p>
+                <ul style="margin: 0; padding-left: 20px; color: var(--text-secondary); font-size: 14px;">
+                    <li>Users with equal EcoPoints share the same dense rank (e.g., two users can be Rank 4).</li>
+                    <li>ADMIN and inactive accounts are explicitly excluded from the global leaderboard.</li>
+                </ul>
+            </div>
+        </div>
+    </mat-card>
+
     <!-- LOADING STATE -->
     <div *ngIf="loading" class="loading-state">
         <mat-spinner diameter="40"></mat-spinner>
@@ -23,6 +40,21 @@
     <!-- MAIN CONTENT -->
     <div *ngIf="!loading && !error" class="leaderboard-container">
         
+        <!-- CONTROLS -->
+        <div class="controls-section" style="display: flex; flex-wrap: wrap; gap: 16px; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+            <mat-form-field appearance="outline" class="search-field" style="width: 300px; max-width: 100%;">
+                <mat-label>Search users...</mat-label>
+                <input matInput [(ngModel)]="searchQuery" placeholder="Enter name">
+                <mat-icon matSuffix>search</mat-icon>
+            </mat-form-field>
+
+            <mat-button-toggle-group [(ngModel)]="filterMode" class="filter-group">
+                <mat-button-toggle value="top10">Top 10</mat-button-toggle>
+                <mat-button-toggle value="top25">Top 25</mat-button-toggle>
+                <mat-button-toggle value="all">All</mat-button-toggle>
+            </mat-button-toggle-group>
+        </div>
+
         <!-- CURRENT USER RANK BANNER -->
         <mat-card class="my-rank-card" *ngIf="myRank">
             <div class="rank-badge my-rank">
@@ -44,40 +76,47 @@
         </mat-card>
 
         <!-- PODIUM (Top 3) -->
-        <div class="podium-container" *ngIf="leaderboard.length >= 3">
+        <div class="podium-container" *ngIf="!searchQuery && filteredLeaderboard.length >= 3">
             <div class="podium-item second">
                 <div class="rank-circle silver">2</div>
-                <img *ngIf="leaderboard[1].profileImage" [src]="leaderboard[1].profileImage" class="avatar large">
-                <div *ngIf="!leaderboard[1].profileImage" class="avatar large placeholder"><mat-icon>person</mat-icon></div>
-                <h4>{{ leaderboard[1].fullName }}</h4>
-                <p>{{ leaderboard[1].ecoPoints }} pts</p>
+                <img *ngIf="filteredLeaderboard[1].profileImage" [src]="filteredLeaderboard[1].profileImage" class="avatar large">
+                <div *ngIf="!filteredLeaderboard[1].profileImage" class="avatar large placeholder"><mat-icon>person</mat-icon></div>
+                <h4>{{ filteredLeaderboard[1].fullName }}</h4>
+                <p>{{ filteredLeaderboard[1].ecoPoints }} pts</p>
                 <div class="podium-block silver-block"></div>
             </div>
             
             <div class="podium-item first">
                 <mat-icon class="crown">emoji_events</mat-icon>
                 <div class="rank-circle gold">1</div>
-                <img *ngIf="leaderboard[0].profileImage" [src]="leaderboard[0].profileImage" class="avatar large gold-border">
-                <div *ngIf="!leaderboard[0].profileImage" class="avatar large placeholder gold-border"><mat-icon>person</mat-icon></div>
-                <h4>{{ leaderboard[0].fullName }}</h4>
-                <p>{{ leaderboard[0].ecoPoints }} pts</p>
+                <img *ngIf="filteredLeaderboard[0].profileImage" [src]="filteredLeaderboard[0].profileImage" class="avatar large gold-border">
+                <div *ngIf="!filteredLeaderboard[0].profileImage" class="avatar large placeholder gold-border"><mat-icon>person</mat-icon></div>
+                <h4>{{ filteredLeaderboard[0].fullName }}</h4>
+                <p>{{ filteredLeaderboard[0].ecoPoints }} pts</p>
                 <div class="podium-block gold-block"></div>
             </div>
 
             <div class="podium-item third">
                 <div class="rank-circle bronze">3</div>
-                <img *ngIf="leaderboard[2].profileImage" [src]="leaderboard[2].profileImage" class="avatar large">
-                <div *ngIf="!leaderboard[2].profileImage" class="avatar large placeholder"><mat-icon>person</mat-icon></div>
-                <h4>{{ leaderboard[2].fullName }}</h4>
-                <p>{{ leaderboard[2].ecoPoints }} pts</p>
+                <img *ngIf="filteredLeaderboard[2].profileImage" [src]="filteredLeaderboard[2].profileImage" class="avatar large">
+                <div *ngIf="!filteredLeaderboard[2].profileImage" class="avatar large placeholder"><mat-icon>person</mat-icon></div>
+                <h4>{{ filteredLeaderboard[2].fullName }}</h4>
+                <p>{{ filteredLeaderboard[2].ecoPoints }} pts</p>
                 <div class="podium-block bronze-block"></div>
             </div>
         </div>
 
         <!-- LIST (Rank 4+) -->
         <div class="list-container">
-            <mat-card class="list-item" *ngFor="let user of leaderboard; let i = index" [ngClass]="{'hidden': i < 3 && leaderboard.length >= 3}">
-                <ng-container *ngIf="!(i < 3 && leaderboard.length >= 3)">
+            <mat-card class="list-item" 
+                *ngFor="let user of filteredLeaderboard; let i = index" 
+                [ngClass]="{
+                    'hidden': !searchQuery && i < 3 && filteredLeaderboard.length >= 3,
+                    'is-me': myRank && user.fullName === myRank.fullName && user.ecoPoints === myRank.ecoPoints
+                }"
+                [style.border]="(myRank && user.fullName === myRank.fullName && user.ecoPoints === myRank.ecoPoints) ? '2px solid var(--primary-color)' : ''">
+                
+                <ng-container *ngIf="searchQuery || !(i < 3 && filteredLeaderboard.length >= 3)">
                     <div class="rank-number">
                         #{{ user.rank }}
                     </div>
@@ -86,6 +125,7 @@
                         <img *ngIf="user.profileImage" [src]="user.profileImage" class="avatar small">
                         <div *ngIf="!user.profileImage" class="avatar small placeholder"><mat-icon>person</mat-icon></div>
                         <span class="name">{{ user.fullName }}</span>
+                        <span *ngIf="myRank && user.fullName === myRank.fullName && user.ecoPoints === myRank.ecoPoints" style="margin-left: 8px; font-size: 12px; background: var(--primary-color); color: white; padding: 2px 6px; border-radius: 10px;">You</span>
                     </div>
 
                     <div class="user-stats">
@@ -94,6 +134,10 @@
                     </div>
                 </ng-container>
             </mat-card>
+            
+            <div class="empty-state-small" *ngIf="filteredLeaderboard.length === 0" style="text-align: center; padding: 32px; color: var(--text-secondary);">
+                No users found.
+            </div>
         </div>
 
     </div>

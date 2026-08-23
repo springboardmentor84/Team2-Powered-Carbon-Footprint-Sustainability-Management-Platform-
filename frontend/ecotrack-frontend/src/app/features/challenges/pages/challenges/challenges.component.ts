@@ -65,8 +65,9 @@ export class ChallengesComponent implements OnInit {
       }
     }))
     .subscribe({
-      next: (challenges) => {
-        this.allChallenges = challenges;
+      next: (response: any) => {
+        // Backend returns Page<ChallengeResponse> with content array
+        this.allChallenges = response.content || response;
         this.loadMyParticipations();
       },
       error: (err) => {

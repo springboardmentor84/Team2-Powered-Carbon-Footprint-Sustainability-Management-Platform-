@@ -1,0 +1,22 @@
+--- src/main/java/com/ecotrack/backend/service/impl/ChallengeParticipationServiceImpl.java
++++ src/main/java/com/ecotrack/backend/service/impl/ChallengeParticipationServiceImpl.java
+@@ -134,6 +134,7 @@
+                 challenge.getEndDate().atTime(LocalTime.MAX)
+         );
+ 
++        System.out.println("DEBUG [" + challenge.getId() + "] Entries found: " + entries.size());
+         double progress = 0.0;
+         for (CarbonEntry entry : entries) {
++            System.out.println("DEBUG [" + challenge.getId() + "] Checking entry: " + entry.getId() + " - " + entry.getActivity());
+             if (matchesChallengeCategory(entry, challenge.getCategory())) {
++                System.out.println("DEBUG [" + challenge.getId() + "] Matches category: YES");
+                 if (entry.getUnit() != null && entry.getUnit().equalsIgnoreCase(challenge.getUnit())) {
++                    System.out.println("DEBUG [" + challenge.getId() + "] Matches unit: YES, quantity: " + entry.getQuantity());
+                     progress += entry.getQuantity();
+                 } else {
++                    System.out.println("DEBUG [" + challenge.getId() + "] Matches unit: NO. entry=" + entry.getUnit() + " chal=" + challenge.getUnit());
+                 }
++            } else {
++                System.out.println("DEBUG [" + challenge.getId() + "] Matches category: NO");
+             }
+         }

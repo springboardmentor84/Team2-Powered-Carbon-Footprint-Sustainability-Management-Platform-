@@ -1,0 +1,146 @@
+<div class="dashboard-header">
+  <h1>System Overview</h1>
+  <p>Real-time analytics and platform metrics</p>
+</div>
+
+@if (loading()) {
+  <div class="loading-state">
+    <span class="material-icons rotating">refresh</span>
+    <span>Loading metrics...</span>
+  </div>
+} @else if (error()) {
+  <div class="error-state">
+    <span class="material-icons">error_outline</span>
+    <span>{{ error() }}</span>
+    <button (click)="loadMetrics()">Retry</button>
+  </div>
+} @else if (metrics()) {
+  <div class="metrics-grid">
+    <!-- User Metrics -->
+    <div class="metric-card primary">
+      <div class="icon"><span class="material-icons">people</span></div>
+      <div class="info">
+        <h3>Total Users</h3>
+        <p class="value">{{ metrics()?.totalUsers }}</p>
+        <p class="subtitle">{{ metrics()?.activeUsers }} Active / {{ metrics()?.inactiveUsers }} Inactive</p>
+      </div>
+    </div>
+
+    <!-- Sustainability Metrics -->
+    <div class="metric-card success">
+      <div class="icon"><span class="material-icons">eco</span></div>
+      <div class="info">
+        <h3>Total EcoPoints</h3>
+        <p class="value">{{ metrics()?.totalEcoPointsGenerated | number }}</p>
+        <p class="subtitle">From {{ metrics()?.totalCarbonActivities | number }} activities</p>
+      </div>
+    </div>
+
+    <!-- Engagement Metrics -->
+    <div class="metric-card warning">
+      <div class="icon"><span class="material-icons">emoji_events</span></div>
+      <div class="info">
+        <h3>Challenges</h3>
+        <p class="value">{{ metrics()?.totalChallenges }}</p>
+        <p class="subtitle">{{ metrics()?.completedChallenges }} Completed / {{ metrics()?.activeChallengeParticipations }} Active</p>
+      </div>
+    </div>
+  </div>
+  
+  <div class="metrics-grid" style="margin-top: 1.5rem;">
+    <!-- Emissions Metrics -->
+    <div class="metric-card danger" style="border-left-color: #ef4444;">
+      <div class="icon"><span class="material-icons" style="color: #ef4444;">co2</span></div>
+      <div class="info">
+        <h3>Total Emissions</h3>
+        <p class="value">{{ metrics()?.totalCarbonEmissions | number:'1.0-2' }} kg</p>
+        <p class="subtitle">Avg: {{ metrics()?.averageCarbonEmission | number:'1.0-2' }} kg / entry</p>
+      </div>
+    </div>
+
+    <!-- Goals Metrics -->
+    <div class="metric-card info" style="border-left-color: #3b82f6;">
+      <div class="icon"><span class="material-icons" style="color: #3b82f6;">flag</span></div>
+      <div class="info">
+        <h3>Goals Tracker</h3>
+        <p class="value">{{ metrics()?.activeGoals }} Active</p>
+        <p class="subtitle">{{ metrics()?.completedGoals }} Completed</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="analytics-sections" style="margin-top: 2rem; display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+    <!-- Top Eco Users -->
+    <div class="dashboard-panel">
+      <h3>Top Eco Users</h3>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Rank</th>
+            <th>Name</th>
+            <th>EcoPoints</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let user of metrics()?.topEcoUsers; let i = index">
+            <td>#{{ i + 1 }}</td>
+            <td>{{ user.fullName }}</td>
+            <td><strong>{{ user.ecoPoints | number }}</strong></td>
+          </tr>
+          <tr *ngIf="!metrics()?.topEcoUsers?.length">
+            <td colspan="3" class="empty-state">No users found.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Carbon by Category -->
+    <div class="dashboard-panel">
+      <h3>Emissions by Category</h3>
+      <div class="category-list">
+        <div class="category-item" *ngFor="let cat of metrics()?.categoryEmissions">
+          <div class="cat-info">
+            <span class="cat-name">{{ cat.category }}</span>
+            <span class="cat-value">{{ cat.totalEmission | number:'1.0-2' }} kg</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" [style.width]="(cat.totalEmission / (metrics()?.totalCarbonEmissions || 1)) * 100 + '%'"></div>
+          </div>
+        </div>
+        <div *ngIf="!metrics()?.categoryEmissions?.length" class="empty-state">
+          No emission data.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="analytics-sections" style="margin-top: 1.5rem;">
+    <!-- Recent Activity -->
+    <div class="dashboard-panel">
+      <h3>Recent Platform Activity</h3>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Type</th>
+            <th>Description</th>
+            <th>Time</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let activity of metrics()?.recentActivity">
+            <td>
+              <span class="badge" [ngClass]="activity.type.toLowerCase()">
+                {{ activity.type }}
+              </span>
+            </td>
+            <td>{{ activity.description }}</td>
+            <td>{{ activity.createdAt | date:'short' }}</td>
+          </tr>
+          <tr *ngIf="!metrics()?.recentActivity?.length">
+            <td colspan="3" class="empty-state">No recent activity.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+}

@@ -37,7 +37,7 @@
                 
                 <div class="notification-icon-wrapper">
                     <mat-icon *ngIf="!notification.isRead" class="unread-dot">fiber_manual_record</mat-icon>
-                    <mat-icon class="main-icon">notifications</mat-icon>
+                    <mat-icon class="main-icon">{{ getIconForNotification(notification.title) }}</mat-icon>
                 </div>
                 
                 <div class="notification-content">

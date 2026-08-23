@@ -11,4 +11,7 @@ public interface RewardTransactionRepository extends JpaRepository<RewardTransac
     List<RewardTransaction> findByUserEmailOrderByCreatedAtDesc(String email);
     List<RewardTransaction> findByCarbonEntryId(Long carbonEntryId);
     boolean existsByUser_IdAndReason(Long userId, String reason);
+
+    @org.springframework.data.jpa.repository.Query("SELECT SUM(r.points) FROM RewardTransaction r WHERE r.points > 0")
+    Long sumTotalPointsAwarded();
 }
