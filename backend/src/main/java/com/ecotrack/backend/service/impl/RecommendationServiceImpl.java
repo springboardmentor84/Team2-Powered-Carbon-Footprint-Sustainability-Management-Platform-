@@ -19,6 +19,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,8 +34,31 @@ public class RecommendationServiceImpl implements RecommendationService {
     private final AIService aiService;
     private final ObjectMapper objectMapper;
 
+    // Cache: email -> {recommendations, timestamp}. TTL = 5 minutes.
+    private static final long CACHE_TTL_MS = 5 * 60 * 1000;
+    private final Map<String, List<RecommendationResponse>> cache = new ConcurrentHashMap<>();
+    private final Map<String, Long> cacheTimestamps = new ConcurrentHashMap<>();
+
     @Override
     public List<RecommendationResponse> getRecommendations(String email) {
+        // Return cached result if still fresh
+        Long lastFetched = cacheTimestamps.get(email);
+        if (lastFetched != null && (System.currentTimeMillis() - lastFetched) < CACHE_TTL_MS) {
+            log.info("Returning cached recommendations for {}", email);
+            return cache.get(email);
+        }
+
+        List<RecommendationResponse> result = fetchRecommendations(email);
+
+        // Only cache successful AI results, not fallback responses
+        if (result != null && !result.isEmpty()) {
+            cache.put(email, result);
+            cacheTimestamps.put(email, System.currentTimeMillis());
+        }
+        return result;
+    }
+
+    private List<RecommendationResponse> fetchRecommendations(String email) {
         try {
             // Gather data
             DashboardSummaryResponse summary = dashboardService.getSummary(email);
@@ -115,7 +140,7 @@ public class RecommendationServiceImpl implements RecommendationService {
         // Fallback Recommendation
         return generateFallbackRecommendation(email);
     }
-    
+
     private List<RecommendationResponse> generateFallbackRecommendation(String email) {
         try {
             List<CategoryEmissionResponse> categories = dashboardService.getCategoryEmissions(email);
