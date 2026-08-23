@@ -27,10 +27,10 @@ public class GeminiAIServiceImpl implements AIService {
     private final RestTemplate restTemplate;
 
     public GeminiAIServiceImpl() {
-        // Set timeouts - gemini-3.6-flash can be slow, allow up to 30 seconds
+        // Set timeouts - allow up to 15 seconds for Gemini API response
         SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
-        factory.setConnectTimeout(10000);
-        factory.setReadTimeout(30000);
+        factory.setConnectTimeout(5000);
+        factory.setReadTimeout(15000);
         this.restTemplate = new RestTemplate(factory);
     }
 
