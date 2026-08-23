@@ -24,7 +24,8 @@
   display: flex;
   align-items: center;
   gap: 20px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.03);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.02);
 }
 .metric-card .icon {
   width: 56px;
@@ -38,8 +39,8 @@
   font-size: 28px;
 }
 .metric-card.primary .icon { background: rgba(33, 150, 243, 0.1); color: #2196f3; }
-.metric-card.success .icon { background: rgba(76, 175, 80, 0.1); color: #4caf50; }
-.metric-card.warning .icon { background: rgba(255, 152, 0, 0.1); color: #ff9800; }
+.metric-card.success .icon { background: rgba(76, 175, 80, 0.15); color: #2e7d32; }
+.metric-card.warning .icon { background: rgba(255, 152, 0, 0.1); color: #f57c00; }
 
 .info h3 {
   font-size: 1rem;
@@ -85,7 +86,8 @@
   background: white;
   border-radius: 12px;
   padding: 24px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.03);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.02);
 }
 .dashboard-panel h3 {
   font-size: 1.125rem;
@@ -115,6 +117,13 @@
   font-size: 0.9rem;
   color: #3f4254;
   vertical-align: middle;
+  padding: 16px 16px;
+}
+.data-table tbody tr {
+  transition: background-color 0.2s ease;
+}
+.data-table tbody tr:hover {
+  background-color: #f8f9fa;
 }
 .data-table td strong {
   color: #1e1e2d;
@@ -159,7 +168,7 @@
 }
 .progress-fill {
   height: 100%;
-  background: #2196f3;
+  background: #2e7d32;
   border-radius: 4px;
   transition: width 0.3s ease;
 }
@@ -173,7 +182,8 @@
   background: #f1f1f4;
   color: #7e8299;
 }
-.badge.carbon { background: rgba(244, 67, 54, 0.1); color: #f44336; }
-.badge.goal { background: rgba(33, 150, 243, 0.1); color: #2196f3; }
-.badge.reward { background: rgba(76, 175, 80, 0.1); color: #4caf50; }
-.badge.challenge { background: rgba(255, 152, 0, 0.1); color: #ff9800; }
+.badge.carbon { background: #ffebee; color: #d32f2f; }
+.badge.goal { background: #e3f2fd; color: #1976d2; }
+.badge.reward { background: #e8f5e9; color: #388e3c; }
+.badge.challenge { background: #fff3e0; color: #f57c00; }
+.badge.user { background: #eceff1; color: #546e7a; }

@@ -245,4 +245,15 @@ export class AdminChallenges implements OnInit {
     const d = new Date(dateStr);
     return isNaN(d.getTime()) ? dateStr : d.toLocaleDateString();
   }
+
+  getChallengeStatus(challenge: any): string {
+    if (challenge.status) return challenge.status; // fallback if backend sends it
+    const now = new Date();
+    const start = new Date(challenge.startDate);
+    const end = new Date(challenge.endDate);
+    
+    if (now < start) return 'UPCOMING';
+    if (now > end) return 'EXPIRED';
+    return 'ACTIVE';
+  }
 }

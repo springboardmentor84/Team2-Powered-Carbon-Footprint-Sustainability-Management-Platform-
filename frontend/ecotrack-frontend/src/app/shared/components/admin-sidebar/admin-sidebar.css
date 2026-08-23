@@ -2,14 +2,14 @@
   display: flex;
   flex-direction: column;
   height: 100vh;
-  background-color: #1e1e2d;
+  background-color: #0f291e;
   color: #ffffff;
-  border-right: 1px solid #2b2b40;
+  border-right: 1px solid #1b402f;
   width: 250px;
 }
 .sidebar-header {
   padding: 24px;
-  border-bottom: 1px solid #2b2b40;
+  border-bottom: 1px solid #1b402f;
 }
 .logo {
   display: flex;
@@ -17,7 +17,7 @@
   gap: 12px;
   font-size: 1.25rem;
   font-weight: 600;
-  color: #66bb6a;
+  color: #ffffff;
 }
 .sidebar-nav {
   flex: 1;
@@ -29,21 +29,31 @@
 .nav-item {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 14px;
   padding: 12px 16px;
-  border-radius: 8px;
-  color: #b5b5c3;
+  border-radius: 10px;
+  color: #a3b8ad;
+  font-weight: 500;
+  font-size: 0.95rem;
   text-decoration: none;
   transition: all 0.2s ease;
   cursor: pointer;
 }
+.nav-item .material-icons {
+  font-size: 1.3rem;
+  transition: color 0.2s ease;
+}
 .nav-item:hover:not(.disabled) {
-  background-color: rgba(255, 255, 255, 0.05);
+  background-color: rgba(255, 255, 255, 0.04);
   color: #ffffff;
 }
 .nav-item.active {
-  background-color: #4caf50;
-  color: white;
+  background-color: #1a4531;
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+.nav-item.active .material-icons {
+  color: #4ade80;
 }
 .nav-item.disabled {
   opacity: 0.5;
@@ -51,7 +61,7 @@
 }
 .sidebar-footer {
   padding: 24px;
-  border-top: 1px solid #2b2b40;
+  border-top: 1px solid #1b402f;
 }
 .logout-btn {
   display: flex;
@@ -70,4 +80,34 @@
 }
 .logout-btn:hover {
   background-color: rgba(244, 67, 54, 0.2);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .admin-sidebar {
+    width: 220px;
+  }
+}
+
+@media (max-width: 768px) {
+  .admin-sidebar {
+    width: 80px;
+  }
+  .sidebar-header {
+    padding: 24px 16px;
+  }
+  .logo span:not(.material-icons),
+  .nav-label {
+    display: none;
+  }
+  .nav-item {
+    justify-content: center;
+    padding: 12px;
+  }
+  .logout-btn {
+    padding: 12px;
+  }
+  .logout-btn span:not(.material-icons) {
+    display: none;
+  }
 }

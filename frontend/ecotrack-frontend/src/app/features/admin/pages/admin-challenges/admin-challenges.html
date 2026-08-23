@@ -42,35 +42,37 @@
     <table class="data-table">
       <thead>
         <tr>
-          <th>ID</th>
+          <th style="text-align: center; width: 60px;">ID</th>
           <th><a (click)="changeSort('title,' + (currentSort().includes('desc') ? 'asc' : 'desc'))" style="cursor: pointer;">Title</a></th>
           <th>Category</th>
           <th><a (click)="changeSort('startDate,' + (currentSort().includes('desc') ? 'asc' : 'desc'))" style="cursor: pointer;">Start Date</a></th>
           <th><a (click)="changeSort('endDate,' + (currentSort().includes('desc') ? 'asc' : 'desc'))" style="cursor: pointer;">End Date</a></th>
-          <th>Reward</th>
-          <th>Target</th>
-          <th>Actions</th>
+          <th style="text-align: right;">Reward</th>
+          <th style="text-align: right;">Target</th>
+          <th style="text-align: center;">Status</th>
+          <th style="text-align: center;">Actions</th>
         </tr>
       </thead>
       <tbody>
         <tr *ngFor="let challenge of challenges()">
-          <td>#{{ challenge.id }}</td>
+          <td style="text-align: center;">#{{ challenge.id }}</td>
           <td>
             <div class="challenge-info">
               <span class="challenge-title">{{ challenge.title }}</span>
             </div>
           </td>
-          <td>
-            <span class="badge status-badge active">
-              {{ challenge.category }}
-            </span>
-          </td>
+          <td>{{ challenge.category }}</td>
           <td>{{ challenge.startDate | date:'mediumDate' }}</td>
           <td>{{ challenge.endDate | date:'mediumDate' }}</td>
-          <td>{{ challenge.rewardPoints }} points</td>
-          <td>{{ challenge.target }} {{ challenge.unit }}</td>
-          <td>
-            <button class="btn-icon" (click)="viewChallengeDetails(challenge.id)" title="View Details">
+          <td style="text-align: right;">{{ challenge.rewardPoints }} pts</td>
+          <td style="text-align: right;">{{ challenge.target }} {{ challenge.unit }}</td>
+          <td style="text-align: center;">
+            <span class="badge status-badge" [ngClass]="getChallengeStatus(challenge).toLowerCase()">
+              {{ getChallengeStatus(challenge) }}
+            </span>
+          </td>
+          <td style="text-align: center;">
+            <button class="btn-icon view-btn" (click)="viewChallengeDetails(challenge.id)" title="View Details" aria-label="View Details">
               <span class="material-icons">visibility</span>
             </button>
           </td>
@@ -181,23 +183,23 @@
         <div *ngIf="selectedChallengeDetails() as details">
           <div class="details-grid">
             <div class="detail-card">
-              <h4>Info</h4>
-              <p><strong>Title:</strong> {{ details.title }}</p>
-              <p><strong>Category:</strong> {{ details.category }}</p>
-              <p><strong>Status:</strong> {{ details.status }}</p>
-              <p><strong>Timeline:</strong> {{ details.startDate | date:'shortDate' }} - {{ details.endDate | date:'shortDate' }}</p>
+              <h4><span class="material-icons">info</span> Info</h4>
+              <div class="detail-row"><span class="label">Title:</span> <span class="value">{{ details.title }}</span></div>
+              <div class="detail-row"><span class="label">Category:</span> <span class="value">{{ details.category }}</span></div>
+              <div class="detail-row"><span class="label">Status:</span> <span class="badge status-badge" [ngClass]="getChallengeStatus(details).toLowerCase()">{{ getChallengeStatus(details) }}</span></div>
+              <div class="detail-row"><span class="label">Timeline:</span> <span class="value">{{ details.startDate | date:'shortDate' }} - {{ details.endDate | date:'shortDate' }}</span></div>
             </div>
             
-            <div class="detail-card">
-              <h4>Targets & Rewards</h4>
-              <p><strong>Reward Points:</strong> {{ details.reward | number }}</p>
-              <p><strong>Target:</strong> {{ details.target }} {{ details.unit }}</p>
+            <div class="detail-card highlight-card">
+              <h4><span class="material-icons">stars</span> Targets & Rewards</h4>
+              <div class="detail-row"><span class="label">Reward Points:</span> <strong class="value highlight">{{ details.reward || details.rewardPoints | number }}</strong></div>
+              <div class="detail-row"><span class="label">Target:</span> <span class="value">{{ details.target }} {{ details.unit }}</span></div>
             </div>
 
             <div class="detail-card">
-              <h4>Engagement</h4>
-              <p><strong>Total Participants:</strong> {{ details.participantCount }}</p>
-              <p><strong>Completed By:</strong> {{ details.completionCount }}</p>
+              <h4><span class="material-icons">people</span> Engagement</h4>
+              <div class="detail-row"><span class="label">Total Participants:</span> <span class="value">{{ details.participantCount || 0 }}</span></div>
+              <div class="detail-row"><span class="label">Completed By:</span> <span class="value">{{ details.completionCount || 0 }}</span></div>
             </div>
           </div>
         </div>

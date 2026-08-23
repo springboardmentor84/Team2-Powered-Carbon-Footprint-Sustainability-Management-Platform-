@@ -42,19 +42,19 @@
     <table class="users-table">
       <thead>
         <tr>
-          <th>ID</th>
+          <th style="text-align: center; width: 60px;">ID</th>
           <th>Name</th>
           <th>Email</th>
           <th>Role</th>
-          <th><a (click)="changeSort('ecoPoints,' + (currentSort().includes('desc') ? 'asc' : 'desc'))" style="cursor: pointer;">Eco Points</a></th>
+          <th style="text-align: right;"><a (click)="changeSort('ecoPoints,' + (currentSort().includes('desc') ? 'asc' : 'desc'))" style="cursor: pointer;">Eco Points</a></th>
           <th>Status</th>
           <th><a (click)="changeSort('createdAt,' + (currentSort().includes('desc') ? 'asc' : 'desc'))" style="cursor: pointer;">Joined</a></th>
-          <th>Actions</th>
+          <th style="text-align: center;">Actions</th>
         </tr>
       </thead>
       <tbody>
         <tr *ngFor="let user of users()">
-          <td>#{{ user.id }}</td>
+          <td style="text-align: center;">#{{ user.id }}</td>
           <td>
             <div class="user-info">
               <span class="user-name">{{ user.fullName }}</span>
@@ -66,15 +66,15 @@
               {{ user.role }}
             </span>
           </td>
-          <td>{{ user.ecoPoints | number }}</td>
+          <td style="text-align: right; font-weight: 500;">{{ user.ecoPoints | number }}</td>
           <td>
             <span class="badge status-badge" [ngClass]="user.active ? 'active' : 'inactive'">
               {{ user.active ? 'Active' : 'Inactive' }}
             </span>
           </td>
           <td>{{ user.createdAt | date:'mediumDate' }}</td>
-          <td>
-            <button class="btn-icon" (click)="viewUserDetails(user.id)" title="View Details">
+          <td style="text-align: center;">
+            <button class="btn-icon view-btn" (click)="viewUserDetails(user.id)" title="View Details" aria-label="View Details">
               <span class="material-icons">visibility</span>
             </button>
           </td>
@@ -124,35 +124,35 @@
         <div *ngIf="selectedUserDetails() as details">
           <div class="details-grid">
             <div class="detail-card">
-              <h4>Profile</h4>
-              <p><strong>Name:</strong> {{ details.fullName }}</p>
-              <p><strong>Email:</strong> {{ details.email }}</p>
-              <p><strong>Role:</strong> {{ details.role }}</p>
-              <p><strong>Status:</strong> {{ details.active ? 'Active' : 'Inactive' }}</p>
-              <p><strong>Joined:</strong> {{ details.createdAt | date:'medium' }}</p>
+              <h4><span class="material-icons">person</span> Profile</h4>
+              <div class="detail-row"><span class="label">Name:</span> <span class="value">{{ details.fullName }}</span></div>
+              <div class="detail-row"><span class="label">Email:</span> <span class="value">{{ details.email }}</span></div>
+              <div class="detail-row"><span class="label">Role:</span> <span class="badge role-badge" [ngClass]="details.role.toLowerCase()">{{ details.role }}</span></div>
+              <div class="detail-row"><span class="label">Status:</span> <span class="badge status-badge" [ngClass]="details.active ? 'active' : 'inactive'">{{ details.active ? 'Active' : 'Inactive' }}</span></div>
+              <div class="detail-row"><span class="label">Joined:</span> <span class="value">{{ details.createdAt | date:'mediumDate' }}</span></div>
             </div>
             
             <div class="detail-card">
-              <h4>Challenges</h4>
-              <p><strong>Total Participations:</strong> {{ details.totalParticipations }}</p>
-              <p><strong>Active Challenges:</strong> {{ details.activeChallenges }}</p>
-              <p><strong>Completed Challenges:</strong> {{ details.completedChallenges }}</p>
-              <p><strong>Expired Challenges:</strong> {{ details.expiredChallenges }}</p>
+              <h4><span class="material-icons">emoji_events</span> Challenges</h4>
+              <div class="detail-row"><span class="label">Total Participations:</span> <span class="value">{{ details.totalParticipations }}</span></div>
+              <div class="detail-row"><span class="label">Active:</span> <span class="value">{{ details.activeChallenges }}</span></div>
+              <div class="detail-row"><span class="label">Completed:</span> <span class="value">{{ details.completedChallenges }}</span></div>
+              <div class="detail-row"><span class="label">Expired:</span> <span class="value">{{ details.expiredChallenges }}</span></div>
             </div>
             
-            <div class="detail-card">
-              <h4>Rewards</h4>
-              <p><strong>EcoPoints Balance:</strong> {{ details.ecoPoints | number }}</p>
-              <p><strong>Reward Activities:</strong> {{ details.rewardActivities }}</p>
-              <p><strong>Total Rewarded Points:</strong> {{ details.totalRewardedPoints | number }}</p>
+            <div class="detail-card highlight-card">
+              <h4><span class="material-icons">stars</span> Rewards</h4>
+              <div class="detail-row"><span class="label">EcoPoints Balance:</span> <strong class="value highlight">{{ details.ecoPoints | number }}</strong></div>
+              <div class="detail-row"><span class="label">Reward Activities:</span> <span class="value">{{ details.rewardActivities }}</span></div>
+              <div class="detail-row"><span class="label">Total Earned:</span> <span class="value">{{ details.totalRewardedPoints | number }}</span></div>
             </div>
 
             <div class="detail-card">
-              <h4>Carbon & Goals</h4>
-              <p><strong>Carbon Entries:</strong> {{ details.totalCarbonEntries }}</p>
-              <p><strong>Total Emissions:</strong> {{ details.totalCarbonEmissions | number:'1.0-2' }} kg</p>
-              <p><strong>Active Goals:</strong> {{ details.activeGoals }}</p>
-              <p><strong>Completed Goals:</strong> {{ details.completedGoals }}</p>
+              <h4><span class="material-icons">eco</span> Carbon & Goals</h4>
+              <div class="detail-row"><span class="label">Carbon Entries:</span> <span class="value">{{ details.totalCarbonEntries }}</span></div>
+              <div class="detail-row"><span class="label">Total Emissions:</span> <strong class="value">{{ details.totalCarbonEmissions | number:'1.0-2' }} kg</strong></div>
+              <div class="detail-row"><span class="label">Active Goals:</span> <span class="value">{{ details.activeGoals }}</span></div>
+              <div class="detail-row"><span class="label">Completed Goals:</span> <span class="value">{{ details.completedGoals }}</span></div>
             </div>
           </div>
         </div>
