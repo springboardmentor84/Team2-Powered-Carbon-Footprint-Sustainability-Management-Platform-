@@ -1,20 +1,47 @@
 <div class="ai-recommendation">
 
   <!-- =====================================================
-       LOADING SKELETON
+       LOADING
        ===================================================== -->
-  <div class="ai-state skeleton-container" *ngIf="loading">
+
+  <div
+    class="ai-state skeleton-container"
+    *ngIf="loading">
+
     <div class="skeleton-icon"></div>
+
     <div class="skeleton-details">
-      <div class="skeleton-line category-line"></div>
-      <div class="skeleton-line title-line"></div>
-      <div class="skeleton-line text-line"></div>
-      <div class="skeleton-line text-line-short"></div>
-      <div class="skeleton-meta">
-         <div class="skeleton-badge"></div>
-         <div class="skeleton-badge"></div>
+
+      <div
+        class="skeleton-line category-line">
       </div>
+
+      <div
+        class="skeleton-line title-line">
+      </div>
+
+      <div
+        class="skeleton-line text-line">
+      </div>
+
+      <div
+        class="skeleton-line text-line-short">
+      </div>
+
+      <div class="skeleton-meta">
+
+        <div
+          class="skeleton-badge">
+        </div>
+
+        <div
+          class="skeleton-badge">
+        </div>
+
+      </div>
+
     </div>
+
   </div>
 
 
@@ -75,18 +102,25 @@
 
     <div class="details">
 
+
       <div class="category">
+
         {{ category | titlecase }}
+
       </div>
 
 
       <h3>
+
         {{ title }}
+
       </h3>
 
 
       <p>
+
         {{ text }}
+
       </p>
 
 
@@ -101,6 +135,7 @@
 
       <div class="meta">
 
+
         <span
           class="priority"
           [class.high]="priority === 'HIGH'"
@@ -113,13 +148,35 @@
         </span>
 
 
-        <span class="live">
+        <!-- Live AI -->
 
-          <span class="live-dot"></span>
+        <span
+          class="live"
+          *ngIf="!usingFallback">
+
+          <span
+            class="live-dot">
+          </span>
 
           Live AI insight
 
         </span>
+
+
+        <!-- Fallback -->
+
+        <span
+          class="live"
+          *ngIf="usingFallback">
+
+          <span
+            class="live-dot">
+          </span>
+
+          Sustainability insight
+
+        </span>
+
 
       </div>
 

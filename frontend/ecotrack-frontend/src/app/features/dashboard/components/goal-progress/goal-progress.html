@@ -48,13 +48,14 @@
             [value]="percentage"
             [color]="percentage > 100 ? 'warn' : 'primary'">
         </mat-progress-bar>
-        
-        <p class="goal-status" *ngIf="percentage < 100">
-            Keep going! You're on track.
-        </p>
-        <p class="goal-status success" *ngIf="percentage >= 100">
-            Goal limit exceeded!
-        </p>
+
+  <p class="goal-status" *ngIf="!limitExceeded">
+    {{ percentage | number:'1.0-0' }}% of your carbon goal limit used.
+</p>
+
+<p class="goal-status success" *ngIf="limitExceeded">
+    Goal limit exceeded! Your carbon usage is above the target.
+</p>
     </div>
 
 </div>

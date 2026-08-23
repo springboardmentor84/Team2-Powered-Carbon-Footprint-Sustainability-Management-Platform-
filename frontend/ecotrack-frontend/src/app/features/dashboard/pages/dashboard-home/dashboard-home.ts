@@ -369,7 +369,60 @@ export class DashboardHome
 
 
             // Sustainability score comes from activities
-            this.stats[2].value = '0';
+          const activities =
+  this.activityService
+    .getActivities();
+
+
+const totalCarbon =
+  activities.reduce(
+    (sum, activity) => {
+
+      return (
+        sum +
+        Number(
+          activity.carbonEmission ??
+          activity.carbon ??
+          0
+        )
+      );
+
+    },
+    0
+  );
+
+
+const activityCount =
+  activities.length;
+
+
+const averageEmission =
+  activityCount > 0
+    ? totalCarbon / activityCount
+    : 0;
+
+
+const sustainabilityScore =
+  activityCount === 0
+    ? 100
+    : Math.max(
+        0,
+        Math.min(
+          100,
+          Math.round(
+            100 -
+            (
+              averageEmission * 10
+            )
+          )
+        )
+      );
+
+
+this.stats[2].value =
+  String(
+    sustainabilityScore
+  );
 
 
             // Goal progress is loaded separately
@@ -441,8 +494,27 @@ export class DashboardHome
       activities.length;
 
 
-    const sustainabilityScore = 0;
+    const averageEmission =
+  activityCount > 0
+    ? totalCarbon / activityCount
+    : 0;
 
+
+const sustainabilityScore =
+  activityCount === 0
+    ? 100
+    : Math.max(
+        0,
+        Math.min(
+          100,
+          Math.round(
+            100 -
+            (
+              averageEmission * 10
+            )
+          )
+        )
+      );
 
     this.stats[0].value =
       `${totalCarbon.toFixed(1)} kg`;
