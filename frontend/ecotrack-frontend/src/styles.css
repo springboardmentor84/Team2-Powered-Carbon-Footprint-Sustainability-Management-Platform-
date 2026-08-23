@@ -313,3 +313,57 @@ a {
   }
 
 }
+
+/* ============================================================
+   GLOBAL MAT-SPINNER FIX — Force proper circular stroke
+   ============================================================ */
+
+mat-spinner circle,
+mat-progress-spinner circle {
+  stroke: #2e7d32 !important;
+}
+
+mat-spinner svg,
+mat-progress-spinner svg {
+  animation: mat-progress-spinner-stroke-rotate-100 1.5s linear infinite !important;
+}
+
+/* ============================================================
+   GLOBAL DOT LOADER — Use .eco-loader instead of mat-spinner
+   ============================================================ */
+
+.eco-loader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.eco-loader span {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: #2e7d32;
+  animation: eco-bounce 1.4s infinite ease-in-out both;
+}
+
+.eco-loader span:nth-child(1) { animation-delay: -0.32s; }
+.eco-loader span:nth-child(2) { animation-delay: -0.16s; }
+.eco-loader span:nth-child(3) { animation-delay: 0s; }
+.eco-loader span:nth-child(4) { animation-delay: 0.16s; }
+
+@keyframes eco-bounce {
+  0%, 80%, 100% {
+    transform: scale(0.6);
+    opacity: 0.4;
+  }
+  40% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Blue variant for leaderboard / notifications */
+.eco-loader.blue span { background-color: #1976d2; }

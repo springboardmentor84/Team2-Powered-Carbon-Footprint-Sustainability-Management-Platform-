@@ -6,6 +6,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import lombok.extern.slf4j.Slf4j;
@@ -20,22 +21,32 @@ public class GeminiAIServiceImpl implements AIService {
     @Value("${ai.api.key}")
     private String apiKey;
 
-    @Value("${ai.api.url:https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent}")
+    @Value("${ai.api.url:https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent}")
     private String apiUrl;
 
     private final RestTemplate restTemplate;
 
     public GeminiAIServiceImpl() {
-        this.restTemplate = new RestTemplate();
+        // Set timeouts - allow up to 30 seconds for Gemini API response
+        SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
+        factory.setConnectTimeout(5000);
+        factory.setReadTimeout(30000);
+        this.restTemplate = new RestTemplate(factory);
     }
 
     @Override
     public String generateRecommendations(String prompt) {
         try {
-            String url = apiUrl + "?key=" + apiKey;
+            // AQ. prefix keys require x-goog-api-key header instead of ?key= query param
+            String url = apiKey.startsWith("AQ.") ? apiUrl : apiUrl + "?key=" + apiKey;
+            log.info("Gemini API call: model URL = {}", apiUrl);
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
+            if (apiKey.startsWith("AQ.")) {
+                headers.set("x-goog-api-key", apiKey);
+                log.info("Gemini API: using x-goog-api-key header (AQ. key)");
+            }
 
             // Constructing Gemini API request payload
             Map<String, Object> requestBody = new HashMap<>();

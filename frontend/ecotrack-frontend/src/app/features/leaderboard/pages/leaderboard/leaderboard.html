@@ -26,7 +26,9 @@
 
     <!-- LOADING STATE -->
     <div *ngIf="loading" class="loading-state">
-        <mat-spinner diameter="40"></mat-spinner>
+        <div class="eco-loader blue">
+            <span></span><span></span><span></span><span></span>
+        </div>
         <p>Loading leaderboard rankings...</p>
     </div>
 
