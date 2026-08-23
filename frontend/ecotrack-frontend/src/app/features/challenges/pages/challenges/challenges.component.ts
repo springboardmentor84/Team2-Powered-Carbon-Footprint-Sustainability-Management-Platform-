@@ -14,6 +14,7 @@ interface MyChallengeDetails {
   participation: ChallengeParticipation;
   progress: ChallengeProgress | null;
   leaderboard: ChallengeLeaderboardEntry[];
+  challengeInfo?: Challenge;
   loading: boolean;
 }
 
@@ -98,6 +99,7 @@ export class ChallengesComponent implements OnInit {
           participation: p,
           progress: null,
           leaderboard: [],
+          challengeInfo: this.allChallenges.find(c => c.id === p.challengeId),
           loading: true
         }));
 
