@@ -40,12 +40,18 @@ public class RecommendationServiceImpl implements RecommendationService {
     private final Map<String, Long> cacheTimestamps = new ConcurrentHashMap<>();
 
     @Override
-    public List<RecommendationResponse> getRecommendations(String email) {
-        // Return cached result if still fresh
-        Long lastFetched = cacheTimestamps.get(email);
-        if (lastFetched != null && (System.currentTimeMillis() - lastFetched) < CACHE_TTL_MS) {
-            log.info("Returning cached recommendations for {}", email);
-            return cache.get(email);
+    public List<RecommendationResponse> getRecommendations(String email, boolean refresh) {
+        // Return cached result if still fresh and not a forced refresh
+        if (!refresh) {
+            Long lastFetched = cacheTimestamps.get(email);
+            if (lastFetched != null && (System.currentTimeMillis() - lastFetched) < CACHE_TTL_MS) {
+                log.info("Returning cached recommendations for {}", email);
+                return cache.get(email);
+            }
+        } else {
+            log.info("Forced refresh requested. Bypassing cache for {}", email);
+            cache.remove(email);
+            cacheTimestamps.remove(email);
         }
 
         List<RecommendationResponse> result = fetchRecommendations(email);
@@ -54,8 +60,12 @@ public class RecommendationServiceImpl implements RecommendationService {
         if (result != null && !result.isEmpty()) {
             cache.put(email, result);
             cacheTimestamps.put(email, System.currentTimeMillis());
+            return result;
         }
-        return result;
+
+        log.info("Gemini API failure -> executing fallback strategy");
+        // Fallback Recommendation
+        return generateFallbackRecommendation(email);
     }
 
     private List<RecommendationResponse> fetchRecommendations(String email) {
@@ -136,9 +146,7 @@ public class RecommendationServiceImpl implements RecommendationService {
             log.error("Failed to generate AI recommendations", e);
         }
 
-        log.info("Gemini API failure -> executing fallback strategy");
-        // Fallback Recommendation
-        return generateFallbackRecommendation(email);
+        return null;
     }
 
     private List<RecommendationResponse> generateFallbackRecommendation(String email) {

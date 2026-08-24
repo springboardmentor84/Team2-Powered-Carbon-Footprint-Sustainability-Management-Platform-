@@ -38,7 +38,7 @@ export class AiAssistant implements OnInit {
     this.loadRecommendations();
   }
 
-  loadRecommendations(): void {
+  loadRecommendations(isRefresh: boolean = false): void {
     this.loading = true;
     this.error = false;
     this.errorMessage = '';
@@ -46,7 +46,7 @@ export class AiAssistant implements OnInit {
 
     console.log('[AI] Calling recommendations API...');
 
-    this.aiService.getRecommendations().pipe(
+    this.aiService.getRecommendations(isRefresh).pipe(
       timeout(20000),
       catchError((err) => {
         console.error('[AI] API error:', err?.status, err?.message, err);

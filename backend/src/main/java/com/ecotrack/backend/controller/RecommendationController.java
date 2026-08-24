@@ -21,8 +21,9 @@ public class RecommendationController {
 
     @GetMapping
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
-    public ResponseEntity<List<RecommendationResponse>> getRecommendations() {
+    public ResponseEntity<List<RecommendationResponse>> getRecommendations(
+            @org.springframework.web.bind.annotation.RequestParam(required = false, defaultValue = "false") boolean refresh) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        return ResponseEntity.ok(recommendationService.getRecommendations(email));
+        return ResponseEntity.ok(recommendationService.getRecommendations(email, refresh));
     }
 }

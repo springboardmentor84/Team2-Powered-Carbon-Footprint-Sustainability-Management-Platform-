@@ -48,12 +48,12 @@ export class AiService {
   // GET ALL PERSONALIZED RECOMMENDATIONS
   // =========================================================
 
-  getRecommendations():
+  getRecommendations(refresh: boolean = false):
     Observable<RecommendationResponse[]> {
 
     return this.http.get<
       RecommendationResponse[]
-    >(this.endpoint);
+    >(`${this.endpoint}?refresh=${refresh}`);
 
   }
 
