@@ -4,12 +4,8 @@ import { MatCardModule } from '@angular/material/card';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-
 import { EditProfileDialog } from '../edit-profile-dialog/edit-profile-dialog';
-import { environment } from '../../../../../environments/environment';
-import { TOKEN_KEY } from '../../../../core/constants/app.constants';
 import { ProfileService, UserProfile } from '../../../../core/services/profile';
-import { DashboardService } from '../../../../core/services/dashboard/dashboard.service';
 
 @Component({
   selector: 'app-profile-card',
@@ -24,12 +20,9 @@ import { DashboardService } from '../../../../core/services/dashboard/dashboard.
   styleUrl: './profile-card.css'
 })
 export class ProfileCard implements OnInit {
-
   private dialog = inject(MatDialog);
   private snackBar = inject(MatSnackBar);
-  private http = inject(HttpClient);
   private profileService = inject(ProfileService);
-  private dashboardService = inject(DashboardService);
   private cdr = inject(ChangeDetectorRef);
 
   isUploading = false;
@@ -40,7 +33,7 @@ export class ProfileCard implements OnInit {
     email: 'Loading...',
     phone: 'N/A',
     gender: 'N/A',
-    dob: 'N/A',
+    dateOfBirth: 'N/A',
     location: 'N/A',
     university: 'N/A',
     department: 'N/A',
@@ -51,28 +44,37 @@ export class ProfileCard implements OnInit {
     streak: '0 Days',
     score: '0',
     joined: 'N/A',
-    username: 'N/A',
-    accountStatus: 'N/A',
-    lastLogin: 'N/A'
+    accountStatus: 'Active'
   };
 
   ngOnInit(): void {
     this.profileService.getProfile().subscribe({
-      next: (profile: any) => {
+      next: (profile: UserProfile) => {
         if (profile) {
-          // Merge fetched profile data with existing fallback
           this.user = {
             ...this.user,
             fullName: profile.fullName || 'N/A',
             email: profile.email || 'N/A',
             score: profile.ecoPoints !== undefined ? `${profile.ecoPoints}` : this.user.score,
-            level: profile.nextLevel || profile.role || this.user.level
+            level: profile.currentLevel || profile.role || this.user.level,
+            phone: profile.phone || 'N/A',
+            gender: profile.gender || 'N/A',
+            dateOfBirth: profile.dateOfBirth || 'N/A',
+            location: profile.location || 'N/A',
+            university: profile.university || 'N/A',
+            department: profile.department || 'N/A',
+            rollNumber: profile.rollNumber || 'N/A',
+            year: profile.year || 'N/A',
+            carbon: profile.totalEmissions !== undefined ? `${profile.totalEmissions} kg` : '0 kg',
+            streak: profile.currentStreak !== undefined ? `${profile.currentStreak} Days` : '0 Days',
+            joined: profile.createdAt ? new Date(profile.createdAt).toLocaleDateString() : 'N/A',
+            accountStatus: profile.accountStatus || 'Active'
           };
           
           if (profile.profileImage) {
             this.user.profileImage = profile.profileImage;
           } else if (profile.fullName) {
-             const nameQuery = profile.fullName.replace(/\s+/g, '+');
+             const nameQuery = profile.fullName.replace(/\\s+/g, '+');
              this.user.profileImage = `https://ui-avatars.com/api/?name=${nameQuery}&background=2E7D32&color=fff&size=256`;
           }
           this.cdr.detectChanges();
@@ -85,17 +87,6 @@ export class ProfileCard implements OnInit {
         this.cdr.detectChanges();
       }
     });
-
-    this.dashboardService.getSummary().subscribe({
-      next: (summary) => {
-        if (summary) {
-          this.user.carbon = `${summary.totalCarbonEmission || 0} kg`;
-          this.user.streak = `${summary.currentStreak || 0} Days`;
-          this.cdr.detectChanges();
-        }
-      },
-      error: (err) => console.error('Failed to load dashboard summary for profile', err)
-    });
   }
 
   editProfile(): void {
@@ -104,11 +95,36 @@ export class ProfileCard implements OnInit {
       data: { ...this.user }
     }).afterClosed().subscribe(result => {
       if (result) {
-        this.user = { ...this.user, ...result };
-        this.snackBar.open('Profile Updated Successfully', 'Close', {
-          duration: 3000,
-          horizontalPosition: 'right',
-          verticalPosition: 'top'
+        // Send the updated profile to backend
+        this.profileService.updateProfile(result).subscribe({
+          next: (updatedProfile: UserProfile) => {
+            this.user = { 
+              ...this.user, 
+              ...updatedProfile,
+              dateOfBirth: updatedProfile.dateOfBirth || 'N/A',
+              phone: updatedProfile.phone || 'N/A',
+              gender: updatedProfile.gender || 'N/A',
+              location: updatedProfile.location || 'N/A',
+              university: updatedProfile.university || 'N/A',
+              department: updatedProfile.department || 'N/A',
+              rollNumber: updatedProfile.rollNumber || 'N/A',
+              year: updatedProfile.year || 'N/A'
+            };
+            this.snackBar.open('Profile Updated Successfully', 'Close', {
+              duration: 3000,
+              horizontalPosition: 'right',
+              verticalPosition: 'top'
+            });
+            this.cdr.detectChanges();
+          },
+          error: (err) => {
+            console.error('Failed to update profile', err);
+            this.snackBar.open('Failed to update profile', 'Close', {
+              duration: 3000,
+              horizontalPosition: 'right',
+              verticalPosition: 'top'
+            });
+          }
         });
       }
     });
@@ -119,8 +135,6 @@ export class ProfileCard implements OnInit {
     if (!input.files || input.files.length === 0) return;
 
     const file = input.files[0];
-
-    // Show local preview immediately
     const reader = new FileReader();
     reader.onload = () => {
       this.user.profileImage = reader.result as string;
@@ -128,7 +142,6 @@ export class ProfileCard implements OnInit {
     reader.readAsDataURL(file);
 
     this.isUploading = true;
-
     this.profileService.uploadProfileImage(file).subscribe({
       next: (response: any) => {
         this.isUploading = false;

@@ -1,8 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
-import { DashboardService } from '../../../../core/services/dashboard/dashboard.service';
-import { LeaderboardService } from '../../../../core/services/leaderboard.service';
+import { ProfileService, UserProfile } from '../../../../core/services/profile';
 import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
@@ -16,8 +15,7 @@ import { ChangeDetectorRef } from '@angular/core';
   styleUrl: './profile-stats.css'
 })
 export class ProfileStats implements OnInit {
-  private dashboardService = inject(DashboardService);
-  private leaderboardService = inject(LeaderboardService);
+  private profileService = inject(ProfileService);
   private cdr = inject(ChangeDetectorRef);
 
   stats = [
@@ -25,11 +23,6 @@ export class ProfileStats implements OnInit {
       title: 'Activities',
       value: 'Loading...',
       color: '#2E7D32'
-    },
-    {
-      title: 'Trees Saved',
-      value: 'N/A',
-      color: '#43A047'
     },
     {
       title: 'Total Emissions',
@@ -44,32 +37,19 @@ export class ProfileStats implements OnInit {
   ];
 
   ngOnInit(): void {
-    this.dashboardService.getSummary().subscribe({
-      next: (summary: any) => {
-        if (summary) {
-          this.stats[0].value = summary.totalEntries?.toString() || '0';
-          this.stats[2].value = `${summary.totalCarbonEmission || 0} kg`;
+    this.profileService.getProfile().subscribe({
+      next: (profile: UserProfile) => {
+        if (profile) {
+          this.stats[0].value = profile.activitiesCount?.toString() || '0';
+          this.stats[1].value = profile.totalEmissions !== undefined ? `${profile.totalEmissions} kg` : '0 kg';
+          this.stats[2].value = profile.globalRank !== undefined && profile.globalRank !== null ? `#${profile.globalRank}` : 'N/A';
           this.cdr.detectChanges();
         }
       },
       error: () => {
         this.stats[0].value = 'Error loading';
+        this.stats[1].value = 'Error loading';
         this.stats[2].value = 'Error loading';
-        this.cdr.detectChanges();
-      }
-    });
-
-    this.leaderboardService.getMyRank().subscribe({
-      next: (rankData: any) => {
-        const rankValue = typeof rankData === 'number' || typeof rankData === 'string' 
-          ? rankData 
-          : (rankData?.rank || 'N/A');
-        
-        this.stats[3].value = rankValue !== 'N/A' ? `#${rankValue}` : 'N/A';
-        this.cdr.detectChanges();
-      },
-      error: () => {
-        this.stats[3].value = 'Error loading';
         this.cdr.detectChanges();
       }
     });

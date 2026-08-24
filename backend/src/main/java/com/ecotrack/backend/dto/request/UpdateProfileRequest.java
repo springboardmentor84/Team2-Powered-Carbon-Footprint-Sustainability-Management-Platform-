@@ -15,4 +15,13 @@ public class UpdateProfileRequest {
     private String fullName;
     
     private String profileImage;
+
+    private String gender;
+    private java.time.LocalDate dateOfBirth;
+    private String phone;
+    private String location;
+    private String university;
+    private String department;
+    private String rollNumber;
+    private String year;
 }

@@ -11,7 +11,7 @@
 
     <mat-form-field appearance="outline" class="full-width">
         <mat-label>Email</mat-label>
-        <input matInput [(ngModel)]="user.email">
+        <input matInput [(ngModel)]="user.email" readonly>
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="full-width">
@@ -26,7 +26,7 @@
 
     <mat-form-field appearance="outline" class="full-width">
         <mat-label>Date of Birth</mat-label>
-        <input matInput [(ngModel)]="user.dob">
+        <input matInput type="date" [(ngModel)]="user.dateOfBirth">
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="full-width">
@@ -60,34 +60,29 @@
 
     <mat-form-field appearance="outline" class="full-width">
         <mat-label>Eco Level</mat-label>
-        <input matInput [(ngModel)]="user.level">
+        <input matInput [(ngModel)]="user.level" readonly>
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="full-width">
         <mat-label>Total Emissions</mat-label>
-        <input matInput [(ngModel)]="user.carbon">
+        <input matInput [(ngModel)]="user.carbon" readonly>
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="full-width">
         <mat-label>Current Streak</mat-label>
-        <input matInput [(ngModel)]="user.streak">
+        <input matInput [(ngModel)]="user.streak" readonly>
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="full-width">
         <mat-label>Green Score</mat-label>
-        <input matInput [(ngModel)]="user.score">
+        <input matInput [(ngModel)]="user.score" readonly>
     </mat-form-field>
 
     <h3>Account Information</h3>
 
     <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Username</mat-label>
-        <input matInput [(ngModel)]="user.username">
-    </mat-form-field>
-
-    <mat-form-field appearance="outline" class="full-width">
         <mat-label>Account Status</mat-label>
-        <input matInput [(ngModel)]="user.accountStatus">
+        <input matInput [(ngModel)]="user.accountStatus" readonly>
     </mat-form-field>
 
 </mat-dialog-content>

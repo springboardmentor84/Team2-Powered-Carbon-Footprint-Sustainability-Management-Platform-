@@ -71,6 +71,31 @@ public class User implements UserDetails {
     @Builder.Default
     private Boolean active = true;
 
+    // Editable Profile Fields
+    @Column(length = 20)
+    private String gender;
+
+    @Column
+    private java.time.LocalDate dateOfBirth;
+
+    @Column(length = 20)
+    private String phone;
+
+    @Column(length = 100)
+    private String location;
+
+    @Column(length = 100)
+    private String university;
+
+    @Column(length = 100)
+    private String department;
+
+    @Column(length = 50)
+    private String rollNumber;
+
+    @Column(length = 20)
+    private String year;
+
     @CreationTimestamp
     @Column(updatable = false, nullable = false)
     private LocalDateTime createdAt;

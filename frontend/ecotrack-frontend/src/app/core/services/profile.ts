@@ -17,53 +17,34 @@ import {
 
 
 export interface UserProfile {
-
   id?: number;
-
   fullName?: string;
-
   email?: string;
-
   phone?: string;
-
   gender?: string;
-
-  dob?: string;
-
+  dateOfBirth?: string;
   location?: string;
-
   university?: string;
-
   department?: string;
-
   rollNumber?: string;
-
   year?: string;
-
   username?: string;
-
   profileImage?: string;
-
   accountStatus?: string;
-
   joined?: string;
-
   lastLogin?: string;
-
-  level?: string;
-
-  carbon?: number;
-
-  streak?: number;
-
+  currentLevel?: string;
+  ecoPoints?: number;
+  totalEmissions?: number;
+  currentStreak?: number;
+  activitiesCount?: number;
+  globalRank?: number;
   score?: number;
-
   nextLevel?: string;
-
   pointsRemaining?: number;
-
   progressPercentage?: number;
-
+  createdAt?: string;
+  role?: string;
 }
 
 
