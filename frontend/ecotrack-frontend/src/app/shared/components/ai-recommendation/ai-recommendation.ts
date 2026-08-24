@@ -1,4 +1,5 @@
 import {
+  ChangeDetectorRef,
   Component,
   OnDestroy,
   OnInit,
@@ -18,8 +19,14 @@ import {
 } from '@angular/material/icon';
 
 import {
-  Subscription
+  Subscription,
+  of
 } from 'rxjs';
+
+import {
+  catchError,
+  timeout
+} from 'rxjs/operators';
 
 import {
   AiService,
@@ -48,6 +55,10 @@ export class AiRecommendation
   private readonly aiService =
     inject(AiService);
 
+  private readonly cdr =
+    inject(ChangeDetectorRef);
+
+
   private subscription?: Subscription;
 
 
@@ -59,6 +70,8 @@ export class AiRecommendation
   loading = true;
 
   error = false;
+
+  usingFallback = false;
 
 
   // =========================================================
@@ -84,53 +97,130 @@ export class AiRecommendation
 
 
   // =========================================================
-  // LIVE AI REQUEST
+  // LOAD RECOMMENDATION
   // =========================================================
 
   refreshRecommendation(): void {
 
     this.subscription?.unsubscribe();
 
+
     this.loading = true;
 
     this.error = false;
+
+    this.usingFallback = false;
+
+    this.recommendation = null;
+
+
+    this.cdr.detectChanges();
 
 
     this.subscription =
       this.aiService
         .getRecommendation()
+        .pipe(
+
+          // Do not allow the dashboard to remain
+          // on the loading skeleton forever.
+          timeout(20000),
+
+
+          catchError(error => {
+
+            console.error(
+              '[DASHBOARD AI] Recommendation failed:',
+              error
+            );
+
+
+            return of(null);
+
+          })
+
+        )
         .subscribe({
 
           next: (
-            response: RecommendationResponse
+            response:
+              RecommendationResponse | null
           ) => {
 
-            console.log(
-              'AI RECOMMENDATION:',
-              response
-            );
+            if (response) {
 
-            this.recommendation =
-              response;
+              console.log(
+                '[DASHBOARD AI] Live recommendation:',
+                response
+              );
 
-            this.loading = false;
 
-            this.error = false;
+              this.recommendation =
+                response;
+
+
+              this.usingFallback =
+                false;
+
+
+              this.error =
+                false;
+
+            } else {
+
+              console.warn(
+                '[DASHBOARD AI] Using fallback recommendation'
+              );
+
+
+              this.recommendation =
+                this.getFallbackRecommendation();
+
+
+              this.usingFallback =
+                true;
+
+
+              this.error =
+                false;
+
+            }
+
+
+            this.loading =
+              false;
+
+
+            this.cdr.detectChanges();
 
           },
+
 
           error: error => {
 
             console.error(
-              'AI recommendation failed:',
+              '[DASHBOARD AI] Unexpected error:',
               error
             );
 
-            this.recommendation = null;
 
-            this.loading = false;
+            this.recommendation =
+              this.getFallbackRecommendation();
 
-            this.error = true;
+
+            this.usingFallback =
+              true;
+
+
+            this.loading =
+              false;
+
+
+            this.error =
+              false;
+
+
+            this.cdr.detectChanges();
 
           }
 
@@ -140,7 +230,40 @@ export class AiRecommendation
 
 
   // =========================================================
-  // DISPLAY
+  // FALLBACK
+  // =========================================================
+
+  private getFallbackRecommendation():
+    RecommendationResponse {
+
+    return {
+
+      title:
+        'Continue Tracking Your Progress',
+
+
+      recommendation:
+        'Keep recording your daily activities. Consistent tracking helps EcoTrack identify your highest-emission habits and generate more personalized sustainability recommendations.',
+
+
+      category:
+        'GENERAL',
+
+
+      priority:
+        'MEDIUM',
+
+
+      reason:
+        'The live AI service is temporarily unavailable. This fallback insight keeps your dashboard useful while the recommendation service reconnects.'
+
+    };
+
+  }
+
+
+  // =========================================================
+  // DISPLAY HELPERS
   // =========================================================
 
   get icon(): string {
