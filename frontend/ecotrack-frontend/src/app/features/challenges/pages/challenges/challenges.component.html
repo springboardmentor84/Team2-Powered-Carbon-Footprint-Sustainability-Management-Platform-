@@ -55,7 +55,9 @@
                                         <span>{{ mc.progress.completionPercentage }}%</span>
                                     </div>
                                     <div class="progress-bar-bg">
-                                        <div class="progress-bar-fill" [style.width.%]="mc.progress.completionPercentage"></div>
+                                        <div class="progress-bar-fill" 
+                                             [style.width.%]="mc.progress.completionPercentage"
+                                             [ngClass]="{'expired-bar': mc.progress.challengeStatus === 'EXPIRED'}"></div>
                                     </div>
                                     
                                     <div class="challenge-meta" *ngIf="mc.challengeInfo">
@@ -81,19 +83,6 @@
                                         <mat-icon>check_circle</mat-icon> Reward Granted: {{ mc.challengeInfo?.rewardPoints }} points
                                     </div>
 
-                                    <div class="leaderboard-snippet">
-                                        <h4>Top Participants</h4>
-                                        <div *ngIf="mc.leaderboard.length > 0">
-                                            <div class="lb-entry" *ngFor="let entry of mc.leaderboard">
-                                                <span class="lb-rank">#{{ entry.rank }}</span>
-                                                <span class="lb-name">{{ entry.userName }}</span>
-                                                <span class="lb-score">{{ entry.progress }} {{ entry.unit }}</span>
-                                            </div>
-                                        </div>
-                                        <div *ngIf="mc.leaderboard.length === 0" style="color: #9e9e9e; font-size: 0.85rem; padding: 4px 0;">
-                                            No participants yet
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
 
