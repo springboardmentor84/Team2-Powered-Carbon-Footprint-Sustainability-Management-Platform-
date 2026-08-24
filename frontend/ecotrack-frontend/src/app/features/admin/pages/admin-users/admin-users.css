@@ -4,17 +4,25 @@
 }
 
 .header-section {
-  margin-bottom: 2rem;
+  background: linear-gradient(135deg, #1b5e20, #2e7d32);
+  color: white;
+  padding: 32px;
+  border-radius: 16px;
+  margin-bottom: 32px;
+  box-shadow: 0 4px 12px rgba(46, 125, 50, 0.2);
 }
 
 .header-section h2 {
-  font-size: 1.75rem;
-  color: var(--text-primary);
-  margin-bottom: 0.5rem;
+  font-size: 2rem;
+  font-weight: 700;
+  color: white;
+  margin: 0 0 8px 0;
 }
 
 .header-section p {
-  color: var(--text-secondary);
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 1rem;
+  margin: 0;
 }
 
 .users-table-container {
@@ -98,22 +106,24 @@
 .export-actions {
   display: flex;
   gap: 12px;
+  align-items: center;
 }
-.btn-secondary {
+.export-actions .btn-secondary {
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 8px 16px;
-  background: white;
-  border: 1px solid var(--border-color);
+  padding: 10px 16px;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.4);
   border-radius: 8px;
-  font-weight: 500;
-  color: var(--text-primary);
+  font-weight: 600;
+  color: white;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
 }
-.btn-secondary:hover {
-  background: var(--bg-default);
+.export-actions .btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: white;
 }
 .btn-icon {
   background: none;

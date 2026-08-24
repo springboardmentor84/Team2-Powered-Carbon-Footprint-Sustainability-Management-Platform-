@@ -4,17 +4,25 @@
 }
 
 .header-section {
-  margin-bottom: 2rem;
+  background: linear-gradient(135deg, #1b5e20, #2e7d32);
+  color: white;
+  padding: 32px;
+  border-radius: 16px;
+  margin-bottom: 32px;
+  box-shadow: 0 4px 12px rgba(46, 125, 50, 0.2);
 }
 
 .header-section h2 {
-  font-size: 1.75rem;
-  color: var(--text-primary);
-  margin-bottom: 0.5rem;
+  font-size: 2rem;
+  font-weight: 700;
+  color: white;
+  margin: 0 0 8px 0;
 }
 
 .header-section p {
-  color: var(--text-secondary);
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 1rem;
+  margin: 0;
 }
 
 .table-container {
@@ -142,7 +150,7 @@
   color: var(--text-primary, #111827);
 }
 
-form {
+.modal-body {
   padding: 1.5rem;
 }
 
@@ -241,22 +249,43 @@ form {
 .header-actions {
   display: flex;
   gap: 12px;
+  align-items: center;
 }
-.btn-secondary {
+.header-actions .btn-secondary {
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 8px 16px;
-  background: white;
-  border: 1px solid var(--border-color);
+  padding: 10px 16px;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.4);
   border-radius: 8px;
-  font-weight: 500;
-  color: var(--text-primary);
+  font-weight: 600;
+  color: white;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
 }
-.btn-secondary:hover {
-  background: var(--bg-default);
+.header-actions .btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: white;
+}
+.header-actions .btn-primary {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 20px;
+  background: white;
+  color: #1b5e20;
+  border: none;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+.header-actions .btn-primary:hover {
+  background: #f8fafc;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }
 .btn-icon {
   background: none;
@@ -319,17 +348,19 @@ form {
 .details-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 20px;
+  gap: 24px;
 }
 .detail-card {
   background: var(--bg-default);
-  padding: 16px;
-  border-radius: 8px;
+  padding: 20px;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
 }
 .detail-card h4 {
   margin: 0 0 16px 0;
   color: var(--text-primary);
-  font-size: 1rem;
+  font-size: 1.05rem;
   font-weight: 600;
   display: flex;
   align-items: center;
@@ -347,11 +378,12 @@ form {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 0;
+  padding: 12px 0;
   border-bottom: 1px dashed rgba(0, 0, 0, 0.05);
 }
 .detail-row:last-child {
   border-bottom: none;
+  padding-bottom: 0;
 }
 .detail-row .label {
   color: var(--text-secondary);
@@ -361,6 +393,9 @@ form {
   color: var(--text-primary);
   font-weight: 500;
   font-size: 0.95rem;
+  text-align: right;
+  padding-left: 12px;
+  word-break: break-word;
 }
 .detail-row .value.highlight {
   color: #2e7d32;
