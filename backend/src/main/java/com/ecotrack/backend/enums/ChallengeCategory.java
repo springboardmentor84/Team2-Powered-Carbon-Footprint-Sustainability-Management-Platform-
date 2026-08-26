@@ -6,5 +6,12 @@ public enum ChallengeCategory {
     ENERGY_SAVING,
     TREE_PLANTATION,
     WATER_CONSERVATION,
-    ZERO_WASTE
+    ZERO_WASTE,
+    FOOD,
+    TRANSPORT,
+    ELECTRICITY,
+    WATER,
+    SHOPPING,
+    WASTE,
+    OTHER
 }

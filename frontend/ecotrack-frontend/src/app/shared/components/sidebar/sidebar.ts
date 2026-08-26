@@ -9,6 +9,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { LayoutService } from '../../../core/services/layout/layout.service';
 import { NotificationService } from '../../../core/services/notification';
+import { AuthService } from '../../../core/services/auth';
 
 @Component({
   selector: 'app-sidebar',
@@ -28,6 +29,7 @@ import { NotificationService } from '../../../core/services/notification';
 export class Sidebar implements OnInit, OnDestroy {
   private layoutService = inject(LayoutService);
   private notificationService = inject(NotificationService);
+  private authService = inject(AuthService);
   private cdr = inject(ChangeDetectorRef);
   private sub = new Subscription();
 
@@ -54,7 +56,11 @@ export class Sidebar implements OnInit, OnDestroy {
   }
 
   loadUnreadCount() {
-    this.notificationService.getNotifications().subscribe();
+    if (this.authService.hasToken()) {
+      this.notificationService.getNotifications().subscribe({
+        error: (err) => console.warn('Failed to load notifications:', err)
+      });
+    }
   }
 
   ngOnDestroy() {

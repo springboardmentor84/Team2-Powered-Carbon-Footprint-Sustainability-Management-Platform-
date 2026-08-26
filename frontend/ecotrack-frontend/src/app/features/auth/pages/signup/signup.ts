@@ -67,8 +67,8 @@ export class Signup {
     return (
       this.name.trim().length > 0 &&
       this.email.trim().length > 0 &&
-      this.password.length >= 6 &&
-      this.confirmPassword.length >= 6 &&
+      this.password.length >= 8 &&
+      this.confirmPassword.length >= 8 &&
       this.password === this.confirmPassword &&
       this.agreeTerms
     );

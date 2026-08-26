@@ -120,7 +120,9 @@ export class AddActivityDialog {
     'minutes',
     'hours',
     'units',
-    'activity'
+    'activity',
+    'meals',
+    'items'
   ];
 
 

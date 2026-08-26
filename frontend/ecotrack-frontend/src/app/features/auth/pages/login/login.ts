@@ -60,7 +60,9 @@ export class Login {
   }
 
   get canSubmit(): boolean {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return this.email.trim().length > 0 &&
+           emailRegex.test(this.email.trim()) &&
            this.password.trim().length > 0;
   }
 

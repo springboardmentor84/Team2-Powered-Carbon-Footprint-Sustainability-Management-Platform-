@@ -198,6 +198,20 @@ public class ChallengeParticipationServiceImpl implements ChallengeParticipation
                 return (entry.getCategory() == CarbonCategory.WASTE || entry.getCategory() == CarbonCategory.OTHER) && (activity.contains("plastic") || activity.contains("single-use"));
             case TREE_PLANTATION:
                 return entry.getCategory() == CarbonCategory.OTHER && (activity.contains("tree") || activity.contains("plant"));
+            case FOOD:
+                return entry.getCategory() == CarbonCategory.FOOD;
+            case TRANSPORT:
+                return entry.getCategory() == CarbonCategory.TRANSPORT;
+            case ELECTRICITY:
+                return entry.getCategory() == CarbonCategory.ELECTRICITY;
+            case WATER:
+                return entry.getCategory() == CarbonCategory.WATER;
+            case SHOPPING:
+                return entry.getCategory() == CarbonCategory.SHOPPING;
+            case WASTE:
+                return entry.getCategory() == CarbonCategory.WASTE;
+            case OTHER:
+                return entry.getCategory() == CarbonCategory.OTHER;
             default:
                 return false;
         }
