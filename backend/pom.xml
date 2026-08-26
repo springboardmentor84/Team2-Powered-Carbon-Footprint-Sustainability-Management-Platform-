@@ -27,9 +27,9 @@
 		<url/>
 	</scm>
 	<properties>
-		<java.version>25</java.version>
-		<spring-boot-admin.version>4.1.2</spring-boot-admin.version>
-	</properties>
+    <java.version>21</java.version>
+    <spring-boot-admin.version>4.1.2</spring-boot-admin.version>
+</properties>
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -114,9 +114,9 @@
 		</dependency>
 		<!-- Jackson for JSON parsing -->
 		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-databind</artifactId>
-		</dependency>
+          <groupId>com.fasterxml.jackson.core</groupId>
+          <artifactId>jackson-databind</artifactId>
+         </dependency>
 		<!-- OpenPDF for PDF Report Generation -->
 		<dependency>
 			<groupId>com.github.librepdf</groupId>

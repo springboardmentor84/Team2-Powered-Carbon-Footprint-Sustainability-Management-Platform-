@@ -367,3 +367,35 @@ mat-progress-spinner svg {
 
 /* Blue variant for leaderboard / notifications */
 .eco-loader.blue span { background-color: #1976d2; }
+:root {
+  --app-bg: #f5f7f6;
+  --card-bg: #ffffff;
+  --text-primary: #202020;
+  --text-secondary: #747474;
+  --border-color: #e5e9e7;
+  --secondary-btn-bg: #edf1ef;
+  --sidebar-bg: #ffffff;
+--sidebar-text: #25332a;
+--sidebar-border: #e5e9e7;
+--sidebar-hover: #eef6f1;
+--sidebar-active: #e2f4e9;
+}
+
+html[data-theme='dark'] {
+  --app-bg: #121715;
+  --card-bg: #1b211e;
+  --text-primary: #f2f5f3;
+  --text-secondary: #a9b3ad;
+  --border-color: #303a34;
+  --secondary-btn-bg: #29332d;
+  --sidebar-bg: #171d1a;
+--sidebar-text: #e8eeea;
+--sidebar-border: #303a34;
+--sidebar-hover: #26352d;
+--sidebar-active: #294535;
+}
+
+html[data-theme='dark'] body {
+  background: #121715;
+  color: #f2f5f3;
+}

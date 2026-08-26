@@ -45,6 +45,7 @@ export interface UserProfile {
   progressPercentage?: number;
   createdAt?: string;
   role?: string;
+  preferences?: string | null;
 }
 
 

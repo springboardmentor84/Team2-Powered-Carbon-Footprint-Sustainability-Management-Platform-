@@ -1,1 +1,288 @@
-<p>settings works!</p>
+<div class="settings-page">
+
+  <div class="settings-header">
+    <div>
+      <h1>Settings</h1>
+      <p>Customize your EcoTrack experience and manage application preferences.</p>
+    </div>
+
+    <button
+      type="button"
+      class="save-btn"
+      [disabled]="saving"
+      (click)="saveSettings()"
+    >
+      {{ saving ? 'Saving...' : 'Save Changes' }}
+    </button>
+  </div>
+
+  <div
+    class="success-message"
+    *ngIf="successMessage"
+  >
+    {{ successMessage }}
+  </div>
+
+  <!-- Appearance -->
+  <section class="settings-card">
+    <div class="card-heading">
+      <div>
+        <h2>Appearance</h2>
+        <p>Choose how EcoTrack looks on your device.</p>
+      </div>
+    </div>
+
+    <div class="theme-options">
+
+      <button
+        type="button"
+        class="theme-option"
+        [class.active]="selectedTheme === 'light'"
+        (click)="setTheme('light')"
+      >
+        <div class="theme-preview light-preview">
+          <div class="preview-sidebar"></div>
+
+          <div class="preview-content">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+        </div>
+
+        <div class="theme-text">
+          <strong>Light</strong>
+          <small>Use light appearance</small>
+        </div>
+      </button>
+
+      <button
+        type="button"
+        class="theme-option"
+        [class.active]="selectedTheme === 'dark'"
+        (click)="setTheme('dark')"
+      >
+        <div class="theme-preview dark-preview">
+          <div class="preview-sidebar"></div>
+
+          <div class="preview-content">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+        </div>
+
+        <div class="theme-text">
+          <strong>Dark</strong>
+          <small>Use dark appearance</small>
+        </div>
+      </button>
+
+      <button
+        type="button"
+        class="theme-option"
+        [class.active]="selectedTheme === 'system'"
+        (click)="setTheme('system')"
+      >
+        <div class="theme-preview system-preview">
+          <div class="preview-half light-half"></div>
+          <div class="preview-half dark-half"></div>
+        </div>
+
+        <div class="theme-text">
+          <strong>System</strong>
+          <small>Follow your device settings</small>
+        </div>
+      </button>
+
+    </div>
+  </section>
+
+  <!-- Notifications -->
+  <section class="settings-card">
+    <div class="card-heading">
+      <div>
+        <h2>Notifications</h2>
+        <p>Control the updates and reminders you receive from EcoTrack.</p>
+      </div>
+    </div>
+
+    <div class="settings-list">
+
+      <div class="setting-row">
+        <div class="setting-info">
+          <h3>Weekly Sustainability Summary</h3>
+          <p>Receive a weekly overview of your carbon footprint and progress.</p>
+        </div>
+
+        <label class="switch">
+          <input
+            type="checkbox"
+            [(ngModel)]="notifications.weeklySummary"
+            name="weeklySummary"
+          />
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div class="setting-row">
+        <div class="setting-info">
+          <h3>Challenge Reminders</h3>
+          <p>Get reminders about active and upcoming sustainability challenges.</p>
+        </div>
+
+        <label class="switch">
+          <input
+            type="checkbox"
+            [(ngModel)]="notifications.challengeReminders"
+            name="challengeReminders"
+          />
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div class="setting-row">
+        <div class="setting-info">
+          <h3>AI Recommendation Alerts</h3>
+          <p>Get notified when new personalized recommendations are available.</p>
+        </div>
+
+        <label class="switch">
+          <input
+            type="checkbox"
+            [(ngModel)]="notifications.recommendationAlerts"
+            name="recommendationAlerts"
+          />
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div class="setting-row">
+        <div class="setting-info">
+          <h3>System Notifications</h3>
+          <p>Receive important account and platform updates.</p>
+        </div>
+
+        <label class="switch">
+          <input
+            type="checkbox"
+            [(ngModel)]="notifications.systemNotifications"
+            name="systemNotifications"
+          />
+          <span class="slider"></span>
+        </label>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Privacy -->
+  <section class="settings-card">
+    <div class="card-heading">
+      <div>
+        <h2>Privacy</h2>
+        <p>Control what information is visible to other EcoTrack users.</p>
+      </div>
+    </div>
+
+    <div class="settings-list">
+
+      <div class="setting-row">
+        <div class="setting-info">
+          <h3>Show Me on Leaderboard</h3>
+          <p>Allow your sustainability score and ranking to appear on the leaderboard.</p>
+        </div>
+
+        <label class="switch">
+          <input
+            type="checkbox"
+            [(ngModel)]="privacy.showOnLeaderboard"
+            name="showOnLeaderboard"
+          />
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div class="setting-row">
+        <div class="setting-info">
+          <h3>Show Carbon Statistics</h3>
+          <p>Allow your sustainability statistics to be visible in shared areas.</p>
+        </div>
+
+        <label class="switch">
+          <input
+            type="checkbox"
+            [(ngModel)]="privacy.showCarbonStatistics"
+            name="showCarbonStatistics"
+          />
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div class="setting-row">
+        <div class="setting-info">
+          <h3>Show Activity History</h3>
+          <p>Allow selected activity history to be visible where applicable.</p>
+        </div>
+
+        <label class="switch">
+          <input
+            type="checkbox"
+            [(ngModel)]="privacy.showActivityHistory"
+            name="showActivityHistory"
+          />
+          <span class="slider"></span>
+        </label>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Account -->
+  <section class="settings-card">
+    <div class="card-heading">
+      <div>
+        <h2>Account</h2>
+        <p>Manage account-related actions.</p>
+      </div>
+    </div>
+
+    <div class="account-actions">
+
+      <div class="account-action">
+        <div>
+          <h3>Change Password</h3>
+          <p>Update your account password securely.</p>
+        </div>
+
+        <button type="button" class="secondary-btn">
+          Change Password
+        </button>
+      </div>
+
+      <div class="account-action danger-zone">
+        <div>
+          <h3>Deactivate Account</h3>
+          <p>Deactivate your EcoTrack account.</p>
+        </div>
+
+        <button type="button" class="danger-btn">
+          Deactivate
+        </button>
+      </div>
+
+    </div>
+  </section>
+
+  <div class="bottom-actions">
+    <button
+      type="button"
+      class="save-btn"
+      [disabled]="saving"
+      (click)="saveSettings()"
+    >
+      {{ saving ? 'Saving Changes...' : 'Save All Changes' }}
+    </button>
+  </div>
+
+</div>
