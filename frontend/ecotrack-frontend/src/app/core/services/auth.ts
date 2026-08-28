@@ -1,7 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-
 import { HttpClient } from '@angular/common/http';
-
 import { Observable } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
@@ -14,11 +12,14 @@ import {
 import { API_ENDPOINTS } from '../constants/api.constants';
 
 
+// =========================================================
+// AUTH INTERFACES
+// =========================================================
+
 export interface LoginRequest {
   email: string;
   password: string;
 }
-
 
 export interface LoginResponse {
   token: string;
@@ -31,13 +32,11 @@ export interface LoginResponse {
   role?: string;
 }
 
-
 export interface RegisterRequest {
   fullName: string;
   email: string;
   password: string;
 }
-
 
 export interface RegisterResponse {
   id?: number;
@@ -47,16 +46,53 @@ export interface RegisterResponse {
 }
 
 
+// =========================================================
+// PASSWORD MANAGEMENT
+// =========================================================
+
+export interface ChangePasswordRequest {
+  currentPassword: string;
+  newPassword: string;
+  confirmPassword: string;
+}
+
+export interface ForgotPasswordRequest {
+  email: string;
+}
+
+export interface VerifyOtpRequest {
+  email: string;
+  otp: string;
+}
+
+export interface ResetPasswordRequest {
+  email: string;
+  otp: string;
+  newPassword: string;
+  confirmPassword: string;
+}
+
+export interface DeactivateAccountRequest {
+  password: string;
+}
+
+export interface AuthMessageResponse {
+  message: string;
+}
+
+
+// =========================================================
+// AUTH SERVICE
+// =========================================================
+
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
-  private readonly http =
-    inject(HttpClient);
+  private readonly http = inject(HttpClient);
 
-  private readonly API =
-    environment.apiUrl;
+  private readonly API = environment.apiUrl;
 
 
   // =========================================================
@@ -84,6 +120,81 @@ export class AuthService {
 
     return this.http.post<RegisterResponse>(
       `${this.API}${API_ENDPOINTS.AUTH.SIGNUP}`,
+      request
+    );
+  }
+
+
+  // =========================================================
+  // CHANGE PASSWORD
+  // =========================================================
+
+  changePassword(
+    request: ChangePasswordRequest
+  ): Observable<AuthMessageResponse> {
+
+    return this.http.post<AuthMessageResponse>(
+      `${this.API}${API_ENDPOINTS.AUTH.CHANGE_PASSWORD}`,
+      request
+    );
+  }
+
+
+  // =========================================================
+  // DEACTIVATE ACCOUNT
+  // =========================================================
+
+  deactivateAccount(
+    request: DeactivateAccountRequest
+  ): Observable<AuthMessageResponse> {
+
+    return this.http.post<AuthMessageResponse>(
+      `${this.API}${API_ENDPOINTS.AUTH.DEACTIVATE_ACCOUNT}`,
+      request
+    );
+  }
+
+
+  // =========================================================
+  // FORGOT PASSWORD
+  // =========================================================
+
+  forgotPassword(
+    request: ForgotPasswordRequest
+  ): Observable<AuthMessageResponse> {
+
+    return this.http.post<AuthMessageResponse>(
+      `${this.API}${API_ENDPOINTS.AUTH.FORGOT_PASSWORD}`,
+      request
+    );
+  }
+
+
+  // =========================================================
+  // VERIFY OTP
+  // =========================================================
+
+  verifyOtp(
+    request: VerifyOtpRequest
+  ): Observable<AuthMessageResponse> {
+
+    return this.http.post<AuthMessageResponse>(
+      `${this.API}${API_ENDPOINTS.AUTH.VERIFY_OTP}`,
+      request
+    );
+  }
+
+
+  // =========================================================
+  // RESET PASSWORD
+  // =========================================================
+
+  resetPassword(
+    request: ResetPasswordRequest
+  ): Observable<AuthMessageResponse> {
+
+    return this.http.post<AuthMessageResponse>(
+      `${this.API}${API_ENDPOINTS.AUTH.RESET_PASSWORD}`,
       request
     );
   }

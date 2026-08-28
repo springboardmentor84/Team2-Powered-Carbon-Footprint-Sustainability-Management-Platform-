@@ -20,7 +20,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
 import jakarta.servlet.http.HttpServletResponse;
+
 import java.util.List;
 
 @Configuration
@@ -35,54 +37,175 @@ public class SecurityConfig {
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
+
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:4200"));
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
-        config.setAllowedHeaders(List.of("*"));
+
+        config.setAllowedOrigins(
+                List.of("http://localhost:4200")
+        );
+
+        config.setAllowedMethods(
+                List.of(
+                        "GET",
+                        "POST",
+                        "PUT",
+                        "DELETE",
+                        "OPTIONS",
+                        "PATCH"
+                )
+        );
+
+        config.setAllowedHeaders(
+                List.of("*")
+        );
+
         config.setAllowCredentials(true);
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", config);
+
+        UrlBasedCorsConfigurationSource source =
+                new UrlBasedCorsConfigurationSource();
+
+        source.registerCorsConfiguration(
+                "/**",
+                config
+        );
+
         return source;
     }
 
     @Bean
     public AuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider(userDetailsService);
-        authProvider.setPasswordEncoder(passwordEncoder);
+
+        DaoAuthenticationProvider authProvider =
+                new DaoAuthenticationProvider(
+                        userDetailsService
+                );
+
+        authProvider.setPasswordEncoder(
+                passwordEncoder
+        );
+
         return authProvider;
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+    public AuthenticationManager authenticationManager(
+            AuthenticationConfiguration config
+    ) throws Exception {
+
         return config.getAuthenticationManager();
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(
+            HttpSecurity http
+    ) throws Exception {
+
         http
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .csrf(AbstractHttpConfigurer::disable)
+                .cors(cors ->
+                        cors.configurationSource(
+                                corsConfigurationSource()
+                        )
+                )
+
+                .csrf(
+                        AbstractHttpConfigurer::disable
+                )
+
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/v1/auth/**", "/actuator/**", "/error").permitAll()
+
+                        // =================================================
+                        // PUBLIC AUTHENTICATION ENDPOINTS
+                        // =================================================
+
+                        .requestMatchers(
+                                "/api/v1/auth/signup",
+                                "/api/v1/auth/login",
+                                "/api/v1/auth/forgot-password",
+                                "/api/v1/auth/verify-otp",
+                                "/api/v1/auth/reset-password"
+                        ).permitAll()
+
+                        // =================================================
+                        // AUTHENTICATED ACCOUNT OPERATIONS
+                        // =================================================
+
+                        .requestMatchers(
+                                "/api/v1/auth/change-password",
+                                "/api/v1/auth/deactivate-account"
+                        ).authenticated()
+
+                        // =================================================
+                        // OTHER PUBLIC ENDPOINTS
+                        // =================================================
+
+                        .requestMatchers(
+                                "/actuator/**",
+                                "/error"
+                        ).permitAll()
+
+                        // =================================================
+                        // EVERYTHING ELSE
+                        // =================================================
+
                         .anyRequest().authenticated()
                 )
-                .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(
+                                SessionCreationPolicy.STATELESS
+                        )
                 )
-                .exceptionHandling(exceptions -> exceptions
-                        .authenticationEntryPoint((request, response, authException) -> {
-                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                            response.setContentType("application/json");
-                            response.getWriter().write("{\"error\": \"Unauthorized\", \"message\": \"" + authException.getMessage() + "\"}");
-                        })
-                        .accessDeniedHandler((request, response, accessDeniedException) -> {
-                            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                            response.setContentType("application/json");
-                            response.getWriter().write("{\"error\": \"Forbidden\", \"message\": \"" + accessDeniedException.getMessage() + "\"}");
-                        })
+
+                .exceptionHandling(exceptions ->
+                        exceptions
+
+                                .authenticationEntryPoint(
+                                        (request, response, authException) -> {
+
+                                            response.setStatus(
+                                                    HttpServletResponse.SC_UNAUTHORIZED
+                                            );
+
+                                            response.setContentType(
+                                                    "application/json"
+                                            );
+
+                                            response.getWriter().write(
+                                                    "{\"error\":\"Unauthorized\",\"message\":\""
+                                                            + authException.getMessage()
+                                                            + "\"}"
+                                            );
+                                        }
+                                )
+
+                                .accessDeniedHandler(
+                                        (request, response, accessDeniedException) -> {
+
+                                            response.setStatus(
+                                                    HttpServletResponse.SC_FORBIDDEN
+                                            );
+
+                                            response.setContentType(
+                                                    "application/json"
+                                            );
+
+                                            response.getWriter().write(
+                                                    "{\"error\":\"Forbidden\",\"message\":\""
+                                                            + accessDeniedException.getMessage()
+                                                            + "\"}"
+                                            );
+                                        }
+                                )
                 )
-                .authenticationProvider(authenticationProvider())
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+
+                .authenticationProvider(
+                        authenticationProvider()
+                )
+
+                .addFilterBefore(
+                        jwtAuthFilter,
+                        UsernamePasswordAuthenticationFilter.class
+                );
 
         return http.build();
     }

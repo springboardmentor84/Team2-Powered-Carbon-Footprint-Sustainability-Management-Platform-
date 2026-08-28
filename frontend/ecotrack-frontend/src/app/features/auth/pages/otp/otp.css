@@ -1,0 +1,137 @@
+.auth-page {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 450px;
+  padding: 32px;
+  background: var(--card-bg, #ffffff);
+  border: 1px solid var(--border-color, #e5e5e5);
+  border-radius: 18px;
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.08);
+  box-sizing: border-box;
+}
+
+.auth-header {
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.icon-circle {
+  width: 58px;
+  height: 58px;
+  margin: 0 auto 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(34, 160, 107, 0.1);
+  border-radius: 50%;
+  font-size: 26px;
+}
+
+.auth-header h1 {
+  margin: 0 0 10px;
+  color: var(--text-primary, #222);
+  font-size: 28px;
+}
+
+.auth-header p {
+  margin: 0;
+  color: var(--text-secondary, #777);
+  line-height: 1.5;
+}
+
+.email-display {
+  margin-top: 10px !important;
+  font-weight: 600;
+  color: #22a06b !important;
+  word-break: break-word;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: var(--text-primary, #333);
+}
+
+.form-group input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 13px 14px;
+  border: 1px solid var(--border-color, #d9d9d9);
+  border-radius: 9px;
+  font-size: 16px;
+  outline: none;
+  text-align: center;
+  letter-spacing: 6px;
+}
+
+.form-group input:focus {
+  border-color: #22a06b;
+}
+
+.primary-btn {
+  width: 100%;
+  padding: 13px;
+  border: none;
+  border-radius: 9px;
+  background: #22a06b;
+  color: white;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.primary-btn:hover:not(:disabled) {
+  background: #168153;
+}
+
+.primary-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.message {
+  margin-bottom: 18px;
+  padding: 12px 14px;
+  border-radius: 9px;
+  font-size: 14px;
+}
+
+.success-message {
+  background: #e9f9ee;
+  border: 1px solid #b9e8c8;
+  color: #18794e;
+}
+
+.error-message {
+  background: #fff0f0;
+  border: 1px solid #f1c1c1;
+  color: #c62828;
+}
+
+.back-btn {
+  width: 100%;
+  margin-top: 15px;
+  padding: 11px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary, #666);
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.back-btn:hover {
+  color: #22a06b;
+}

@@ -39,16 +39,32 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String requestPath = request.getServletPath();
 
-        // Public authentication endpoints
-        if (requestPath.startsWith("/api/v1/auth/")) {
+        /*
+         * These endpoints do NOT require JWT authentication.
+         *
+         * Login/signup:
+         *   POST /api/v1/auth/signup
+         *   POST /api/v1/auth/login
+         *
+         * Password recovery:
+         *   POST /api/v1/auth/forgot-password
+         *   POST /api/v1/auth/verify-otp
+         *   POST /api/v1/auth/reset-password
+         *
+         * Change password and deactivate account are intentionally
+         * NOT included here because they require authentication.
+         */
+        if (isPublicAuthEndpoint(requestPath)) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        final String authHeader = request.getHeader("Authorization");
+        final String authHeader =
+                request.getHeader("Authorization");
 
         // No token present
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+        if (authHeader == null ||
+                !authHeader.startsWith("Bearer ")) {
 
             System.out.println(
                     "[JWT] No Bearer token received for: "
@@ -63,7 +79,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         try {
 
-            String jwt = authHeader.substring(7).trim();
+            String jwt =
+                    authHeader.substring(7).trim();
 
             System.out.println(
                     "[JWT] Token received for: "
@@ -73,10 +90,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             );
 
             if (jwt.isBlank()) {
+
                 sendErrorResponse(
                         response,
                         "JWT token is empty"
                 );
+
                 return;
             }
 
@@ -88,7 +107,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                             + userEmail
             );
 
-            if (userEmail == null || userEmail.isBlank()) {
+            if (userEmail == null ||
+                    userEmail.isBlank()) {
 
                 sendErrorResponse(
                         response,
@@ -186,6 +206,31 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         filterChain.doFilter(
                 request,
                 response
+        );
+    }
+
+    /**
+     * Returns true only for authentication endpoints
+     * that genuinely do not require an existing JWT.
+     */
+    private boolean isPublicAuthEndpoint(
+            String requestPath
+    ) {
+
+        return requestPath.equals(
+                "/api/v1/auth/signup"
+        )
+                || requestPath.equals(
+                "/api/v1/auth/login"
+        )
+                || requestPath.equals(
+                "/api/v1/auth/forgot-password"
+        )
+                || requestPath.equals(
+                "/api/v1/auth/verify-otp"
+        )
+                || requestPath.equals(
+                "/api/v1/auth/reset-password"
         );
     }
 

@@ -2,7 +2,18 @@ export const API_ENDPOINTS = {
 
   AUTH: {
     LOGIN: '/api/v1/auth/login',
-    SIGNUP: '/api/v1/auth/signup'
+    SIGNUP: '/api/v1/auth/signup',
+
+    // Password management
+    CHANGE_PASSWORD: '/api/v1/auth/change-password',
+
+    // Account management
+    DEACTIVATE_ACCOUNT: '/api/v1/auth/deactivate-account',
+
+    // Password recovery
+    FORGOT_PASSWORD: '/api/v1/auth/forgot-password',
+    VERIFY_OTP: '/api/v1/auth/verify-otp',
+    RESET_PASSWORD: '/api/v1/auth/reset-password'
   },
 
   CARBON: {
@@ -38,7 +49,8 @@ export const API_ENDPOINTS = {
 
   GOALS: {
     BASE: '/api/v1/goals',
-    BY_ID: (id: number) => `/api/v1/goals/${id}`
+    BY_ID: (id: number) =>
+      `/api/v1/goals/${id}`
   },
 
   GAMIFICATION: {
