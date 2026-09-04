@@ -26,7 +26,7 @@ export interface AdminReportResponse {
   providedIn: 'root'
 })
 export class AdminReportsService {
-  private apiUrl = `${environment.apiUrl}/admin/reports`;
+  private apiUrl = `${environment.apiUrl}/api/v1/admin/reports`;
 
   constructor(private http: HttpClient) { }
 

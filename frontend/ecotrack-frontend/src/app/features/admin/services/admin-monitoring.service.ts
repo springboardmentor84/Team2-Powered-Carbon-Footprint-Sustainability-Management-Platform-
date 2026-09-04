@@ -19,7 +19,7 @@ export interface SystemHealthResponse {
   providedIn: 'root'
 })
 export class AdminMonitoringService {
-  private apiUrl = `${environment.apiUrl}/admin/system`;
+  private apiUrl = `${environment.apiUrl}/api/v1/admin/system`;
 
   constructor(private http: HttpClient) { }
 

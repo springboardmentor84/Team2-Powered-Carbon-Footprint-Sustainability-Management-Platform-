@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AdminMonitoringService, SystemHealthResponse } from '../../services/admin-monitoring.service';
+import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
   selector: 'app-admin-monitoring',
@@ -14,7 +15,10 @@ export class AdminMonitoring implements OnInit {
   isLoading = true;
   error = '';
 
-  constructor(private monitoringService: AdminMonitoringService) {}
+  constructor(
+    private monitoringService: AdminMonitoringService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
     this.checkHealth();
@@ -27,11 +31,13 @@ export class AdminMonitoring implements OnInit {
       next: (data) => {
         this.health = data;
         this.isLoading = false;
+        this.cdr.detectChanges();
       },
       error: (err) => {
         this.error = 'Failed to fetch system health status. The backend might be unreachable.';
         this.isLoading = false;
         console.error(err);
+        this.cdr.detectChanges();
       }
     });
   }

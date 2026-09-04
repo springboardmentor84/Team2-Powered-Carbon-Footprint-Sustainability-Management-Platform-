@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 
@@ -31,7 +31,7 @@ export interface TopUserEmissionDTO {
   providedIn: 'root'
 })
 export class AdminAnalyticsService {
-  private apiUrl = `${environment.apiUrl}/admin/analytics`;
+  private apiUrl = `${environment.apiUrl}/api/v1/admin/analytics`;
 
   constructor(private http: HttpClient) { }
 
@@ -44,7 +44,10 @@ export class AdminAnalyticsService {
   }
 
   getTrends(year?: number): Observable<TrendDTO[]> {
-    const params = year ? { year: year.toString() } : {};
+    let params = new HttpParams();
+    if (year !== undefined && year !== null) {
+      params = params.set('year', year.toString());
+    }
     return this.http.get<TrendDTO[]>(`${this.apiUrl}/trends`, { params });
   }
 

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ChangeDetectorRef } from '@angular/core';
 import { AdminReportsService, AdminReportResponse, AdminReportGenerationRequest } from '../../services/admin-reports.service';
 
 @Component({
@@ -24,7 +25,10 @@ export class AdminReports implements OnInit {
 
   showGenerateModal = false;
 
-  constructor(private reportsService: AdminReportsService) {}
+  constructor(
+    private reportsService: AdminReportsService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
     this.loadReports();
@@ -36,11 +40,13 @@ export class AdminReports implements OnInit {
       next: (data) => {
         this.reports = data;
         this.isLoading = false;
+        this.cdr.detectChanges();
       },
       error: (err) => {
         this.error = 'Failed to load report history.';
         this.isLoading = false;
         console.error(err);
+        this.cdr.detectChanges();
       }
     });
   }
