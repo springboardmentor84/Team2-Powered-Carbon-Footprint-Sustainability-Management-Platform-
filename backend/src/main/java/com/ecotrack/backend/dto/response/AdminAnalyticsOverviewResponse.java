@@ -15,4 +15,5 @@ public class AdminAnalyticsOverviewResponse {
     private double totalEmissions;
     private double averageEmission;
     private long activeUsers;
+    private EngagementMetricsDTO engagement;
 }

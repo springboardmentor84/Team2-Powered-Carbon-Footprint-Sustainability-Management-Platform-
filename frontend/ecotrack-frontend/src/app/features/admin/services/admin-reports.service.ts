@@ -38,7 +38,7 @@ export class AdminReportsService {
     return this.http.post<AdminReportResponse>(`${this.apiUrl}/generate`, request);
   }
 
-  downloadReport(id: number): void {
+  downloadReport(id: number, format: string): void {
     // using window.open to trigger the download directly from the browser since it's an octet stream
     // it's easier than handling blobs in angular sometimes
     const token = localStorage.getItem('token');
@@ -47,7 +47,8 @@ export class AdminReportsService {
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `admin-report-${id}`;
+      const extension = format.toLowerCase() === 'csv' ? '.csv' : '.pdf';
+      a.download = `admin-report-${id}${extension}`;
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);

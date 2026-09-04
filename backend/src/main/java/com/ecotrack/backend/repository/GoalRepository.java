@@ -22,4 +22,8 @@ public interface GoalRepository extends JpaRepository<Goal, Long> {
     long countByStatus(com.ecotrack.backend.enums.GoalStatus status);
     
     List<Goal> findTop5ByOrderByCreatedAtDesc();
+
+    // --- Admin Analytics Expanded Queries ---
+    long countByCreatedAtBetween(java.time.LocalDateTime startDate, java.time.LocalDateTime endDate);
+    long countByStatusAndCreatedAtBetween(com.ecotrack.backend.enums.GoalStatus status, java.time.LocalDateTime startDate, java.time.LocalDateTime endDate);
 }

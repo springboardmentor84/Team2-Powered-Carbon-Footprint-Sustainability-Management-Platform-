@@ -42,4 +42,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
             @org.springframework.data.repository.query.Param("startDate") java.time.LocalDateTime startDate, 
             @org.springframework.data.repository.query.Param("endDate") java.time.LocalDateTime endDate, 
             org.springframework.data.domain.Pageable pageable);
+
+    // --- Admin Analytics Expanded Queries ---
+    long countByRoleAndCreatedAtBetween(com.ecotrack.backend.enums.Role role, java.time.LocalDateTime startDate, java.time.LocalDateTime endDate);
+
+    long countByRoleAndActiveTrueAndCreatedAtBetween(com.ecotrack.backend.enums.Role role, java.time.LocalDateTime startDate, java.time.LocalDateTime endDate);
 }

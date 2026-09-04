@@ -76,9 +76,9 @@ export class AdminReports implements OnInit {
   }
 
   downloadReport(id: number): void {
-    this.reportsService.downloadReport(id);
     const report = this.reports.find(r => r.id === id);
     if (report) {
+      this.reportsService.downloadReport(id, report.format);
       report.downloads += 1;
     }
   }

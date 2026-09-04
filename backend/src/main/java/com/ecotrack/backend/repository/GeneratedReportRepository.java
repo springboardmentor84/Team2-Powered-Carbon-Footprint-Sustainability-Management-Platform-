@@ -10,4 +10,7 @@ import java.util.List;
 @Repository
 public interface GeneratedReportRepository extends JpaRepository<GeneratedReport, Long> {
     List<GeneratedReport> findByUserOrderByGeneratedAtDesc(User user);
+
+    // --- Admin Analytics Expanded Queries ---
+    long countByGeneratedAtBetween(java.time.LocalDateTime startDate, java.time.LocalDateTime endDate);
 }

@@ -14,4 +14,10 @@ public interface ChallengeParticipationRepository extends JpaRepository<Challeng
     List<ChallengeParticipation> findByUserIdAndStatus(Long userId, ChallengeParticipationStatus status);
     List<ChallengeParticipation> findByChallengeIdAndStatus(Long challengeId, ChallengeParticipationStatus status);
     long countByStatus(ChallengeParticipationStatus status);
+
+    // --- Admin Analytics Expanded Queries ---
+    @org.springframework.data.jpa.repository.Query("SELECT COUNT(DISTINCT c.user) FROM ChallengeParticipation c WHERE c.joinedAt >= :startDate AND c.joinedAt <= :endDate")
+    long countDistinctUsersByJoinedAtBetween(@org.springframework.data.repository.query.Param("startDate") java.time.LocalDateTime startDate, @org.springframework.data.repository.query.Param("endDate") java.time.LocalDateTime endDate);
+    
+    long countByStatusAndJoinedAtBetween(ChallengeParticipationStatus status, java.time.LocalDateTime startDate, java.time.LocalDateTime endDate);
 }
