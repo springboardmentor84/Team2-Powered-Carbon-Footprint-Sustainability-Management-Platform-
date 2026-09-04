@@ -1,0 +1,95 @@
+<div class="analytics-container">
+  <div class="header">
+    <h1>Sustainability Analytics</h1>
+    <p>System-wide carbon emissions and user engagement statistics.</p>
+  </div>
+
+  <div *ngIf="isLoading" class="loading-state">
+    <div class="spinner"></div>
+    <p>Loading analytics data...</p>
+  </div>
+
+  <div *ngIf="error" class="error-message">
+    {{ error }}
+    <button (click)="loadData()">Retry</button>
+  </div>
+
+  <ng-container *ngIf="!isLoading && !error && overview">
+    <!-- Overview Cards -->
+    <div class="overview-grid">
+      <div class="stat-card">
+        <span class="material-icons icon-users">group</span>
+        <div class="stat-info">
+          <h3>Total Users</h3>
+          <p class="stat-value">{{ overview.totalUsers }}</p>
+          <p class="stat-sub">{{ overview.activeUsers }} active users</p>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <span class="material-icons icon-entries">receipt_long</span>
+        <div class="stat-info">
+          <h3>Total Entries</h3>
+          <p class="stat-value">{{ overview.totalEntries }}</p>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <span class="material-icons icon-carbon">co2</span>
+        <div class="stat-info">
+          <h3>Total Emissions</h3>
+          <p class="stat-value">{{ overview.totalEmissions | number:'1.0-2' }} kg</p>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <span class="material-icons icon-avg">speed</span>
+        <div class="stat-info">
+          <h3>Avg Emission/Entry</h3>
+          <p class="stat-value">{{ overview.averageEmission | number:'1.0-2' }} kg</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="charts-section">
+      <!-- Categories -->
+      <div class="chart-card">
+        <h2>Emissions by Category</h2>
+        <div class="category-list" *ngIf="categories.length > 0; else noCat">
+          <div class="category-item" *ngFor="let cat of categories">
+            <div class="cat-label">
+              <span>{{ cat.category }}</span>
+              <span>{{ cat.totalEmission | number:'1.0-2' }} kg</span>
+            </div>
+            <div class="progress-bar-bg">
+              <div class="progress-bar-fill" [style.width.%]="(cat.totalEmission / overview.totalEmissions) * 100"></div>
+            </div>
+          </div>
+        </div>
+        <ng-template #noCat><p>No category data available.</p></ng-template>
+      </div>
+
+      <!-- Top Users -->
+      <div class="chart-card">
+        <h2>Top Emitters</h2>
+        <table class="data-table" *ngIf="topUsers.length > 0; else noUsers">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Total Emission (kg)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let user of topUsers">
+              <td>{{ user.name }}</td>
+              <td>{{ user.email }}</td>
+              <td><strong>{{ user.totalEmission | number:'1.0-2' }}</strong></td>
+            </tr>
+          </tbody>
+        </table>
+        <ng-template #noUsers><p>No user emission data available.</p></ng-template>
+      </div>
+    </div>
+  </ng-container>
+</div>

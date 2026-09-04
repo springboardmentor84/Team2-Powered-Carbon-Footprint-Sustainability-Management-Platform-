@@ -49,4 +49,11 @@ public interface CarbonEntryRepository extends JpaRepository<CarbonEntry, Long> 
 
     @Query(value = "SELECT EXTRACT(MONTH FROM created_at) AS month, SUM(carbon_emission) FROM carbon_entries WHERE user_id = (SELECT id FROM users WHERE email = :email) AND EXTRACT(YEAR FROM created_at) = :year GROUP BY EXTRACT(MONTH FROM created_at)", nativeQuery = true)
     List<Object[]> findMonthlyEmissionsByUserEmailAndYear(@Param("email") String email, @Param("year") int year);
+
+    @Query("SELECT new com.ecotrack.backend.dto.response.TopUserEmissionDTO(u.fullName, u.email, SUM(c.carbonEmission)) " +
+           "FROM CarbonEntry c JOIN c.user u GROUP BY u.id, u.fullName, u.email ORDER BY SUM(c.carbonEmission) DESC")
+    List<com.ecotrack.backend.dto.response.TopUserEmissionDTO> findTopUsersByEmission(org.springframework.data.domain.Pageable pageable);
+
+    @Query(value = "SELECT EXTRACT(MONTH FROM created_at) AS month, SUM(carbon_emission) FROM carbon_entries WHERE EXTRACT(YEAR FROM created_at) = :year GROUP BY EXTRACT(MONTH FROM created_at)", nativeQuery = true)
+    List<Object[]> findGlobalMonthlyEmissionsByYear(@Param("year") int year);
 }
