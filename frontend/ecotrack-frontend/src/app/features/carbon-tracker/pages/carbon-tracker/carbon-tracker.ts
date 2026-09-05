@@ -2,7 +2,8 @@ import {
   Component,
   OnDestroy,
   OnInit,
-  inject
+  inject,
+  ChangeDetectorRef
 } from '@angular/core';
 
 import { CommonModule } from '@angular/common';
@@ -38,6 +39,9 @@ export class CarbonTracker
   private readonly dashboardService =
     inject(DashboardService);
 
+  private readonly cdr =
+    inject(ChangeDetectorRef);
+
   private loadingSub?: Subscription;
   private errorSub?: Subscription;
   private subscription?: Subscription;
@@ -45,7 +49,7 @@ export class CarbonTracker
   activities: Activity[] = [];
   categoryEmissions: CategoryEmission[] = [];
   
-  loading = true;
+  loading = false;  // Service's loadingSubject starts false — match it
   apiError = false;
 
   saving = false;
@@ -73,10 +77,12 @@ export class CarbonTracker
   ngOnInit(): void {
     this.loadingSub = this.activityService.loading$.subscribe(isLoading => {
       this.loading = isLoading;
+      this.cdr.detectChanges();
     });
     
     this.errorSub = this.activityService.error$.subscribe(hasError => {
       this.apiError = hasError;
+      this.cdr.detectChanges();
     });
 
     this.subscription =
@@ -97,6 +103,7 @@ export class CarbonTracker
               );
 
           this.updateInsights();
+          this.cdr.detectChanges();
         });
 
     this.loadActivities();
@@ -123,7 +130,9 @@ export class CarbonTracker
   }
 
   loadActivities(): void {
-    if (this.loading && this.activities.length > 0) {
+    // Only skip if currently loading AND data is already present (debounce rapid calls)
+    // Do NOT skip when re-entering the page — always reload fresh data on navigation
+    if (this.loading) {
       return;
     }
     this.activityService.loadActivities();

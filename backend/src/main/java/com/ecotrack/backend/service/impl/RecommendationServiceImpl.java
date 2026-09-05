@@ -41,17 +41,17 @@ public class RecommendationServiceImpl implements RecommendationService {
 
     @Override
     public List<RecommendationResponse> getRecommendations(String email, boolean refresh) {
-        // Return cached result if still fresh and not a forced refresh
-        if (!refresh) {
-            Long lastFetched = cacheTimestamps.get(email);
-            if (lastFetched != null && (System.currentTimeMillis() - lastFetched) < CACHE_TTL_MS) {
-                log.info("Returning cached recommendations for {}", email);
-                return cache.get(email);
-            }
-        } else {
-            log.info("Forced refresh requested. Bypassing cache for {}", email);
+        // If forced refresh, clear the cache for this user
+        if (refresh) {
             cache.remove(email);
             cacheTimestamps.remove(email);
+        }
+
+        // Return cached result if still fresh
+        Long lastFetched = cacheTimestamps.get(email);
+        if (lastFetched != null && (System.currentTimeMillis() - lastFetched) < CACHE_TTL_MS) {
+            log.info("Returning cached recommendations for {}", email);
+            return cache.get(email);
         }
 
         List<RecommendationResponse> result = fetchRecommendations(email);
@@ -60,12 +60,8 @@ public class RecommendationServiceImpl implements RecommendationService {
         if (result != null && !result.isEmpty()) {
             cache.put(email, result);
             cacheTimestamps.put(email, System.currentTimeMillis());
-            return result;
         }
-
-        log.info("Gemini API failure -> executing fallback strategy");
-        // Fallback Recommendation
-        return generateFallbackRecommendation(email);
+        return result;
     }
 
     private List<RecommendationResponse> fetchRecommendations(String email) {
@@ -105,7 +101,7 @@ public class RecommendationServiceImpl implements RecommendationService {
                 promptBuilder.append(cat.getCategory().name()).append(" (").append(cat.getTotalEmission()).append(" kg), ");
             }
             promptBuilder.append("\n");
-
+           // Takes only recent 5 activities
             promptBuilder.append("- Recent Activities: ");
             for (int i = 0; i < Math.min(recentEntries.size(), 5); i++) {
                 promptBuilder.append(recentEntries.get(i).getActivity()).append(", ");
@@ -146,7 +142,9 @@ public class RecommendationServiceImpl implements RecommendationService {
             log.error("Failed to generate AI recommendations", e);
         }
 
-        return null;
+        log.info("Gemini API failure -> executing fallback strategy");
+        // Fallback Recommendation
+        return generateFallbackRecommendation(email);
     }
 
     private List<RecommendationResponse> generateFallbackRecommendation(String email) {

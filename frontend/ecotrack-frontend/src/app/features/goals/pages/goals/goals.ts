@@ -2,7 +2,8 @@ import {
   Component,
   OnDestroy,
   OnInit,
-  inject
+  inject,
+  ChangeDetectorRef
 } from '@angular/core';
 
 import { CommonModule } from '@angular/common';
@@ -63,9 +64,11 @@ export class Goals
   private readonly goalService =
     inject(GoalService);
 
-
   private readonly activityService =
     inject(ActivityService);
+
+  private readonly cdr =
+    inject(ChangeDetectorRef);
 
 
   private goalsSubscription?: Subscription;
@@ -206,23 +209,15 @@ export class Goals
               goals
             );
 
-
             this.goals =
               Array.isArray(goals)
                 ? goals
                 : [];
 
-
-            /*
-             * IMPORTANT:
-             * Stop loading immediately after
-             * GET /api/v1/goals responds.
-             */
-
             this.loading = false;
 
-
             this.loadGoalProgressForAll();
+            this.cdr.detectChanges();
 
           },
 
@@ -234,59 +229,23 @@ export class Goals
               error
             );
 
-
             this.goals = [];
-
             this.progressMap = {};
-
-
             this.loading = false;
 
-
-            if (
-              error?.name ===
-              'TimeoutError'
-            ) {
-
-              this.error =
-                'Goal request timed out. Check that the Spring Boot backend and PostgreSQL database are running.';
-
+            if (error?.name === 'TimeoutError') {
+              this.error = 'Goal request timed out. Check that the Spring Boot backend and PostgreSQL database are running.';
+            } else if (error?.status === 401) {
+              this.error = 'Your login session has expired. Please login again.';
+            } else if (error?.status === 403) {
+              this.error = 'You do not have permission to access goals.';
+            } else if (error?.status === 500) {
+              this.error = 'Backend error while reading goals. Check the Spring Boot console.';
+            } else {
+              this.error = 'Unable to load goals. Check the backend connection.';
             }
 
-            else if (
-              error?.status === 401
-            ) {
-
-              this.error =
-                'Your login session has expired. Please login again.';
-
-            }
-
-            else if (
-              error?.status === 403
-            ) {
-
-              this.error =
-                'You do not have permission to access goals.';
-
-            }
-
-            else if (
-              error?.status === 500
-            ) {
-
-              this.error =
-                'Backend error while reading goals. Check the Spring Boot console.';
-
-            }
-
-            else {
-
-              this.error =
-                'Unable to load goals. Check the backend connection.';
-
-            }
-
+            this.cdr.detectChanges();
           }
 
         });
@@ -325,54 +284,26 @@ export class Goals
           const map:
             Record<number, GoalProgressResponse> = {};
 
-
           progressList.forEach(
             progress => {
-
-              map[progress.goalId] =
-                progress;
-
+              map[progress.goalId] = progress;
             }
           );
 
-
           this.progressMap = map;
 
-
-          /*
-           * Update selected goal if open.
-           */
-
-          if (
-            this.selectedGoal
-          ) {
-
-            const progress =
-              this.progressMap[
-                this.selectedGoal.id
-              ];
-
-
+          if (this.selectedGoal) {
+            const progress = this.progressMap[this.selectedGoal.id];
             if (progress) {
-
               this.selectedGoal = {
-
                 ...this.selectedGoal,
-
-                currentCarbon:
-                  Number(
-                    progress.currentCarbon || 0
-                  ),
-
-                status:
-                  progress.status
-
+                currentCarbon: Number(progress.currentCarbon || 0),
+                status: progress.status
               };
-
             }
-
           }
 
+          this.cdr.detectChanges();
         },
 
 
