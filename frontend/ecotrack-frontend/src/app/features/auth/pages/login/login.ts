@@ -52,12 +52,7 @@ export class Login {
     this.showPassword = !this.showPassword;
   }
 
-  openGoogleAuth(): void {
-    window.open(
-      'https://accounts.google.com/signin/v2/identifier',
-      '_blank'
-    );
-  }
+
 
   get canSubmit(): boolean {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

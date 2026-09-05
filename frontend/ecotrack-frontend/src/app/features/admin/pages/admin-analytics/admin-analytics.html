@@ -1,0 +1,234 @@
+<div class="analytics-container">
+  <div class="header-section">
+    <div class="header-content">
+      <div>
+        <h2>Sustainability Analytics</h2>
+        <p>System-wide carbon emissions and user engagement statistics.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 2: Filters -->
+  <section class="filters-section">
+    <div class="segmented-control">
+      <button [class.active]="activeFilter === 'today'" (click)="applyFilter('today')">Today</button>
+      <button [class.active]="activeFilter === '7days'" (click)="applyFilter('7days')">7 Days</button>
+      <button [class.active]="activeFilter === '30days'" (click)="applyFilter('30days')">30 Days</button>
+      <button [class.active]="activeFilter === 'month'" (click)="applyFilter('month')">This Month</button>
+      <button [class.active]="activeFilter === 'year'" (click)="applyFilter('year')">This Year</button>
+      <button [class.active]="activeFilter === 'custom'" (click)="activeFilter = 'custom'">Custom</button>
+    </div>
+
+    <div class="custom-filter-picker" *ngIf="activeFilter === 'custom'">
+      <div class="date-input-group">
+        <input type="date" [(ngModel)]="startDate" placeholder="Start Date">
+        <span class="date-separator">→</span>
+        <input type="date" [(ngModel)]="endDate" placeholder="End Date">
+      </div>
+      <button class="btn-primary" (click)="applyCustomFilter()">Apply</button>
+    </div>
+  </section>
+
+  <div *ngIf="error" class="error-message">
+    <span class="material-icons">error_outline</span>
+    <span>{{ error }}</span>
+  </div>
+
+  <div *ngIf="isLoading" class="loading-state">
+    <div class="spinner"></div>
+    <p>Loading analytics data...</p>
+  </div>
+
+  <ng-container *ngIf="!isLoading && !error && overview">
+    
+    <!-- SECTION 1: Overview KPI cards -->
+    <section class="overview-section">
+      <div class="kpi-grid">
+        <!-- Core KPIs -->
+        <div class="kpi-card">
+          <div class="kpi-icon users"><span class="material-icons">group</span></div>
+          <div class="kpi-content">
+            <span class="kpi-label">Total Users</span>
+            <span class="kpi-value">{{ overview.totalUsers }}</span>
+            <span class="kpi-subtext" *ngIf="overview.activeUsers">{{ overview.activeUsers }} active</span>
+          </div>
+        </div>
+        
+        <div class="kpi-card">
+          <div class="kpi-icon entries"><span class="material-icons">list_alt</span></div>
+          <div class="kpi-content">
+            <span class="kpi-label">Total Entries</span>
+            <span class="kpi-value">{{ overview.totalEntries }}</span>
+          </div>
+        </div>
+        
+        <div class="kpi-card">
+          <div class="kpi-icon emission"><span class="material-icons">co2</span></div>
+          <div class="kpi-content">
+            <span class="kpi-label">Total Emissions</span>
+            <span class="kpi-value">{{ overview.totalEmissions | number:'1.0-2' }} kg</span>
+          </div>
+        </div>
+        
+        <div class="kpi-card">
+          <div class="kpi-icon average"><span class="material-icons">speed</span></div>
+          <div class="kpi-content">
+            <span class="kpi-label">Avg Emission/Entry</span>
+            <span class="kpi-value">{{ overview.averageEmission | number:'1.0-2' }} kg</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 7: Goals & Challenge Engagement -->
+    <section class="engagement-section">
+      <h2 class="section-title">Engagement Metrics</h2>
+      <div class="kpi-grid engagement">
+        <div class="kpi-card">
+          <div class="kpi-icon target"><span class="material-icons">track_changes</span></div>
+          <div class="kpi-content">
+            <span class="kpi-label">Total Goals</span>
+            <span class="kpi-value">{{ overview.engagement.totalGoals }}</span>
+            <span class="kpi-subtext">{{ overview.engagement.activeGoals }} Active | {{ overview.engagement.completedGoals }} Completed</span>
+          </div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-icon target"><span class="material-icons">emoji_events</span></div>
+          <div class="kpi-content">
+            <span class="kpi-label">Challenge Participants</span>
+            <span class="kpi-value">{{ overview.engagement.totalChallengeParticipants }}</span>
+            <span class="kpi-subtext">Across {{ overview.engagement.totalChallenges }} challenges</span>
+          </div>
+        </div>
+        
+        <!-- SECTION 8: Reports Summary -->
+        <div class="kpi-card">
+          <div class="kpi-icon reports"><span class="material-icons">picture_as_pdf</span></div>
+          <div class="kpi-content">
+            <span class="kpi-label">Reports Generated</span>
+            <span class="kpi-value">{{ overview.engagement.reportsGenerated }}</span>
+            <a routerLink="/admin/reports" class="kpi-link">View Reports</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 3: Emission Trend Chart -->
+    <section class="trend-section">
+      <div class="section-header-flex">
+        <h2>Emission Trends</h2>
+        <div class="segmented-control compact">
+          <button [class.active]="trendPeriod === 'daily'" (click)="setTrendPeriod('daily')">Daily</button>
+          <button [class.active]="trendPeriod === 'weekly'" (click)="setTrendPeriod('weekly')">Weekly</button>
+          <button [class.active]="trendPeriod === 'monthly'" (click)="setTrendPeriod('monthly')">Monthly</button>
+          <button [class.active]="trendPeriod === 'yearly'" (click)="setTrendPeriod('yearly')">Yearly</button>
+        </div>
+      </div>
+      <div class="chart-container large-chart">
+        <div *ngIf="trends.length === 0" class="no-data">No trend data available for this period.</div>
+        <canvas #trendChart [style.display]="trends.length > 0 ? 'block' : 'none'"></canvas>
+      </div>
+    </section>
+
+    <div class="charts-row">
+      <!-- SECTION 4: Category Analytics -->
+      <section class="category-section">
+        <h2>Emissions by Category</h2>
+        <div class="category-layout">
+          <div class="chart-container small-chart">
+            <div *ngIf="categories.length === 0" class="no-data">No data</div>
+            <canvas #categoryChart [style.display]="categories.length > 0 ? 'block' : 'none'"></canvas>
+          </div>
+          
+          <div class="category-list" *ngIf="categories.length > 0">
+            <div class="category-card" *ngFor="let cat of categories; let i = index">
+              <div class="cat-card-header">
+                <span class="cat-name">{{ cat.category }}</span>
+                <div class="cat-stats">
+                  <span class="cat-value">{{ cat.totalEmission | number:'1.0-2' }} kg</span>
+                  <span class="cat-pct">{{ getPercentageText(cat.totalEmission, overview.totalEmissions) }}</span>
+                </div>
+              </div>
+              <div class="cat-progress-bg">
+                <div class="cat-progress-fill" 
+                     [style.width.%]="getPercentageNum(cat.totalEmission, overview.totalEmissions)"
+                     [style.background-color]="categoryColors[i % categoryColors.length]">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 6: Most Recorded Activities -->
+      <section class="activities-section">
+        <h2>Most Recorded Activities</h2>
+        <div class="activity-list" *ngIf="activities.length > 0; else noAct">
+          <div class="activity-item" *ngFor="let act of activities">
+            <span class="act-name">{{ act.activity }}</span>
+            <span class="act-count">{{ act.entries }} entries</span>
+          </div>
+        </div>
+        <ng-template #noAct>
+          <div class="no-data">No activities recorded.</div>
+        </ng-template>
+      </section>
+    </div>
+
+    <!-- SECTION 5: Top Emitters -->
+    <section class="top-users-section">
+      <div class="section-header-flex">
+        <h2>Top Emitters</h2>
+        <select [(ngModel)]="topUserLimit" (change)="loadData()" class="limit-select">
+          <option [ngValue]="5">Top 5</option>
+          <option [ngValue]="10">Top 10</option>
+          <option [ngValue]="20">Top 20</option>
+        </select>
+      </div>
+      
+      <div class="table-responsive" *ngIf="topUsers.length > 0; else noUsers">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Rank</th>
+              <th>User</th>
+              <th>Total Emissions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let user of topUsers; let i = index">
+              <td>
+                <span class="rank-badge" [ngClass]="{'rank-1': i === 0, 'rank-2': i === 1, 'rank-3': i === 2}">
+                  #{{ i + 1 }}
+                </span>
+              </td>
+              <td class="user-cell">
+                <div class="avatar">{{ user.name.charAt(0) }}</div>
+                <div class="user-info">
+                  <span class="user-name">{{ user.name }}</span>
+                  <span class="user-email">{{ user.email }}</span>
+                </div>
+              </td>
+              <td class="emission-cell">
+                <div class="emission-val-container">
+                  <span class="emission-val">{{ user.totalEmission | number:'1.0-2' }} kg</span>
+                  <span class="emission-pct">{{ getPercentageText(user.totalEmission, overview.totalEmissions) }} of total</span>
+                </div>
+                <div class="pct-bar-container-new">
+                  <div class="pct-bar-new">
+                    <div class="pct-fill-new" [style.width.%]="getPercentageNum(user.totalEmission, overview.totalEmissions)"></div>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <ng-template #noUsers>
+        <div class="no-data">No user emissions recorded.</div>
+      </ng-template>
+    </section>
+
+  </ng-container>
+</div>

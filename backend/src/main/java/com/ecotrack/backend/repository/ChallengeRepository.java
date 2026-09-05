@@ -24,4 +24,10 @@ public interface ChallengeRepository extends org.springframework.data.jpa.reposi
             @org.springframework.data.repository.query.Param("startDate") java.time.LocalDateTime startDate, 
             @org.springframework.data.repository.query.Param("endDate") java.time.LocalDateTime endDate, 
             org.springframework.data.domain.Pageable pageable);
+
+    // --- Admin Analytics Expanded Queries ---
+    long countByCreatedAtBetween(java.time.LocalDateTime startDate, java.time.LocalDateTime endDate);
+
+    @org.springframework.data.jpa.repository.Query("SELECT COUNT(c) FROM Challenge c WHERE c.startDate <= :date AND c.endDate >= :date AND c.createdAt >= :startDate AND c.createdAt <= :endDate")
+    long countActiveChallengesBetween(@org.springframework.data.repository.query.Param("date") java.time.LocalDate date, @org.springframework.data.repository.query.Param("startDate") java.time.LocalDateTime startDate, @org.springframework.data.repository.query.Param("endDate") java.time.LocalDateTime endDate);
 }

@@ -30,6 +30,8 @@ import { AdminDashboard } from './features/admin/pages/admin-dashboard/admin-das
 
 import { AdminUsers } from './features/admin/pages/admin-users/admin-users';
 import { AdminChallenges } from './features/admin/pages/admin-challenges/admin-challenges';
+import { AdminAnalytics } from './features/admin/pages/admin-analytics/admin-analytics';
+import { AdminReports } from './features/admin/pages/admin-reports/admin-reports';
 
 import { authGuard } from './core/guards/auth-guard';
 import { adminGuard } from './core/guards/admin.guard';
@@ -82,7 +84,9 @@ export const routes: Routes = [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', component: AdminDashboard },
       { path: 'users', component: AdminUsers },
-      { path: 'challenges', component: AdminChallenges }
+      { path: 'challenges', component: AdminChallenges },
+      { path: 'analytics', component: AdminAnalytics },
+      { path: 'reports', component: AdminReports }
     ]
   },
 

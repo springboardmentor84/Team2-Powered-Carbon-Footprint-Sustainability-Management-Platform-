@@ -54,10 +54,7 @@ export class Signup {
     this.showConfirmPassword = !this.showConfirmPassword;
   }
 
-  openGoogleAuth(): void {
-    // Backend ready — replace with proper OAuth flow using AuthService
-    window.open('https://accounts.google.com/signin/v2/identifier', '_blank');
-  }
+
 
   get passwordMismatch(): boolean {
     return this.confirmPassword.length > 0 && this.password !== this.confirmPassword;
