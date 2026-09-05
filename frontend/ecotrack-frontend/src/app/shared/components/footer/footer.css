@@ -1,13 +1,16 @@
-footer{
+.app-footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 24px 20px;
+  background: transparent;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+  margin-top: 20px;
+}
 
-    height:60px;
-
-    display:flex;
-
-    justify-content:center;
-
-    align-items:center;
-
-    border-top:1px solid #ddd;
-
+.footer-text {
+  font-size: 0.85rem;
+  color: #64748b;
+  text-align: center;
+  font-weight: 500;
 }

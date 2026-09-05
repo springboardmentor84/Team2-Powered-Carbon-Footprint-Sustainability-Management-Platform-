@@ -18,10 +18,18 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: flex-start;
+  align-items: center;
   padding: 28px 36px;
   color: #ffffff;
   overflow: hidden;
+}
+
+.left-content-wrapper {
+  max-width: 420px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .brand {
