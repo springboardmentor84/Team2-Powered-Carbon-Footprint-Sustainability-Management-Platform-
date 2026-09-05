@@ -37,10 +37,24 @@ export class AdminAnalytics implements OnInit, OnDestroy {
   trendPeriod = 'daily'; // daily, weekly, monthly, yearly
   topUserLimit = 5;
 
+  categoryColors: string[] = ['#2ecc71', '#3498db', '#9b59b6', '#e74c3c', '#f1c40f', '#e67e22', '#1abc9c'];
+
   constructor(
     private analyticsService: AdminAnalyticsService,
     private cdr: ChangeDetectorRef
   ) {}
+
+  getPercentageText(value: number, total: number): string {
+    if (!total || total === 0) return '0%';
+    const pct = (value / total) * 100;
+    if (pct > 0 && pct < 0.1) return '<0.1%';
+    return pct.toFixed(1) + '%';
+  }
+
+  getPercentageNum(value: number, total: number): number {
+    if (!total || total === 0) return 0;
+    return (value / total) * 100;
+  }
 
   ngOnInit(): void {
     this.applyFilter('30days'); // default to 30 days instead of today
@@ -187,8 +201,8 @@ export class AdminAnalytics implements OnInit, OnDestroy {
 
     const ctx = this.categoryChartRef.nativeElement.getContext('2d');
     
-    // Generate distinct colors
-    const colors = ['#2ecc71', '#3498db', '#9b59b6', '#e74c3c', '#f1c40f', '#e67e22', '#1abc9c'];
+    // Generate distinct colors using the class property
+    const colors = this.categoryColors;
     
     this.categoryChartInstance = new Chart(ctx, {
       type: 'doughnut',

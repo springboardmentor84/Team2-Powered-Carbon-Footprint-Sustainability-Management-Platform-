@@ -4,21 +4,59 @@
   margin: 0 auto;
 }
 
-.header {
+.header-section {
+  background: linear-gradient(135deg, #1b5e20, #2e7d32);
+  color: white;
+  padding: 32px;
+  border-radius: 16px;
+  margin-bottom: 32px;
+  box-shadow: 0 4px 12px rgba(46, 125, 50, 0.2);
+}
+
+.header-section h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: white;
+  margin: 0 0 8px 0;
+}
+
+.header-section p {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 1rem;
+  margin: 0;
+}
+
+.header-content {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 2rem;
 }
 
-.header h1 {
-  font-size: 2rem;
-  color: var(--text-color);
-  margin-bottom: 0.5rem;
+.header-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
 }
 
-.header p {
-  color: var(--text-secondary);
+.header-actions .btn-primary {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 20px;
+  background: white;
+  color: #1b5e20;
+  border: none;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.header-actions .btn-primary:hover {
+  background: #f8fafc;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }
 
 .btn-primary {
@@ -126,17 +164,23 @@
 }
 
 .modal-content {
-  background: var(--surface-color);
+  background: white;
   width: 100%;
-  max-width: 500px;
-  border-radius: 12px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  max-width: 450px;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
   overflow: hidden;
+  animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .modal-header {
-  padding: 1.5rem;
-  border-bottom: 1px solid var(--border-color);
+  padding: 1.5rem 1.5rem 1rem 1.5rem;
+  border-bottom: 1px solid var(--border-color, #e2e8f0);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -144,47 +188,125 @@
 
 .modal-header h2 {
   margin: 0;
-  font-size: 1.2rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1b5e20;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.header-icon {
+  font-size: 1.5rem;
+  color: #2e7d32;
 }
 
 .close-btn {
   background: none;
   border: none;
   font-size: 1.5rem;
+  line-height: 1;
   cursor: pointer;
-  color: var(--text-secondary);
+  color: #94a3b8;
+  transition: color 0.2s;
+  padding: 4px;
+}
+
+.close-btn:hover {
+  color: #1e293b;
 }
 
 .modal-body {
   padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
 }
 
 .form-group {
-  margin-bottom: 1.5rem;
+  margin-bottom: 0;
 }
 
 .form-group label {
   display: block;
   margin-bottom: 0.5rem;
-  font-weight: 500;
-  color: var(--text-color);
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: #334155;
 }
 
-.form-group input, .form-group select {
+.optional-text {
+  font-weight: 400;
+  color: #94a3b8;
+  font-size: 0.8125rem;
+  margin-left: 4px;
+}
+
+.form-control {
   width: 100%;
-  padding: 0.75rem;
-  border: 1px solid var(--border-color);
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border-color, #e2e8f0);
   border-radius: 8px;
-  background: var(--background-color);
-  color: var(--text-color);
+  background: #f8fafc;
+  color: #1e293b;
+  font-size: 0.95rem;
+  font-family: inherit;
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.form-control:focus {
+  border-color: #2e7d32;
+  box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
+  background: white;
 }
 
 .modal-footer {
-  padding: 1.5rem;
-  border-top: 1px solid var(--border-color);
+  padding: 1.25rem 1.5rem;
+  border-top: 1px solid var(--border-color, #e2e8f0);
+  background: #f8fafc;
   display: flex;
   justify-content: flex-end;
-  gap: 1rem;
+  gap: 12px;
+}
+
+.modal-footer .btn-primary {
+  background: #2e7d32;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.modal-footer .btn-primary:hover:not(:disabled) {
+  background: #1b5e20;
+}
+
+.modal-footer .btn-primary:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.modal-footer .btn-cancel {
+  background: transparent;
+  color: #64748b;
+  border: 1px solid #e2e8f0;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.modal-footer .btn-cancel:hover {
+  background: #e2e8f0;
+  color: #1e293b;
 }
 
 .loading-state, .error-message {

@@ -1,12 +1,16 @@
 <div class="analytics-container">
-  <header class="page-header">
-    <h1>Sustainability Analytics</h1>
-    <p>System-wide carbon emissions and user engagement statistics.</p>
-  </header>
+  <div class="header-section">
+    <div class="header-content">
+      <div>
+        <h2>Sustainability Analytics</h2>
+        <p>System-wide carbon emissions and user engagement statistics.</p>
+      </div>
+    </div>
+  </div>
 
   <!-- SECTION 2: Filters -->
   <section class="filters-section">
-    <div class="filter-buttons">
+    <div class="segmented-control">
       <button [class.active]="activeFilter === 'today'" (click)="applyFilter('today')">Today</button>
       <button [class.active]="activeFilter === '7days'" (click)="applyFilter('7days')">7 Days</button>
       <button [class.active]="activeFilter === '30days'" (click)="applyFilter('30days')">30 Days</button>
@@ -15,11 +19,13 @@
       <button [class.active]="activeFilter === 'custom'" (click)="activeFilter = 'custom'">Custom</button>
     </div>
 
-    <div class="custom-filter" *ngIf="activeFilter === 'custom'">
-      <input type="date" [(ngModel)]="startDate" placeholder="Start Date">
-      <span>to</span>
-      <input type="date" [(ngModel)]="endDate" placeholder="End Date">
-      <button class="btn-primary" (click)="applyCustomFilter()">Apply Range</button>
+    <div class="custom-filter-picker" *ngIf="activeFilter === 'custom'">
+      <div class="date-input-group">
+        <input type="date" [(ngModel)]="startDate" placeholder="Start Date">
+        <span class="date-separator">→</span>
+        <input type="date" [(ngModel)]="endDate" placeholder="End Date">
+      </div>
+      <button class="btn-primary" (click)="applyCustomFilter()">Apply</button>
     </div>
   </section>
 
@@ -112,7 +118,7 @@
     <section class="trend-section">
       <div class="section-header-flex">
         <h2>Emission Trends</h2>
-        <div class="period-selector">
+        <div class="segmented-control compact">
           <button [class.active]="trendPeriod === 'daily'" (click)="setTrendPeriod('daily')">Daily</button>
           <button [class.active]="trendPeriod === 'weekly'" (click)="setTrendPeriod('weekly')">Weekly</button>
           <button [class.active]="trendPeriod === 'monthly'" (click)="setTrendPeriod('monthly')">Monthly</button>
@@ -136,10 +142,20 @@
           </div>
           
           <div class="category-list" *ngIf="categories.length > 0">
-            <div class="category-item" *ngFor="let cat of categories">
-              <span class="cat-name">{{ cat.category }}</span>
-              <span class="cat-value">{{ cat.totalEmission | number:'1.0-2' }} kg</span>
-              <span class="cat-pct">({{ (cat.totalEmission / overview.totalEmissions) * 100 | number:'1.0-1' }}%)</span>
+            <div class="category-card" *ngFor="let cat of categories; let i = index">
+              <div class="cat-card-header">
+                <span class="cat-name">{{ cat.category }}</span>
+                <div class="cat-stats">
+                  <span class="cat-value">{{ cat.totalEmission | number:'1.0-2' }} kg</span>
+                  <span class="cat-pct">{{ getPercentageText(cat.totalEmission, overview.totalEmissions) }}</span>
+                </div>
+              </div>
+              <div class="cat-progress-bg">
+                <div class="cat-progress-fill" 
+                     [style.width.%]="getPercentageNum(cat.totalEmission, overview.totalEmissions)"
+                     [style.background-color]="categoryColors[i % categoryColors.length]">
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -177,25 +193,31 @@
             <tr>
               <th>Rank</th>
               <th>User</th>
-              <th>Email</th>
-              <th>Total Emission</th>
-              <th>% of Total</th>
+              <th>Total Emissions</th>
             </tr>
           </thead>
           <tbody>
             <tr *ngFor="let user of topUsers; let i = index">
-              <td>#{{ i + 1 }}</td>
+              <td>
+                <span class="rank-badge" [ngClass]="{'rank-1': i === 0, 'rank-2': i === 1, 'rank-3': i === 2}">
+                  #{{ i + 1 }}
+                </span>
+              </td>
               <td class="user-cell">
                 <div class="avatar">{{ user.name.charAt(0) }}</div>
-                <span>{{ user.name }}</span>
+                <div class="user-info">
+                  <span class="user-name">{{ user.name }}</span>
+                  <span class="user-email">{{ user.email }}</span>
+                </div>
               </td>
-              <td>{{ user.email }}</td>
-              <td class="emission-val">{{ user.totalEmission | number:'1.0-2' }} kg</td>
-              <td>
-                <div class="pct-bar-container">
-                  <span>{{ (user.totalEmission / overview.totalEmissions) * 100 | number:'1.0-1' }}%</span>
-                  <div class="pct-bar">
-                    <div class="pct-fill" [style.width.%]="(user.totalEmission / overview.totalEmissions) * 100"></div>
+              <td class="emission-cell">
+                <div class="emission-val-container">
+                  <span class="emission-val">{{ user.totalEmission | number:'1.0-2' }} kg</span>
+                  <span class="emission-pct">{{ getPercentageText(user.totalEmission, overview.totalEmissions) }} of total</span>
+                </div>
+                <div class="pct-bar-container-new">
+                  <div class="pct-bar-new">
+                    <div class="pct-fill-new" [style.width.%]="getPercentageNum(user.totalEmission, overview.totalEmissions)"></div>
                   </div>
                 </div>
               </td>

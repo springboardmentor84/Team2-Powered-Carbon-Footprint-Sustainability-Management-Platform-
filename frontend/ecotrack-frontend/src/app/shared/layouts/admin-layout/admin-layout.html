@@ -1,6 +1,31 @@
 <div class="admin-layout">
   <app-admin-sidebar></app-admin-sidebar>
-  <main class="admin-main">
-    <router-outlet></router-outlet>
-  </main>
+  <div class="admin-content-wrapper">
+    <!-- Global Admin Header -->
+    <header class="global-admin-header">
+      <div class="header-left">
+        <h1 class="header-title">EcoTrack Admin</h1>
+        <span class="header-subtitle">Manage users, challenges, analytics and reports</span>
+      </div>
+      <div class="header-right">
+        <div class="admin-profile-info">
+          <span class="admin-name">{{ adminName }}</span>
+          <span class="admin-role">Administrator</span>
+        </div>
+        <div class="admin-avatar">
+          {{ adminInitials }}
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="admin-main">
+      <router-outlet></router-outlet>
+    </main>
+
+    <!-- Global Admin Footer -->
+    <footer class="global-admin-footer">
+      <p>&copy; 2026 EcoTrack. All Rights Reserved.</p>
+    </footer>
+  </div>
 </div>
